@@ -14,7 +14,7 @@ Tampa, зона — Tampa Bay. Владелец — не программист:
 | Название | ONE TOWING |
 | Телефон | **656-777-2980** (`tel:+16567772980`) |
 | Режим | 24/7 |
-| База | Morgan St, Downtown Tampa (**точный адрес и координаты ещё не вписаны** — заглушка в `app/lib/constants.ts` → `BASE_LOCATION`) |
+| База | **124 S Morgan St, Tampa, FL 33602** (Harbour Island), координаты 27.94607, -82.45422 — `app/lib/constants.ts` → `BASE_LOCATION` |
 | Зона | Tampa Bay: Downtown Tampa, Tampa, Ybor City, St. Petersburg, Largo, Clearwater, Brandon, Riverview |
 | Шоссе | I-275, I-4, I-75, Selmon Expressway / SR 618, US-301 |
 | Домен | onetowingfl.com (куплен на Namecheap, ещё НЕ подключён) |
@@ -83,9 +83,10 @@ app/
 ## Переменные окружения (`.env.local`, НИКОГДА не в git; дублировать в Vercel)
 | Переменная | Зачем | Статус |
 |---|---|---|
-| `TELEGRAM_BOT_TOKEN` | бот от @BotFather | ⏳ владелец создаёт |
-| `TELEGRAM_CHAT_ID` | чат владельца | ⏳ |
+| `TELEGRAM_BOT_TOKEN` | бот @One_towing_alerts_bot от @BotFather | ✅ работает |
+| `TELEGRAM_CHAT_ID` | чат владельца (463539688) | ✅ |
 | `GOOGLE_MAPS_API_KEY` | Routes API + Geocoding API (серверный ключ) | ⏳ |
+| `NEXT_PUBLIC_ESTIMATOR_ENABLED` | `1` = калькулятор /estimate виден; пусто/`0` = 404 и ссылки скрыты | сейчас **выключен** |
 | `NEXT_PUBLIC_GOOGLE_REVIEWS_URL` | ссылка «оставить отзыв» | ⏳ после GBP |
 | `NEXT_PUBLIC_DEMO_CONTENT` | `1` = демо-плитки фото/отзывов, **только локально** | локально =1 |
 | `NEXT_PUBLIC_GA_ID`, `NEXT_PUBLIC_GSC_VERIFICATION` | аналитика | ⏳ |
@@ -115,11 +116,13 @@ app/
 - ✅ Секции «Фото» и «Отзывы» — готовы принимать реальный контент, пустыми не показываются
 - ✅ Калькулятор переписан: вилка цены вместо фикса, «Call for price» для дорожной помощи
 - ✅ Locate: геолокация/адрес → расстояние и время в пути от базы (Google Routes API)
-- ✅ Telegram-уведомления (тихое + заявка) с меткой на карте
+- ✅ Telegram-уведомления (тихое + заявка) с меткой на карте — **проверено на живом боте**
+- ✅ Адрес базы вписан, цена растёт монотонно (дальний тариф — как только выгоднее клиенту)
+- ✅ Калькулятор спрятан за флагом `NEXT_PUBLIC_ESTIMATOR_ENABLED` (сейчас выключен)
 - ✅ `npm run build` проходит
 
 В работе / дальше:
-- ⏳ Владелец: точный адрес базы на Morgan St, Telegram-бот, ключ Google Maps
+- ⏳ Владелец: ключ Google Maps (без него расстояние по прямой), новый токен бота после `/revoke`
 - ⏳ Реальные фото с работы (сейчас в hero — картинка от ИИ, заменить)
 - ⏳ Google Business Profile → живые отзывы
 - ⏳ 4 языка (en/es/ru/uk) через next-intl + кириллические шрифты — `BLUEPRINT.md` §B, §C
