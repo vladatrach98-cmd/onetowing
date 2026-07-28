@@ -17,13 +17,12 @@ export const BUSINESS = {
 
 /**
  * База (откуда выезжает эвакуатор). От неё считается время в пути до клиента.
- * TODO(owner): вписать точный адрес на Morgan St и координаты из Google Maps
- * (правый клик по точке на карте → первая строка = "27.9506, -82.4572").
+ * Координаты — Harbour Island, Downtown Tampa.
  */
 export const BASE_LOCATION = {
-  address: 'Morgan St, Tampa, FL',
-  lat: 27.9459,
-  lng: -82.4584,
+  address: '124 S Morgan St, Tampa, FL 33602',
+  lat: 27.94607,
+  lng: -82.45422,
 } as const;
 
 /**
