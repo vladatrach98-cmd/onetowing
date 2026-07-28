@@ -91,7 +91,9 @@ app/
 | `NEXT_PUBLIC_ESTIMATOR_ENABLED` | `1` = калькулятор /estimate виден; пусто/`0` = 404 и ссылки скрыты | сейчас **выключен** |
 | `NEXT_PUBLIC_GOOGLE_REVIEWS_URL` | ссылка «оставить отзыв» | ⏳ после GBP |
 | `NEXT_PUBLIC_DEMO_CONTENT` | `1` = демо-плитки фото/отзывов, **только локально** | локально =1 |
-| `NEXT_PUBLIC_GA_ID`, `NEXT_PUBLIC_GSC_VERIFICATION` | аналитика | ⏳ |
+| `NEXT_PUBLIC_GA_ID` | GA4 `G-676GCTBX4Z` (аккаунт «One Towing», ресурс onetowingfl.com) | ✅ работает |
+| `NEXT_PUBLIC_GOOGLE_ADS_ID` / `..._CALL_LABEL` | Google Ads: конверсия «нажатие на телефон» | ⏳ |
+| `NEXT_PUBLIC_GSC_VERIFICATION` | не нужна: Search Console подтверждён через TXT-запись в DNS | — |
 
 Без ключей ничего не падает: маршрут считается по прямой линии (пометка «rough estimate»),
 заявка пишется в лог сервера вместо Telegram.
@@ -130,8 +132,15 @@ Vercel падала на `bg-ink-950 does not exist`. Перед пушем — 
 - ✅ Калькулятор спрятан за флагом `NEXT_PUBLIC_ESTIMATOR_ENABLED` (сейчас выключен)
 - ✅ `npm run build` проходит
 
+- ✅ SEO-слой: robots.txt, sitemap.xml, JSON-LD (AutomotiveBusiness), OG-теги, canonical
+- ✅ Search Console: ресурс-домен `onetowingfl.com` подтверждён TXT-записью, sitemap отправлен,
+  индексирование запрошено (ждём 3–10 дней)
+- ✅ GA4 `G-676GCTBX4Z`: счётчик работает, событие `call_click` (нажатие на телефон)
+  помечено как ключевое — потом импортируется в Google Ads как конверсия
+
 В работе / дальше:
 - ⏳ Владелец: ключ Google Maps (без него расстояние по прямой), новый токен бота после `/revoke`
+- ⏳ Google Ads: аккаунт без кампании → конверсия «звонок» → `AW-...` + ярлык
 - ⏳ Реальные фото с работы (сейчас в hero — картинка от ИИ, заменить)
 - ⏳ Google Business Profile → живые отзывы
 - ⏳ 4 языка (en/es/ru/uk) через next-intl + кириллические шрифты — `BLUEPRINT.md` §B, §C
