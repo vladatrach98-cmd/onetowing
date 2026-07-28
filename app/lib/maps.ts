@@ -120,8 +120,11 @@ export async function geocode(address: string): Promise<{ point: LatLng; formatt
   try {
     const url = new URL('https://maps.googleapis.com/maps/api/geocode/json');
     url.searchParams.set('address', address);
-    // Подсказываем Google, что ищем во Флориде — меньше промахов по однотипным названиям улиц.
-    url.searchParams.set('components', 'country:US|administrative_area:FL');
+    // Ограничиваем США, но НЕ Флоридой: дальняя буксировка бывает и в соседний штат.
+    url.searchParams.set('components', 'country:US');
+    // bounds — это подсказка, а не запрет: при неоднозначном названии улицы
+    // Google предпочтёт Tampa Bay, но адрес в Джорджии всё равно найдёт.
+    url.searchParams.set('bounds', '27.5,-82.9|28.3,-82.1');
     url.searchParams.set('key', KEY);
 
     const response = await fetch(url, { cache: 'no-store' });

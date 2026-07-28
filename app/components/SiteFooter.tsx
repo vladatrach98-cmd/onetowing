@@ -1,7 +1,10 @@
 import Link from 'next/link';
-import { BUSINESS, HIGHWAYS, NAV_LINKS, PRICING, SERVICE_AREAS } from '../lib/constants';
+import { BUSINESS, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
+import { getNavLinks } from '../lib/nav';
 
 export default function SiteFooter() {
+  const navLinks = getNavLinks();
+
   return (
     <footer className="bg-ink-950 text-ink-400">
       <div className="mx-auto grid max-w-[1280px] gap-12 px-6 pb-[30px] pt-16 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
@@ -30,7 +33,7 @@ export default function SiteFooter() {
             <Link href="/" className="text-ink-400 transition-colors hover:text-white">
               Home
             </Link>
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link key={link.label} href={link.href} className="text-ink-400 transition-colors hover:text-white">
                 {link.label}
               </Link>

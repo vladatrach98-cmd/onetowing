@@ -1,9 +1,12 @@
 import Link from 'next/link';
-import { BUSINESS, NAV_LINKS } from '../lib/constants';
+import { BUSINESS } from '../lib/constants';
+import { getNavLinks } from '../lib/nav';
 
 const topBarItems = ['24/7 Towing & Roadside', 'Tampa Bay Area', 'Local Tow From $95'];
 
 export default function SiteHeader({ showTopBar = true }: { showTopBar?: boolean }) {
+  const navLinks = getNavLinks();
+
   return (
     <header className="sticky top-0 z-50 bg-ink-950">
       {showTopBar ? (
@@ -28,8 +31,11 @@ export default function SiteHeader({ showTopBar = true }: { showTopBar?: boolean
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-x-[30px] text-[13px] font-semibold uppercase leading-none tracking-[0.14em] lg:flex">
-            {NAV_LINKS.map((link) => (
+          <nav
+            aria-label="Main"
+            className="hidden items-center gap-x-[30px] text-[13px] font-semibold uppercase leading-none tracking-[0.14em] lg:flex"
+          >
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
@@ -51,8 +57,11 @@ export default function SiteHeader({ showTopBar = true }: { showTopBar?: boolean
       </div>
 
       {/* Мобильная навигация: одна строка со скроллом вбок — без бургер-меню, всё видно сразу. */}
-      <nav className="flex gap-x-6 overflow-x-auto border-b border-white/10 px-6 py-3 text-[12px] font-semibold uppercase leading-none tracking-[0.14em] lg:hidden">
-        {NAV_LINKS.map((link) => (
+      <nav
+        aria-label="Main (mobile)"
+        className="flex gap-x-6 overflow-x-auto border-b border-white/10 px-6 py-3 text-[12px] font-semibold uppercase leading-none tracking-[0.14em] lg:hidden"
+      >
+        {navLinks.map((link) => (
           <Link key={link.label} href={link.href} className="whitespace-nowrap text-ink-300 hover:text-white">
             {link.label}
           </Link>

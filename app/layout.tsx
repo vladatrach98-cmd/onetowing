@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Archivo, Barlow } from 'next/font/google';
 import './globals.css';
+import { BUSINESS, PRICING } from './lib/constants';
 
 const archivo = Archivo({
   subsets: ['latin'],
@@ -17,9 +18,8 @@ const barlow = Barlow({
 });
 
 export const metadata: Metadata = {
-  title: 'One Towing | 24/7 Tow Truck & Roadside Assistance',
-  description:
-    'Fast, reliable towing and roadside assistance across the city. Available day and night for emergency towing, jump starts, lockouts, and more.',
+  title: `${BUSINESS.name} | 24/7 Tow Truck & Roadside Assistance in Tampa, FL`,
+  description: `Towing and roadside assistance across Tampa Bay, 24 hours a day. Local tow from $${PRICING.baseFee}, $${PRICING.extraMileRate} per extra mile. Call ${BUSINESS.phone}.`,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

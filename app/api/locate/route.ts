@@ -23,7 +23,8 @@ const clean = (value: unknown, max = 200) => (typeof value === 'string' ? value.
 
 export async function POST(request: Request) {
   const ip = clientIp(request.headers);
-  if (!allow(`locate:${ip}`, 30, 60_000)) {
+  // Каждый вызов — до 4 обращений к платному Google. Держим планку низко.
+  if (!allow(`locate:${ip}`, 12, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
@@ -74,8 +75,10 @@ export async function POST(request: Request) {
   }
 
   // Тихое сообщение владельцу: он видит движение на сайте ещё до звонка.
+  // Ждём отправку (await), а не «вдогонку»: serverless-функция засыпает сразу
+  // после ответа браузеру и незавершённый запрос к Telegram потерялся бы.
   if (body.notifyOwner && allow(`locate-notify:${ip}`, 1, 15 * 60_000)) {
-    void sendLead({
+    await sendLead({
       kind: 'auto',
       service: clean(body.service, 120) || 'не выбрано',
       serviceKind: body.serviceKind === 'roadside' ? 'roadside' : 'tow',
