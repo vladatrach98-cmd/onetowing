@@ -1,0 +1,232 @@
+# Google Business Profile — ONE TOWING
+
+> Полная инструкция: создание профиля, видео-верификация, развитие точки.
+> Все данные сверены с живым сайтом onetowingfl.com — ничего не выдумано.
+> Проверено 2026-07-28.
+
+---
+
+## ЧАСТЬ 0. Расхождения, которые надо закрыть ДО создания профиля
+
+| # | Что не сходится | Решение |
+|---|---|---|
+| 1 | **Email не существует.** На сайте нет ни одного адреса (заглушку `dispatch@` убрали). Для дилеров, страховых и счетов почта нужна. | См. ЧАСТЬ 1 |
+| 2 | **Сайт публикует адрес базы.** В разметке для Google стоит `streetAddress: 124 S Morgan St`. Для Service Area Business адрес должен быть скрыт — иначе профиль и сайт противоречат друг другу. | Убрать улицу из разметки, оставить Tampa, FL |
+| 3 | **Районов 8 на сайте, 6 в задаче.** На сайте есть Largo и Downtown Tampa. | Решить, какой список верный, и сделать одинаковым везде |
+| 4 | **База на Harbour Island.** 124 S Morgan St — жилой квартал с высотками. Видео-верификация требует снять эвакуатор **на месте базы**. | Подтвердить, что трак реально стоит там |
+
+---
+
+## ЧАСТЬ 1. Рабочая почта
+
+GBP не показывает email клиентам, но он нужен бизнесу. Три пути:
+
+| Вариант | Цена | Что даёт |
+|---|---|---|
+| **Namecheap Email Forwarding** | бесплатно, уже включён в DNS | `info@onetowingfl.com` пересылается на твой Gmail. **Только приём.** Отвечать будешь с личной почты |
+| **Namecheap Private Email** | ~$15/год | Полный ящик: приём и отправка от имени `info@onetowingfl.com` |
+| **Google Workspace** | ~$7/мес | То же, но внутри Gmail и в одной экосистеме с GBP/Ads |
+
+**Рекомендация:** начать с бесплатной пересылки (5 минут), перейти на платный ящик, когда пойдут дилеры и страховые — им важно получать письма именно с домена.
+
+Как включить бесплатную пересылку:
+1. Namecheap → домен → вкладка **Domain** (не Advanced DNS)
+2. Блок **REDIRECT EMAIL** → **ADD FORWARDER**
+3. Alias: `info` → Forward to: твой Gmail → сохранить
+
+---
+
+## ЧАСТЬ 2. Данные для профиля (сверены с сайтом)
+
+| Поле | Значение | Откуда |
+|---|---|---|
+| Название | **ONE TOWING** | сайт, шапка и футер |
+| Основная категория | **Towing service** | — |
+| Доп. категория | **Roadside assistance** | на сайте 5 roadside-услуг |
+| Телефон | **656-777-2980** | `app/lib/constants.ts` |
+| Сайт | **https://onetowingfl.com** | живой, SSL |
+| Адрес (для Google, скрытый) | **124 S Morgan St, Tampa, FL 33602** | `BASE_LOCATION` |
+| Часы | **Open 24 hours** × 7 дней | сайт: «Open 24 hours, 7 days a week» |
+| Тип бизнеса | **Service Area Business** — адрес скрыт | выезд к клиенту |
+
+### Название — чего НЕ добавлять
+`Tampa` · `FL` · `24/7` · `Emergency` · `Best` · `Cheap` · `Towing Service` · телефон · адрес сайта.
+Только `ONE TOWING`. Любая приписка — прямое нарушение правил и повод для блокировки.
+
+### Категории — чего НЕ выбирать
+Tire shop · Auto repair shop · Auto body shop · Mechanic · Transportation service ·
+Truck rental · Car dealer. И не менять основную категорию первые недели после верификации.
+
+---
+
+## ЧАСТЬ 3. Описание бизнеса (готовое, вставить как есть)
+
+Проверено: без телефона, без ссылок, без «best/cheapest», без обещаний времени подачи,
+без перечисления районов, только реальные услуги с сайта. 640 знаков из 750 доступных.
+
+```
+ONE TOWING is a locally owned towing company based in Tampa, Florida. We handle
+local and emergency towing for cars, SUVs and vans, and we transport vehicles to
+dealerships and repair shops across Tampa and nearby communities. Our roadside
+services include jump starts, lockouts, tire changes and fuel delivery. Every job
+starts with a clear price agreed before the truck rolls out, and we stay in touch
+until the vehicle is where it needs to be. We work days, nights, weekends and
+holidays, and we load and secure every vehicle carefully — from a routine tow to a
+car that will not roll.
+```
+
+---
+
+## ЧАСТЬ 4. Услуги в профиле (зеркалят сайт, 12 штук)
+
+Часть Google предложит из своего списка, остальное добавляется как Custom service.
+
+| Услуга в GBP | Есть на сайте |
+|---|---|
+| Local towing | ✅ Local Towing |
+| Emergency towing | ✅ Emergency Towing |
+| Roadside assistance | ✅ Roadside Assistance |
+| Jump start | ✅ Jump Start |
+| Car lockout | ✅ Car Lockout |
+| Tire change | ✅ Tire Change |
+| Fuel delivery | ✅ Fuel Delivery |
+| Towing for vehicles that won't roll | ✅ Wheels Won't Roll |
+| Transport to a dealership | ✅ Delivery to a Dealership |
+| Transport to a repair shop | ✅ Delivery to a Repair Shop |
+| Vehicle transport | ✅ Vehicle Transport |
+| Long distance towing | ✅ Long Distance Towing |
+
+### Цена — только в описании услуги, никогда в названии профиля
+
+В поле описания услуги «Local towing»:
+
+```
+Local towing starts at $95, which covers up to 10 miles to reach you, standard
+loading and up to 10 miles of towing. Additional miles are $5 per mile, and longer
+runs are billed at a lower per-mile rate. The final price depends on distance,
+vehicle type, access to the vehicle and any special equipment needed, and is agreed
+with you before the truck rolls out.
+```
+
+Так цена не превращается в обещание «любой вызов = $95».
+
+---
+
+## ЧАСТЬ 5. Пошаговое создание
+
+1. **google.com/business** → войти рабочим Google-аккаунтом (тем же, где Аналитика). Двухэтапная защита включена. Без VPN.
+2. Название: `ONE TOWING` → Далее
+3. Категория: `Towing service` → Далее
+4. **«Do you want to add a location customers can visit?»** → **NO**
+   *(это ключевой шаг: он делает профиль Service Area Business)*
+5. **Service areas:** список из ЧАСТИ 2 после твоего решения по расхождению №3
+6. Адрес для Google (скрытый): `124 S Morgan St, Tampa, FL 33602` — поставить пин точно на здание
+7. Телефон: `656-777-2980`, сайт: `https://onetowingfl.com`
+8. Часы: **Open 24 hours** на все семь дней
+9. Описание из ЧАСТИ 3
+10. Google предложит верификацию → выбрать **Video** (для SAB чаще всего единственный вариант)
+
+**Скриншотить каждый шаг.** Если Google задаст непонятный вопрос — остановиться, не жать Next наугад.
+
+### Чего НЕ делать
+- Не создавать отдельные профили для Tampa, Brandon, Riverview, Clearwater — **один профиль** на всю зону
+- Не создавать второй профиль, пока первый на проверке
+- Не менять название/адрес/телефон/категорию сразу после отправки
+- Не удалять профиль при задержке — проверка может идти до нескольких недель
+
+---
+
+## ЧАСТЬ 6. Видео-верификация — сценарий
+
+**Снимать только через приложение GBP, одним куском, без монтажа и пауз. 3–5 минут.**
+
+### До записи собрать в одном месте
+- [ ] Эвакуатор с брендингом ONE TOWING и телефоном на борту
+- [ ] Ключи от эвакуатора
+- [ ] Оборудование: winch, straps, chains, dollies, конусы, jump box
+- [ ] Футболка с логотипом, визитки
+- [ ] Документы: Florida LLC, commercial auto insurance, tow-truck registration, invoice
+- [ ] Заклеить/убрать: EIN, SSN, номер счёта, номер водительского, данные клиентов
+- [ ] Телефон заряжен, снимать горизонтально, днём
+
+### Порядок съёмки
+
+**1. Где находится бизнес (30–40 сек)**
+Начать НЕ с эвакуатора. Показать: табличку с названием улицы → номер здания → окружение → узнаваемый ориентир рядом → и только потом перевести камеру на место, где стоит трак.
+
+**2. Эвакуатор (40–60 сек)**
+Обойти вокруг: перед → бок → зад. Крупно: логотип **ONE TOWING**, телефон на борту, номерные знаки (во время верификации не скрывать), towing equipment.
+
+**3. Оборудование (40–60 сек)**
+Открыть рабочие отсеки. Показать: wheel-lift, winch, straps, chains, конусы, dollies, jump box. Только то, что реально есть и соответствует услугам на сайте.
+
+**4. Контроль над бизнесом (40–60 сек)** ← самая важная часть
+Ключом открыть кабину → сесть → **завести двигатель** → показать towing controls → поработать wheel-lift или winch. Это доказывает, что ты владелец, а не прохожий у чужой машины.
+
+**5. Брендинг (20–30 сек)**
+Футболка с логотипом, визитки, бланк invoice — название ONE TOWING везде одинаковое.
+
+**6. Документы (30–40 сек)**
+LLC registration, страховка, регистрация трака, invoice. Название в документах = ONE TOWING.
+
+### Категорически нельзя
+Заранее записанное видео · монтаж и склейки · только документы без трака ·
+только трак без документов · чужие лица в кадре · чужой эвакуатор
+
+**Видео должно доказать 4 вещи одновременно:** где бизнес · что он реален · что есть трак и оборудование · что ты им управляешь.
+
+Сохрани подтверждение отправки видео.
+
+---
+
+## ЧАСТЬ 7. После верификации
+
+### Фото — качество, а не количество
+Первый набор: логотип · обложка · трак спереди · трак сбоку · брендинг и номер на борту · оборудование · водитель в форме · безопасная погрузка · дневная работа · ночная работа.
+
+Дальше — регулярно с реальных заказов.
+
+**Нельзя:** стоковые фото · сгенерированные ИИ · чужие эвакуаторы.
+⚠️ Картинка на сайте сейчас сгенерирована ИИ — в профиль её НЕ загружать, и на сайте заменить, когда будут свои фото.
+
+**Приватность на публичных фото:** не показывать точный адрес клиента, его документы, пострадавших, лица без разрешения; номер машины клиента замазывать.
+
+### Отзывы
+Только от настоящих клиентов. Никаких купленных, друзей, скидок за отзыв, массовых в один день.
+
+Шаблон просьбы после заказа:
+```
+Thank you for choosing ONE TOWING. Your honest feedback helps other drivers know
+what to expect. You can leave a Google review using this link: <ссылка>
+```
+Не писать текст за клиента. Не требовать упомянуть Tampa или услугу. Отвечать на каждый отзыв индивидуально — без одинакового списка городов в каждом ответе.
+
+### Посты — 2–3 в неделю, только по реальным работам
+Темы: выполненный местный тов · доставка в дилерский центр · доставка в сервис · roadside-выезд · ночная работа · как безопасно ждать эвакуатор · что делать при поломке на I-275, I-4, I-75, Selmon Expressway · подготовка к шторму.
+
+Не выдумывать кейсы. Не публиковать один текст с заменой города.
+
+### FAQ — ответы совпадают с сайтом
+
+| Вопрос | Ответ |
+|---|---|
+| Do you provide 24/7 towing? | Yes. We take calls and run jobs day and night, including weekends and holidays. |
+| How much does local towing cost? | Local towing starts at $95, which covers up to 10 miles to reach you and up to 10 miles of towing. Extra miles are $5 per mile. The final price depends on distance, vehicle and access, and is agreed before we roll out. |
+| What areas do you serve? | Tampa and nearby communities in the Tampa Bay area. |
+| Can you tow my vehicle to a dealership? | Yes, we transport vehicles to dealership service departments. |
+| Can you transport a vehicle to a repair shop? | Yes, to your own mechanic or a shop nearby. |
+| Do you provide long-distance towing? | Yes, longer runs are billed at a lower per-mile rate. |
+| What information do you need when I call? | Your location, where the vehicle needs to go, the make and model, and whether the wheels roll and the vehicle steers. |
+| Do you provide jump starts or lockout assistance? | Yes, along with tire changes and fuel delivery. |
+
+⚠️ Ни в одном ответе не обещать конкретное время подачи, пока оно не измерено.
+
+---
+
+## ЧАСТЬ 8. Связка с сайтом после верификации
+
+Когда профиль подтвердят, прислать:
+1. **Ссылку на карточку** в Google Картах → в `NEXT_PUBLIC_GOOGLE_MAPS_URL` (пойдёт в разметку `sameAs`)
+2. **Короткую ссылку на отзыв** → в `NEXT_PUBLIC_GOOGLE_REVIEWS_URL` → на сайте появится кнопка «Leave a review on Google» и заработает секция отзывов
+
+Живые отзывы Google подтягиваются заменой одной функции `getReviews()` в `app/lib/reviews.ts` — вёрстка уже готова.
