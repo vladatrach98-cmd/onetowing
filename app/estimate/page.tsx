@@ -4,6 +4,7 @@ import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import EstimateForm from './EstimateForm';
 import { BUSINESS, PRICING } from '../lib/constants';
+import { LONG_DISTANCE_FROM_MILES } from '../lib/pricing';
 
 export const metadata: Metadata = {
   title: `Towing Price Estimate | ${BUSINESS.name}`,
@@ -21,7 +22,7 @@ const formula = [
   },
   {
     title: `Long distance — $${PRICING.longDistanceMileRate}/mile`,
-    detail: `Tows over ${PRICING.longDistanceThresholdMiles} miles are charged at the lower per-mile rate.`,
+    detail: `From about ${LONG_DISTANCE_FROM_MILES} miles the cheaper per-mile rate kicks in on its own. We always charge whichever of the two comes out lower.`,
   },
   {
     title: 'Roadside help — call for price',

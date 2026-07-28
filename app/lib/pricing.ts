@@ -7,7 +7,12 @@ import { PRICING } from './constants';
  * Формула владельца:
  *   $95 = выезд до 10 миль + погрузка + буксировка до 10 миль
  *   каждая миля сверх включённых — $5
- *   буксировка от 50 миль — $3 за милю по всему маршруту
+ *   дальняя буксировка — $3 за милю по всему маршруту
+ *
+ * Из двух тарифов берём тот, что ДЕШЕВЛЕ для клиента. Иначе цена скакала бы:
+ * по старому правилу «$3 только от 50 миль» поездка на 49 миль стоила $290,
+ * а на 50 миль — $245, то есть длиннее = дешевле. Тарифы сравниваются в нуле
+ * при 25 милях, поэтому фактически дальний тариф включается с 25-й мили.
  */
 
 export type EstimateInput = {
@@ -33,6 +38,14 @@ export type EstimateResult = {
 
 const roundTo5 = (value: number) => Math.round(value / 5) * 5;
 
+/**
+ * С какой мили дальний тариф становится выгоднее обычного.
+ * (t − включённые) × $5 = t × $3  →  t = включённые × 5 / (5 − 3) = 25 миль.
+ */
+export const LONG_DISTANCE_FROM_MILES = Math.ceil(
+  (PRICING.includedTowMiles * PRICING.extraMileRate) / (PRICING.extraMileRate - PRICING.longDistanceMileRate),
+);
+
 export function estimate({ approachMiles, towMiles }: EstimateInput): EstimateResult {
   const approach = Math.max(0, approachMiles);
   const tow = Math.max(0, towMiles);
@@ -40,11 +53,13 @@ export function estimate({ approachMiles, towMiles }: EstimateInput): EstimateRe
   const extraApproachMiles = Math.max(0, approach - PRICING.includedApproachMiles);
   const approachCharge = extraApproachMiles * PRICING.extraMileRate;
 
-  const isLongDistance = tow >= PRICING.longDistanceThresholdMiles;
+  const standardTowCharge = Math.max(0, tow - PRICING.includedTowMiles) * PRICING.extraMileRate;
+  const longDistanceTowCharge = tow * PRICING.longDistanceMileRate;
+
+  // Клиент всегда платит по тому тарифу, который для него дешевле.
+  const isLongDistance = longDistanceTowCharge < standardTowCharge;
+  const towCharge = isLongDistance ? longDistanceTowCharge : standardTowCharge;
   const towMileRate = isLongDistance ? PRICING.longDistanceMileRate : PRICING.extraMileRate;
-  const towCharge = isLongDistance
-    ? tow * PRICING.longDistanceMileRate
-    : Math.max(0, tow - PRICING.includedTowMiles) * PRICING.extraMileRate;
 
   const mid = PRICING.baseFee + approachCharge + towCharge;
 

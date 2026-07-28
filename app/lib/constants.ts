@@ -35,8 +35,13 @@ export const PRICING = {
   includedApproachMiles: 10,
   includedTowMiles: 10,
   extraMileRate: 5,
-  longDistanceThresholdMiles: 50,
   longDistanceMileRate: 3,
+  /**
+   * Порог из прайса владельца («дальняя буксировка — от 50 миль»). Для расчёта
+   * НЕ используется: калькулятор берёт тот тариф, что дешевле клиенту, и по
+   * математике это происходит уже с 25 миль (см. LONG_DISTANCE_FROM_MILES).
+   */
+  longDistanceThresholdMiles: 50,
   currency: 'USD',
 } as const;
 

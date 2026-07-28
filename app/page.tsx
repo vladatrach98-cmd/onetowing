@@ -6,6 +6,7 @@ import EmergencySplash from './components/EmergencySplash';
 import GallerySection from './components/GallerySection';
 import ReviewsSection from './components/ReviewsSection';
 import { BUSINESS, HIGHWAYS, PRICING, SERVICE_AREAS } from './lib/constants';
+import { LONG_DISTANCE_FROM_MILES } from './lib/pricing';
 import { SERVICES } from './lib/services';
 
 const stats = [
@@ -32,8 +33,8 @@ const priceRows = [
     detail: 'Anything past the included miles, whether we drive to you or tow you further.',
   },
   {
-    title: `Long distance (${PRICING.longDistanceThresholdMiles}+ miles) — $${PRICING.longDistanceMileRate} per mile`,
-    detail: 'Going out of the area or across Florida costs less per mile.',
+    title: `Long distance — $${PRICING.longDistanceMileRate} per mile`,
+    detail: `Long runs cost less per mile. From about ${LONG_DISTANCE_FROM_MILES} miles we switch you to this rate automatically — you always get the cheaper of the two.`,
   },
   {
     title: 'Roadside help — call for price',

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BUSINESS, PRICING } from '../lib/constants';
-import { estimate, usd } from '../lib/pricing';
+import { estimate, LONG_DISTANCE_FROM_MILES, usd } from '../lib/pricing';
 import { ESTIMATE_OPTIONS } from './estimate-options';
 
 type LocateResponse = {
@@ -467,7 +467,7 @@ export default function EstimateForm() {
         <ul className="mt-[18px] list-none border-t border-bone-300 p-0">
           {[
             `Base $${PRICING.baseFee} covers ${PRICING.includedApproachMiles} miles to you, loading, and ${PRICING.includedTowMiles} miles of towing.`,
-            `Every mile past that is $${PRICING.extraMileRate}. Runs over ${PRICING.longDistanceThresholdMiles} miles drop to $${PRICING.longDistanceMileRate} a mile.`,
+            `Every mile past that is $${PRICING.extraMileRate}. On long runs (from about ${LONG_DISTANCE_FROM_MILES} miles) we switch to $${PRICING.longDistanceMileRate} a mile — whichever is cheaper for you.`,
             'Nights, weekends and holidays cost the same as any other hour.',
             'The number here is a ballpark — the final price is agreed with you before we roll.',
           ].map((item) => (
