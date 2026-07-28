@@ -2,3 +2,13 @@ node_modules
 .next
 out
 npm-debug.log*
+
+# секреты — НИКОГДА не в git
+.env
+.env*.local
+
+# служебное
+.vercel
+.DS_Store
+*.tsbuildinfo
+ПАМЯТКА.md
