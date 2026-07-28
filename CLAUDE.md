@@ -17,7 +17,9 @@ Tampa, зона — Tampa Bay. Владелец — не программист:
 | База | **124 S Morgan St, Tampa, FL 33602** (Harbour Island), координаты 27.94607, -82.45422 — `app/lib/constants.ts` → `BASE_LOCATION` |
 | Зона | Tampa Bay: Downtown Tampa, Tampa, Ybor City, St. Petersburg, Largo, Clearwater, Brandon, Riverview |
 | Шоссе | I-275, I-4, I-75, Selmon Expressway / SR 618, US-301 |
-| Домен | onetowingfl.com (куплен на Namecheap, ещё НЕ подключён) |
+| Сайт | **https://onetowingfl.com** (живой, SSL, www → 308 на основной домен) |
+| Хостинг | Vercel, проект `onetowing`, team_c3M18TfG1uNJY0Nen9OQn2mX, prj_quwYw1P0UfjMBVxbAc4UGQyvB2se |
+| DNS | Namecheap BasicDNS: A `@` → 76.76.21.21, CNAME `www` → cname.vercel-dns.com |
 | Репозиторий | github.com/vladatrach98-cmd/onetowing |
 
 **Цены — только эти, других НЕ выдумывать:**
@@ -101,9 +103,16 @@ app/
    сколько ехать (мили + минуты), куда везти, вилка цены, телефон клиента, метка на карте
    отдельным сообщением.
 
-## Деплой (когда дойдём до него)
-`git push origin main` СНАЧАЛА, потом git-source деплой через Vercel REST API — CLI
-`npx vercel --prod` в этом окружении зависает. Рецепт и грабли — в `BLUEPRINT.md` §E–G.
+## Деплой
+`git push origin main` — Vercel собирает и публикует сам (~1 минута).
+Если авто-деплой не сработал, добить руками через REST API (проверенный рецепт):
+`POST https://api.vercel.com/v13/deployments?teamId={team}&forceNew=1` с телом
+`{name:"onetowing", project:"{prjId}", target:"production", gitSource:{type:"github",
+org:"vladatrach98-cmd", repo:"onetowing", ref:"main", sha:"{HEAD}"}}`, заголовки:
+Bearer из `~/Library/Application Support/com.vercel.cli/auth.json` + браузерный User-Agent
+(иначе Cloudflare отдаёт 403). Токен протухает → `npx vercel login`.
+⚠️ Грабля, на которой уже падали: `tailwind.config.ts` не был закоммичен, и сборка на
+Vercel падала на `bg-ink-950 does not exist`. Перед пушем — `git status`, а не только `app/`.
 Коммиты только под GitHub-noreply email, иначе Vercel блокирует авто-деплой:
 `user.name "vladatrach98-cmd"`, `user.email "304151701+vladatrach98-cmd@users.noreply.github.com"`
 (уже настроено в этом репо).
