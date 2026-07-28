@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import EstimateForm from './EstimateForm';
-import { BUSINESS, PRICING } from '../lib/constants';
+import { BUSINESS, ESTIMATOR_ENABLED, PRICING } from '../lib/constants';
 import { LONG_DISTANCE_FROM_MILES } from '../lib/pricing';
 
 export const metadata: Metadata = {
@@ -31,6 +32,10 @@ const formula = [
 ];
 
 export default function EstimatePage() {
+  // Калькулятор выключен флагом — страницы для посетителя просто не существует
+  // (и Google её не индексирует). Включается NEXT_PUBLIC_ESTIMATOR_ENABLED=1.
+  if (!ESTIMATOR_ENABLED) notFound();
+
   return (
     <>
       <SiteHeader />

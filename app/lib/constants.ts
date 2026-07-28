@@ -69,6 +69,18 @@ export const NAV_LINKS = [
 ] as const;
 
 /**
+ * КАЛЬКУЛЯТОР ЦЕНЫ (/estimate) — выключен по умолчанию.
+ *
+ * Включить: в .env.local (и в Vercel) поставить NEXT_PUBLIC_ESTIMATOR_ENABLED=1
+ * и пересобрать сайт. Пока выключен — страница отдаёт 404, а все ссылки на неё
+ * с сайта пропадают и ведут в блок цен.
+ */
+export const ESTIMATOR_ENABLED = process.env.NEXT_PUBLIC_ESTIMATOR_ENABLED === '1';
+
+/** Куда ведёт кнопка «узнать цену»: в калькулятор или в блок цен на главной. */
+export const PRICE_LINK = ESTIMATOR_ENABLED ? '/estimate' : '/#pricing';
+
+/**
  * Ссылка на карточку Google Business Profile («оставить отзыв»).
  * Появится в .env.local и в Vercel, когда карточка будет создана.
  */

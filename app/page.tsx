@@ -5,7 +5,7 @@ import SiteFooter from './components/SiteFooter';
 import EmergencySplash from './components/EmergencySplash';
 import GallerySection from './components/GallerySection';
 import ReviewsSection from './components/ReviewsSection';
-import { BUSINESS, HIGHWAYS, PRICING, SERVICE_AREAS } from './lib/constants';
+import { BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICE_LINK, PRICING, SERVICE_AREAS } from './lib/constants';
 import { LONG_DISTANCE_FROM_MILES } from './lib/pricing';
 import { SERVICES } from './lib/services';
 
@@ -81,10 +81,10 @@ export default function Home() {
                   Call {BUSINESS.phone}
                 </a>
                 <Link
-                  href="/estimate"
+                  href={PRICE_LINK}
                   className="border border-white/35 px-8 py-5 text-[14px] font-bold uppercase leading-none tracking-[0.12em] text-white transition-colors hover:border-brand-500 hover:text-brand-300"
                 >
-                  Check the price
+                  {ESTIMATOR_ENABLED ? 'Check the price' : 'See our prices'}
                 </Link>
               </div>
             </div>
@@ -167,12 +167,21 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap items-center gap-5 pt-[34px]">
-                <Link
-                  href="/estimate"
-                  className="bg-ink-950 px-[30px] py-[19px] text-[13px] font-bold uppercase leading-none tracking-[0.12em] text-white transition-colors hover:bg-brand-500 hover:text-white"
-                >
-                  Get an approximate price
-                </Link>
+                {ESTIMATOR_ENABLED ? (
+                  <Link
+                    href="/estimate"
+                    className="bg-ink-950 px-[30px] py-[19px] text-[13px] font-bold uppercase leading-none tracking-[0.12em] text-white transition-colors hover:bg-brand-500 hover:text-white"
+                  >
+                    Get an approximate price
+                  </Link>
+                ) : (
+                  <a
+                    href={BUSINESS.phoneHref}
+                    className="bg-ink-950 px-[30px] py-[19px] text-[13px] font-bold uppercase leading-none tracking-[0.12em] text-white transition-colors hover:bg-brand-500 hover:text-white"
+                  >
+                    Call for your price: {BUSINESS.phone}
+                  </a>
+                )}
                 <span className="max-w-[520px] text-[16px] text-ink-500">
                   These numbers are an estimate, not a fixed quote — the final price is agreed on the phone once we know
                   the car and the spot.
@@ -308,10 +317,10 @@ export default function Home() {
                   Call {BUSINESS.phone}
                 </a>
                 <Link
-                  href="/estimate"
+                  href={ESTIMATOR_ENABLED ? '/estimate' : '/#services'}
                   className="border border-ember-line px-8 py-[21px] text-[14px] font-bold uppercase leading-none tracking-[0.12em] text-ember-ink transition-colors hover:border-ember-hover hover:bg-ember-hover hover:text-white"
                 >
-                  Check the price
+                  {ESTIMATOR_ENABLED ? 'Check the price' : 'See all services'}
                 </Link>
               </div>
             </div>

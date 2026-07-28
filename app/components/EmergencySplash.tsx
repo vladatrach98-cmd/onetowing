@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { BUSINESS } from '../lib/constants';
+import { BUSINESS, ESTIMATOR_ENABLED, PRICE_LINK } from '../lib/constants';
 
 const locations = ['Tampa', 'Ybor City', 'Clearwater', 'St. Petersburg', '+ Tampa Bay'];
 
@@ -105,10 +105,10 @@ export default function EmergencySplash() {
           </p>
 
           <Link
-            href="/estimate"
+            href={PRICE_LINK}
             className="mt-7 border-b border-white/25 pb-1 text-[13px] font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:border-brand-500 hover:text-brand-300"
           >
-            Or check the price first
+            {ESTIMATOR_ENABLED ? 'Or check the price first' : 'Or see our prices'}
           </Link>
         </div>
 

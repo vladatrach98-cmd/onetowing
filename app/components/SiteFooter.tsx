@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BUSINESS, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
+import { BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
 import { getNavLinks } from '../lib/nav';
 
 export default function SiteFooter() {
@@ -38,9 +38,11 @@ export default function SiteFooter() {
                 {link.label}
               </Link>
             ))}
-            <Link href="/estimate" className="text-ink-400 transition-colors hover:text-white">
-              Price Estimate
-            </Link>
+            {ESTIMATOR_ENABLED ? (
+              <Link href="/estimate" className="text-ink-400 transition-colors hover:text-white">
+                Price Estimate
+              </Link>
+            ) : null}
           </div>
         </div>
 
