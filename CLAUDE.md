@@ -13,6 +13,8 @@ Tampa, зона — Tampa Bay. Владелец — не программист:
 |---|---|
 | Название | ONE TOWING |
 | Телефон | **656-777-2980** (`tel:+16567772980`) |
+| Почта | **info@onetowingfl.com** — псевдоним ящика `roman@onetowingfl.com` (Google Workspace Business Starter, $8.40/мес). Показана только в подвале сайта |
+| Владелец бизнеса | Роман Володин, `roman@onetowingfl.com` — под ним карточка в Картах и Google Ads |
 | Режим | 24/7 |
 | База | **124 S Morgan St, Tampa, FL 33602** (Harbour Island), координаты 27.94607, -82.45422 — `app/lib/constants.ts` → `BASE_LOCATION` |
 | Зона | Tampa Bay: Downtown Tampa, Tampa, Ybor City, St. Petersburg, Largo, Clearwater, Brandon, Riverview |
@@ -138,7 +140,15 @@ Vercel падала на `bg-ink-950 does not exist`. Перед пушем — 
 - ✅ GA4 `G-676GCTBX4Z`: счётчик работает, событие `call_click` (нажатие на телефон)
   помечено как ключевое — потом импортируется в Google Ads как конверсия
 
+- ✅ Google Workspace на домене: `roman@onetowingfl.com` + псевдоним `info@`.
+  DNS почты: MX `smtp.google.com` (prio 1), SPF `include:_spf.google.com`, DKIM `google._domainkey`.
+  ⚠️ Правило DNS: в `MAIL SETTINGS` Namecheap должен стоять **Custom MX**, SPF-запись ровно одна,
+  и НЕЛЬЗЯ трогать две TXT `google-site-verification` (Search Console + Workspace).
+
 В работе / дальше:
+- ⏳ Доступы Роману: GA4 (Администратор) + Search Console (Владелец) — **ресурсы не пересоздавать**
+- ⏳ Карточка в Картах: создаёт Роман под `roman@onetowingfl.com`, он же снимает видео-верификацию.
+  Инструкция и сценарий видео — `GOOGLE-BUSINESS.md`. Роли и передача доступов — `ACCESS.md`
 - ⏳ Владелец: ключ Google Maps (без него расстояние по прямой), новый токен бота после `/revoke`
 - ⏳ Google Ads: аккаунт без кампании → конверсия «звонок» → `AW-...` + ярлык
 - ⏳ Реальные фото с работы (сейчас в hero — картинка от ИИ, заменить)
