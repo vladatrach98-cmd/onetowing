@@ -9,6 +9,9 @@ export const BUSINESS = {
   phone: '656-777-2980',
   phoneHref: 'tel:+16567772980',
   phoneE164: '+16567772980',
+  /** Псевдоним ящика roman@onetowingfl.com в Google Workspace. */
+  email: 'info@onetowingfl.com',
+  emailHref: 'mailto:info@onetowingfl.com',
   hours: 'Open 24 hours, 7 days a week',
   serviceArea: 'Tampa Bay',
   domain: 'onetowingfl.com',

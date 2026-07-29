@@ -17,6 +17,7 @@ export function businessJsonLd() {
     description: `24/7 towing and roadside assistance across ${BUSINESS.serviceArea}. Local tow from $${PRICING.baseFee}.`,
     url: BUSINESS.siteUrl,
     telephone: BUSINESS.phoneE164,
+    email: BUSINESS.email,
     image: `${BUSINESS.siteUrl}/one-towing-hero.png`,
     priceRange: '$$',
     currenciesAccepted: 'USD',

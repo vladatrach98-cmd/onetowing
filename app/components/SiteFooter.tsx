@@ -54,6 +54,10 @@ export default function SiteFooter() {
             <a href={BUSINESS.phoneHref} className="text-ink-400 transition-colors hover:text-white">
               {BUSINESS.phone}
             </a>
+            {/* Почта — скромно, только здесь. Главное действие на сайте везде звонок. */}
+            <a href={BUSINESS.emailHref} className="text-ink-400 transition-colors hover:text-white">
+              {BUSINESS.email}
+            </a>
             <span>{BUSINESS.hours}</span>
             <span>Call for current ETA</span>
           </div>
