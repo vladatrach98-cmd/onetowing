@@ -52,11 +52,11 @@ export const ESTIMATE_OPTIONS: EstimateOption[] = [
     needsDestination: false,
   },
   {
-    id: 'flat-tire',
-    label: 'Flat tire',
-    description: 'Spare mounted on the spot, or a tow to the nearest tire shop.',
-    kind: 'roadside',
-    needsDestination: false,
+    id: 'motorcycle',
+    label: 'Motorcycle transport',
+    description: 'Soft straps and a wheel chock — the bike arrives exactly as it left.',
+    kind: 'tow',
+    needsDestination: true,
   },
   {
     id: 'lockout',

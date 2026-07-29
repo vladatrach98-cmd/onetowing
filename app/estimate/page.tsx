@@ -27,7 +27,7 @@ const formula = [
   },
   {
     title: 'Roadside help — call for price',
-    detail: 'Jump start, lockout, tire change, fuel delivery. Quoted on the phone, no guessing games.',
+    detail: 'Jump start, lockout, fuel delivery. Quoted on the phone, no guessing games.',
   },
 ];
 

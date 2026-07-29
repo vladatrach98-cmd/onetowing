@@ -38,7 +38,7 @@ const priceRows = [
   },
   {
     title: 'Roadside help — call for price',
-    detail: 'Jump start, lockout, tire change, fuel delivery. Every case is different, so we quote it on the phone.',
+    detail: 'Jump start, lockout, fuel delivery. Every case is different, so we quote it on the phone.',
   },
 ];
 

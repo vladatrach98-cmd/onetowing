@@ -24,6 +24,24 @@ export const SERVICES: Service[] = [
     kind: 'tow',
   },
   {
+    id: 'breakdown',
+    title: 'Car Won’t Start or Won’t Drive',
+    description: 'Dead engine, transmission, overheating — we load it and take it where it can be fixed.',
+    kind: 'tow',
+  },
+  {
+    id: 'accident-recovery',
+    title: 'Accident Recovery',
+    description: 'After a collision: safe load-up and transport to a body shop, storage lot or home.',
+    kind: 'tow',
+  },
+  {
+    id: 'motorcycle',
+    title: 'Motorcycle Towing',
+    description: 'Bikes secured with soft straps and a wheel chock so they arrive as they left.',
+    kind: 'tow',
+  },
+  {
     id: 'roadside',
     title: 'Roadside Assistance',
     description: 'Small problems fixed on the spot so you can keep driving.',
@@ -39,12 +57,6 @@ export const SERVICES: Service[] = [
     id: 'lockout',
     title: 'Car Lockout',
     description: 'Keys locked inside — we open most vehicles without damage.',
-    kind: 'roadside',
-  },
-  {
-    id: 'tire-change',
-    title: 'Tire Change',
-    description: 'Your spare mounted on the spot, or a tow to the nearest tire shop.',
     kind: 'roadside',
   },
   {
