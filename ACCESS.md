@@ -15,17 +15,26 @@
 
 ---
 
-## Целевая структура
+## Фактическое состояние на 28 июля 2026
 
 | Сервис | Основной владелец | Второй владелец (страховка) | Подрядчик по рекламе/SEO |
 |---|---|---|---|
-| **Google Business Profile** | `roman@onetowingfl.com` — Primary owner | Влада — Owner | **Manager** |
-| **Google Analytics 4** (`G-676GCTBX4Z`) | Влада — Administrator | `roman@…` — Administrator | **Marketer** или **Analyst** |
-| **Search Console** (домен onetowingfl.com) | Влада — Owner | `roman@…` — Owner | **Full user** |
-| **Google Ads** | `roman@…` — Admin | Влада — Admin | **Standard** или связка через MCC |
-| **Google Workspace** | `roman@onetowingfl.com` | — | доступа нет |
-| **Vercel / GitHub / Namecheap** | Влада | — | **доступа нет никогда** |
-| **Telegram-бот заявок** | Роман | — | доступа нет |
+| **Google Workspace** (почта на домене) | ✅ `roman@onetowingfl.com` — суперадмин | — | доступа нет |
+| **Google Analytics 4** (`G-676GCTBX4Z`) | ✅ Влада — Administrator | ✅ `roman@…` — Administrator | **Marketer** или **Analyst** |
+| **Search Console** (домен onetowingfl.com) | ✅ Влада — Owner | ✅ `roman@…` — Owner | **Full user** |
+| **Google Business Profile** | ⏳ будет `roman@…` — Primary owner | ⏳ Влада — Owner | **Manager** |
+| **Google Ads** | ⏳ будет `roman@…` — Admin | ⏳ Влада — Admin | **Standard** или связка через MCC |
+| **Vercel / GitHub / Namecheap** | ✅ Влада | — | **доступа нет никогда** |
+| **Telegram-бот заявок** | ✅ Роман (чат 463539688) | — | доступа нет |
+
+### Ключи и идентификаторы (не секретные)
+- Счётчик Аналитики: `G-676GCTBX4Z` — вшит в сайт, **не пересоздавать**
+- Подтверждение Search Console: TXT-запись в DNS, поставлена Владой
+- Подтверждение Workspace: вторая TXT-запись в том же DNS
+- Почта домена: MX `smtp.google.com`, SPF, DKIM `google._domainkey`, DMARC `_dmarc`
+
+### Секреты — только в менеджере паролей, НЕ в файлах проекта
+Пароль от `roman@onetowingfl.com` · токен Telegram-бота · ключ Google Maps (когда появится)
 
 ### Почему подрядчик — не владелец
 
