@@ -321,7 +321,7 @@ export default function EstimateForm() {
                 Call for price
               </p>
               <p className="mt-3.5 text-[16px] leading-[1.6] text-ink-300">
-                Jump starts, lockouts, tires and fuel depend on the car and the spot. Tell us what happened on the phone
+                Jump starts, lockouts and fuel depend on the car and the spot. Tell us what happened on the phone
                 and you get the number right away.
               </p>
             </>
