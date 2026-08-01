@@ -92,6 +92,75 @@ function buildMessage(lead: Lead): string {
   return lines.join('\n');
 }
 
+export type CallPing = {
+  /** Город по IP — приблизительно, на уровне провайдера. */
+  city?: string;
+  region?: string;
+  /** Откуда пришёл человек: google.com, реклама, прямой заход. */
+  referrer?: string;
+  /** Страница сайта, с которой нажали. */
+  page?: string;
+  /** true — телефон/планшет, false — компьютер. */
+  mobile?: boolean;
+};
+
+/** Время в Тампе — владелец смотрит уведомление в своём часовом поясе. */
+const tampaTime = () =>
+  new Intl.DateTimeFormat('ru-RU', {
+    timeZone: 'America/New_York',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date());
+
+function buildCallMessage(ping: CallPing): string {
+  const lines: string[] = [];
+
+  lines.push('📞 <b>НАЖАЛИ НА ТЕЛЕФОН</b>');
+  lines.push('<i>Человек набирает номер прямо сейчас.</i>');
+  lines.push('');
+  lines.push(`🕐 ${tampaTime()} по Тампе`);
+
+  const place = [ping.city, ping.region].filter(Boolean).join(', ');
+  if (place) {
+    lines.push(`📍 <b>Примерно:</b> ${escapeHtml(place)} <i>(по интернет-адресу, неточно)</i>`);
+  }
+
+  if (ping.referrer) {
+    lines.push(`🔗 <b>Пришёл с:</b> ${escapeHtml(ping.referrer)}`);
+  }
+  if (ping.page && ping.page !== '/') {
+    lines.push(`🌐 <b>Страница:</b> ${escapeHtml(ping.page)}`);
+  }
+  if (ping.mobile != null) {
+    lines.push(ping.mobile ? '📱 С телефона' : '💻 С компьютера');
+  }
+
+  lines.push('');
+  lines.push(`<i>${BUSINESS.domain}</i>`);
+
+  return lines.join('\n');
+}
+
+/** Тихий сигнал «сейчас позвонят» — отправляется, когда кликнули по номеру на сайте. */
+export async function sendCallPing(ping: CallPing): Promise<{ delivered: boolean }> {
+  if (!telegramReady) {
+    console.info('[notify] Telegram не настроен, нажатие на телефон только в логе:', ping);
+    return { delivered: false };
+  }
+
+  try {
+    await callTelegram('sendMessage', {
+      text: buildCallMessage(ping),
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+    });
+    return { delivered: true };
+  } catch (error) {
+    console.error('[notify] Telegram не принял сигнал о звонке:', error);
+    return { delivered: false };
+  }
+}
+
 async function callTelegram(method: string, payload: Record<string, unknown>) {
   const response = await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
     method: 'POST',

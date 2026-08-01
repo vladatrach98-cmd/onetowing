@@ -26,16 +26,47 @@ declare global {
   }
 }
 
+/**
+ * Сигнал владельцу в Telegram «сейчас позвонят».
+ *
+ * sendBeacon, а не обычный запрос: после нажатия на tel: телефон немедленно
+ * открывает набор номера и выгружает страницу. Обычный fetch в этот момент
+ * браузер отменяет, а beacon система обязана доставить.
+ */
+function pingOwner() {
+  try {
+    const payload = JSON.stringify({
+      page: window.location.pathname,
+      referrer: document.referrer,
+    });
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/call-click', new Blob([payload], { type: 'application/json' }));
+      return;
+    }
+
+    void fetch('/api/call-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    // Уведомление — приятный бонус. Если не ушло, звонок всё равно состоится.
+  }
+}
+
 export default function Analytics() {
   const primaryId = GA_ID || ADS_ID;
 
   useEffect(() => {
-    if (!primaryId) return;
-
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
       const link = target?.closest?.('a[href^="tel:"]');
       if (!link) return;
+
+      // Telegram — независимо от счётчиков Google.
+      pingOwner();
 
       window.gtag?.('event', 'call_click', { event_category: 'engagement' });
 
@@ -46,7 +77,7 @@ export default function Analytics() {
 
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, [primaryId]);
+  }, []);
 
   if (!primaryId) return null;
 
