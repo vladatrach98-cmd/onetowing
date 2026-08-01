@@ -68,11 +68,9 @@ function buildMessage(lead: Lead): string {
     lines.push(`📏 <b>Длина буксировки:</b> ${round(lead.towMiles)} миль`);
   }
 
-  if (lead.estimateLow != null && lead.estimateHigh != null) {
-    lines.push(`💵 <b>Он видит цену:</b> $${round(lead.estimateLow)}–$${round(lead.estimateHigh)}`);
-  } else if (lead.serviceKind === 'roadside') {
-    lines.push('💵 <b>Он видит:</b> цена по телефону');
-  }
+  // Цену в уведомлении НЕ пишем: её называет владелец по телефону, глядя на мили выше.
+  // Сумма в сообщении сбивала бы с толку — её легко принять за уже согласованную с клиентом.
+  // Поля estimateLow/estimateHigh приходят с формы, но намеренно не показываются.
 
   if (lead.phone) {
     lines.push(`📞 <b>Его телефон:</b> ${escapeHtml(lead.phone)}`);
