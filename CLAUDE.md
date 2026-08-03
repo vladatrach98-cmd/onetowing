@@ -95,7 +95,7 @@ app/
 | `NEXT_PUBLIC_GOOGLE_REVIEWS_URL` | ссылка «оставить отзыв» | ⏳ после GBP |
 | `NEXT_PUBLIC_DEMO_CONTENT` | `1` = демо-плитки фото/отзывов, **только локально** | локально =1 |
 | `NEXT_PUBLIC_GA_ID` | GA4 `G-676GCTBX4Z` (аккаунт «One Towing», ресурс onetowingfl.com) | ✅ работает |
-| `NEXT_PUBLIC_GOOGLE_ADS_ID` / `..._CALL_LABEL` | Google Ads: конверсия «нажатие на телефон» | ⏳ |
+| `NEXT_PUBLIC_GOOGLE_ADS_ID` / `..._CALL_LABEL` | Google Ads (аккаунт **564-992-8278**, под `roman@`): конверсия «нажатие на телефон» | ⏳ ждём коды |
 | `NEXT_PUBLIC_GSC_VERIFICATION` | не нужна: Search Console подтверждён через TXT-запись в DNS | — |
 
 Без ключей ничего не падает: маршрут считается по прямой линии (пометка «rough estimate»),

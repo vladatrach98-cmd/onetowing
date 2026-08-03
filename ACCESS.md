@@ -23,12 +23,13 @@
 | **Google Analytics 4** (`G-676GCTBX4Z`) | ✅ Влада — Administrator | ✅ `roman@…` — Administrator | **Marketer** или **Analyst** |
 | **Search Console** (домен onetowingfl.com) | ✅ Влада — Owner | ✅ `roman@…` — Owner | **Full user** |
 | **Google Business Profile** | ⏳ будет `roman@…` — Primary owner | ⏳ Влада — Owner | **Manager** |
-| **Google Ads** | ⏳ будет `roman@…` — Admin | ⏳ Влада — Admin | **Standard** или связка через MCC |
+| **Google Ads** (аккаунт `564-992-8278`) | ✅ `roman@onetowingfl.com` — Admin | ⏳ Влада — Admin | **Standard** или связка через MCC |
 | **Vercel / GitHub / Namecheap** | ✅ Влада | — | **доступа нет никогда** |
 | **Telegram-бот заявок** (@One_towing_leads_bot) | ✅ **рабочий** аккаунт Telegram — на нём создан бот | ✅ группа «ONE TOWING- заявки»: Роман + Влада | добавить в группу, токен не давать |
 
 ### Ключи и идентификаторы (не секретные)
 - Счётчик Аналитики: `G-676GCTBX4Z` — вшит в сайт, **не пересоздавать**
+- Аккаунт Google Ads: `564-992-8278` (создан под `roman@onetowingfl.com`, кампаний нет)
 - Подтверждение Search Console: TXT-запись в DNS, поставлена Владой
 - Подтверждение Workspace: вторая TXT-запись в том же DNS
 - Почта домена: MX `smtp.google.com`, SPF, DKIM `google._domainkey`, DMARC `_dmarc`
