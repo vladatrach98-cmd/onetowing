@@ -313,7 +313,9 @@ export default function Home() {
                 <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
                   Stay in the car with your seatbelt on, hazards blinking, and call. Tell us the nearest exit number.
                 </p>
-                <ul className="mt-8 grid list-none border-t border-bone-300 p-0">
+                {/* В две колонки от sm: восемь дорог в один столбец вытягивали
+                    правую половину заметно ниже левой. */}
+                <ul className="mt-8 grid list-none border-t border-bone-300 p-0 sm:grid-cols-2 sm:gap-x-8">
                   {HIGHWAYS.map((highway) => (
                     <li
                       key={highway}

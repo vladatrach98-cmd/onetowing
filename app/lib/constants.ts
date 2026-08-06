@@ -48,19 +48,44 @@ export const PRICING = {
 } as const;
 
 /** Районы обслуживания (для доверия и локального SEO). */
+/**
+ * Районы обслуживания. Этот список идёт сразу в четыре места: блок «Areas» на
+ * главной, подвал, структурированные данные для Google (areaServed) и текст
+ * страницы. Держать его таким же, как зона в карточке Google Business Profile —
+ * расхождение между сайтом и карточкой Google считает признаком неточных данных.
+ */
 export const SERVICE_AREAS = [
-  'Downtown Tampa',
   'Tampa',
+  'Downtown Tampa',
+  'South Tampa',
   'Ybor City',
-  'St. Petersburg',
-  'Largo',
-  'Clearwater',
+  'Hyde Park',
+  'Davis Islands',
+  'West Tampa',
+  'Tampa Heights',
+  'Seminole Heights',
+  'Drew Park',
+  'Carrollwood',
+  'Town ’n’ Country',
+  'Westchase',
+  'Temple Terrace',
+  'University Area',
   'Brandon',
   'Riverview',
+  'Palm River',
 ] as const;
 
-/** Шоссе, на которые выезжаем. */
-export const HIGHWAYS = ['I-275', 'I-4', 'I-75', 'Selmon Expressway / SR 618', 'US-301'] as const;
+/** Шоссе и главные магистрали, на которые выезжаем. */
+export const HIGHWAYS = [
+  'I-275',
+  'I-4',
+  'I-75',
+  'Selmon Expressway',
+  'Veterans Expressway',
+  'US-301',
+  'Dale Mabry Highway',
+  'Hillsborough Avenue',
+] as const;
 
 /** Пункты меню — одностраничная навигация со скроллом к секции. */
 export const NAV_LINKS = [
