@@ -9,6 +9,11 @@ export default {
         display: ['var(--font-archivo)', 'Helvetica', 'Arial', 'sans-serif'],
       },
       colors: {
+        /** Первый экран: почти чёрный фон под текстом и красный акцент в заголовке. */
+        hero: {
+          ink: '#0a0c0d',
+          accent: '#e8463c',
+        },
         brand: {
           50: '#fdf2f2',
           100: '#fbd5d5',

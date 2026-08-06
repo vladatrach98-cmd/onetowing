@@ -43,9 +43,9 @@ export const metadata: Metadata = {
     description,
     url: BUSINESS.siteUrl,
     locale: 'en_US',
-    images: [{ url: '/one-towing-hero.png', width: 1200, height: 630, alt: `${BUSINESS.name} tow truck` }],
+    images: [{ url: '/images/one-towing-og.jpg', width: 1200, height: 630, alt: `${BUSINESS.name} tow truck` }],
   },
-  twitter: { card: 'summary_large_image', title, description, images: ['/one-towing-hero.png'] },
+  twitter: { card: 'summary_large_image', title, description, images: ['/images/one-towing-og.jpg'] },
   robots: { index: true, follow: true },
   // Подтверждение прав в Google Search Console (появится, когда зададим переменную).
   ...(gscVerification ? { verification: { google: gscVerification } } : {}),

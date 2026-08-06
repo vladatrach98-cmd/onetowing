@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
-import EmergencySplash from './components/EmergencySplash';
 import GallerySection from './components/GallerySection';
 import ReviewsSection from './components/ReviewsSection';
 import { BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICE_LINK, PRICING, SERVICE_AREAS } from './lib/constants';
@@ -16,9 +15,24 @@ const stats = [
   { value: 'Tampa Bay', label: 'Service area' },
 ];
 
+/**
+ * Фото в hero. Когда положишь снимок нашего трака — поменяй только эту строку на
+ * '/images/one-towing-ram4500-downtown-tampa.jpg'. Next.js сам сожмёт его и отдаст
+ * браузеру в WebP или AVIF, поэтому экспортировать эти форматы вручную не нужно —
+ * достаточно одного файла в максимальном качестве.
+ */
+const HERO_PHOTO = '/images/one-towing-ram4500-downtown-tampa.jpg';
+
+/** Полоса фактов под кнопкой звонка. Цифры берём из constants, чтобы не разъезжались. */
+const heroFacts = [
+  { value: `From $${PRICING.baseFee}`, label: 'Local tow' },
+  { value: `$${PRICING.extraMileRate}/mi`, label: `Past ${PRICING.includedTowMiles} miles` },
+  { value: '10–20 min', label: 'Downtown Tampa' },
+];
+
 const reasons = [
   'One call, one truck, no call-center runaround',
-  'The price is agreed before we roll out',
+  'Straight answers on price when you call',
   'We work nights, weekends and holidays',
   'Local — we know these streets and highways',
 ].map((text, index) => ({ text, num: String(index + 1).padStart(2, '0') }));
@@ -45,48 +59,66 @@ const priceRows = [
 export default function Home() {
   return (
     <>
-      <EmergencySplash />
-
-      <div className="relative z-10 bg-ink-950">
+      <div className="bg-ink-950">
         <SiteHeader />
 
         <main>
-          <section className="relative overflow-hidden bg-ink-950">
-            <Image
-              src="/one-towing-hero.png"
-              alt="One Towing tow truck at night"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-[68%_center]"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,16,22,.92)_0%,rgba(11,16,22,.78)_55%,rgba(11,16,22,.9)_100%)] md:bg-[linear-gradient(90deg,#0b1016_0%,rgba(11,16,22,.92)_42%,rgba(11,16,22,.35)_72%,rgba(11,16,22,.55)_100%)]" />
+          {/* HERO. Две колонки от 960px: текст слева (44%), фото справа (56%) в край экрана.
+              Ниже 960px — сначала фото 4:3, под ним текст. */}
+          <section className="relative bg-hero-ink min-[960px]:grid min-[960px]:min-h-[640px] min-[960px]:grid-cols-[44%_56%]">
+            <div className="relative order-first aspect-[4/3] w-full min-[960px]:order-last min-[960px]:aspect-auto min-[960px]:h-full">
+              <Image
+                src={HERO_PHOTO}
+                alt="ONE TOWING flatbed tow truck with the downtown Tampa skyline behind it"
+                fill
+                priority
+                sizes="(min-width: 960px) 56vw, 100vw"
+                className="object-cover object-[52%_60%] min-[960px]:object-[58%_62%]"
+              />
+              {/* Затемнение только со стороны текста. Дальше 46% фото не трогаем —
+                  белый борт трака на фоне небоскрёбов и есть весь смысл кадра. */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,#0A0C0D_0%,rgba(10,12,13,.62)_32%,rgba(10,12,13,0)_72%)] min-[960px]:bg-[linear-gradient(90deg,#0A0C0D_0%,rgba(10,12,13,.74)_18%,rgba(10,12,13,0)_46%)]" />
+            </div>
 
-            <div className="relative mx-auto flex min-h-[520px] max-w-[1280px] flex-col justify-center px-6 py-20 lg:px-8 lg:pb-[118px] lg:pt-[132px]">
-              <p className="mb-[22px] text-[12px] font-semibold uppercase leading-none tracking-[0.34em] text-brand-300">
-                Tampa Bay · 24 hours a day
+            <div className="relative order-last flex flex-col justify-center px-6 pb-16 pt-12 min-[960px]:order-first min-[960px]:py-[104px] min-[960px]:pl-[max(24px,calc((100vw-1280px)/2))] min-[960px]:pr-12">
+              <p className="text-[12px] font-semibold uppercase leading-none tracking-[0.3em] text-brand-300">
+                Tow truck in Tampa Bay · 24/7
               </p>
-              <h2 className="max-w-[900px] font-display text-[40px] font-extrabold leading-[1.05] tracking-[-0.02em] text-white text-balance sm:text-[52px] lg:text-[66px] lg:leading-[1.02]">
-                Towing and roadside help, whenever it happens.
-              </h2>
-              <p className="mt-[26px] max-w-[620px] text-[18px] leading-[1.6] text-ink-200 text-pretty sm:text-[20px]">
-                Local tow from ${PRICING.baseFee}. Tell us where you are and where the car needs to go — we quote the
-                price before the truck moves.
+
+              <h1 className="mt-[22px] font-display text-[40px] font-extrabold leading-[1.03] tracking-[-0.02em] text-white text-balance sm:text-[52px] min-[960px]:text-[58px]">
+                Car trouble?{' '}
+                <span className="text-hero-accent">We&rsquo;re on the way.</span>
+              </h1>
+
+              <p className="mt-6 text-[17px] leading-[1.65] text-ink-200 text-pretty sm:text-[18px]">
+                Towing • Jump Starts • Fuel Delivery • Car Lockouts • Locked-Wheel Assistance
               </p>
-              <div className="mt-10 flex flex-wrap gap-[14px]">
+
+              <div className="mt-9">
                 <a
                   href={BUSINESS.phoneHref}
-                  className="bg-brand-500 px-8 py-5 text-[14px] font-bold uppercase leading-none tracking-[0.12em] text-white transition-colors hover:bg-brand-600 hover:text-white"
+                  className="inline-flex items-center gap-3 bg-brand-500 px-8 py-[22px] font-display text-[19px] font-extrabold uppercase leading-none tracking-[0.06em] text-white transition-colors hover:bg-brand-600 hover:text-white sm:text-[22px]"
                 >
+                  <span aria-hidden="true" className="text-[0.9em]">
+                    ☎
+                  </span>
                   Call {BUSINESS.phone}
                 </a>
-                <Link
-                  href={PRICE_LINK}
-                  className="border border-white/35 px-8 py-5 text-[14px] font-bold uppercase leading-none tracking-[0.12em] text-white transition-colors hover:border-brand-500 hover:text-brand-300"
-                >
-                  {ESTIMATOR_ENABLED ? 'Check the price' : 'See our prices'}
-                </Link>
+                <p className="mt-[14px] text-[14px] leading-[1.5] text-ink-300">
+                  A person answers — day, night, weekends
+                </p>
               </div>
+
+              <dl className="mt-11 grid max-w-[520px] grid-cols-3 gap-px border-y border-white/10 bg-white/10">
+                {heroFacts.map((fact) => (
+                  <div key={fact.label} className="bg-hero-ink px-1 py-[18px] text-center first:text-left last:text-right">
+                    <dt className="font-display text-[19px] font-extrabold leading-none text-white sm:text-[21px]">
+                      {fact.value}
+                    </dt>
+                    <dd className="mt-[7px] text-[12px] leading-[1.35] text-ink-400">{fact.label}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </section>
 
