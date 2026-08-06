@@ -175,6 +175,24 @@ export default function Home() {
                     </p>
                   </div>
                 ))}
+
+                {/* Услуг 14, колонок 3 — последняя ячейка оставалась пустой. Вместо дырки
+                    ставим кнопку звонка. На двух колонках плитка занимает всю строку,
+                    чтобы и там ряд закрывался ровно. */}
+                <a
+                  href={BUSINESS.phoneHref}
+                  className="group flex flex-col justify-center bg-ink-700 px-8 pb-11 pt-10 transition-colors hover:bg-ink-950 lg:px-10 sm:col-span-2 lg:col-span-1"
+                >
+                  <h3 className="font-display text-[22px] font-bold leading-[1.25] text-white">
+                    Not sure which one you need?
+                  </h3>
+                  <p className="mt-3 text-[16px] leading-[1.6] text-ink-300 text-pretty">
+                    Describe what happened — we will tell you what it takes and what it costs.
+                  </p>
+                  <p className="mt-5 font-display text-[19px] font-extrabold leading-none tracking-[0.02em] text-white transition-colors group-hover:text-brand-300">
+                    ☎ {BUSINESS.phone}
+                  </p>
+                </a>
               </div>
             </div>
           </section>
