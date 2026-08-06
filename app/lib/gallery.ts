@@ -25,6 +25,11 @@ export const GALLERY: GalleryPhoto[] = [
     caption: 'BMW X4 on the wheel lift — dollies under the rear wheels, nothing dragging.',
   },
   {
+    src: '/images/gallery/one-towing-accident-recovery-highway.jpg',
+    alt: 'ONE TOWING wrecker loading a crashed Mercedes CLA on a Tampa Bay highway shoulder',
+    caption: 'Accident recovery on the shoulder — cleared the lane, car on its way to the body shop.',
+  },
+  {
     src: '/images/gallery/one-towing-mercedes-dollies.jpg',
     alt: 'Mercedes-Benz S-Class loaded on dollies behind a ONE TOWING wrecker at a Tampa shop',
     caption: 'Mercedes S-Class delivered to a shop — locked wheels, so it rode on dollies.',
