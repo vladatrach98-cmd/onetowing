@@ -30,6 +30,23 @@ const heroFacts = [
   { value: '10–20 min', label: 'Downtown Tampa' },
 ];
 
+/**
+ * Услуги двумя группами. Цена у группы одна, поэтому её не приходится повторять
+ * на каждой строке — из-за этого старый блок и выглядел таблицей.
+ */
+const serviceGroups = [
+  {
+    title: 'Towing',
+    price: `From $${PRICING.baseFee}`,
+    items: SERVICES.filter((service) => service.kind === 'tow'),
+  },
+  {
+    title: 'Roadside help',
+    price: 'Call for price',
+    items: SERVICES.filter((service) => service.kind === 'roadside'),
+  },
+];
+
 const reasons = [
   'One call, one truck, no call-center runaround',
   'Straight answers on price when you call',
@@ -162,38 +179,54 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="grid gap-px border-b border-r border-bone-200 bg-bone-200 sm:grid-cols-2 lg:grid-cols-3">
-                {SERVICES.map((service, index) => (
-                  <div key={service.id} className="bg-white px-8 pb-11 pt-10 transition-colors hover:bg-bone-50 lg:px-10">
-                    <p className="mb-5 text-[12px] font-semibold uppercase leading-none tracking-[0.2em] text-bone-400">
-                      {String(index + 1).padStart(2, '0')}
-                    </p>
-                    <h3 className="font-display text-[22px] font-bold leading-[1.25] text-ink-700">{service.title}</h3>
-                    <p className="mt-3 text-[16px] leading-[1.6] text-ink-500 text-pretty">{service.description}</p>
-                    <p className="mt-4 text-[13px] font-semibold uppercase leading-none tracking-[0.1em] text-brand-600">
-                      {service.kind === 'tow' ? `From $${PRICING.baseFee}` : 'Call for price'}
-                    </p>
+              {/* Раньше здесь было 14 одинаковых карточек с «From $95» на каждой —
+                  занимали больше экрана и читались как таблица. Теперь две группы
+                  плотным списком: цена сказана один раз на группу, а не 14 раз. */}
+              <div className="mt-12 grid gap-px bg-bone-200 lg:grid-cols-2">
+                {serviceGroups.map((group) => (
+                  <div key={group.title} className="bg-white px-7 pb-9 pt-8 lg:px-9">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2 border-b-2 border-ink-700 pb-4">
+                      <h3 className="font-display text-[21px] font-extrabold leading-none tracking-[-0.01em] text-ink-700">
+                        {group.title}
+                      </h3>
+                      <span className="text-[13px] font-semibold uppercase leading-none tracking-[0.12em] text-brand-600">
+                        {group.price}
+                      </span>
+                    </div>
+
+                    <ul className="m-0 list-none p-0">
+                      {group.items.map((service) => (
+                        <li
+                          key={service.id}
+                          className="border-b border-bone-200 py-[13px] text-[16px] leading-[1.5] last:border-0"
+                        >
+                          <span className="font-semibold text-ink-700">{service.title}</span>
+                          <span className="text-ink-500"> — {service.description}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 ))}
+              </div>
 
-                {/* Услуг 14, колонок 3 — последняя ячейка оставалась пустой. Вместо дырки
-                    ставим кнопку звонка. На двух колонках плитка занимает всю строку,
-                    чтобы и там ряд закрывался ровно. */}
-                <a
-                  href={BUSINESS.phoneHref}
-                  className="group flex flex-col justify-center bg-ink-700 px-8 pb-11 pt-10 transition-colors hover:bg-ink-950 lg:px-10 sm:col-span-2 lg:col-span-1"
-                >
-                  <h3 className="font-display text-[22px] font-bold leading-[1.25] text-white">
+              {/* Человек дочитал список и не нашёл ровно свой случай — тут телефон,
+                  а не тупик. У эвакуатора так бывает чаще, чем кажется. */}
+              <a
+                href={BUSINESS.phoneHref}
+                className="group mt-px flex flex-wrap items-center justify-between gap-x-8 gap-y-4 bg-ink-700 px-7 py-8 transition-colors hover:bg-ink-950 lg:px-9"
+              >
+                <div>
+                  <p className="font-display text-[21px] font-extrabold leading-[1.2] text-white">
                     Not sure which one you need?
-                  </h3>
-                  <p className="mt-3 text-[16px] leading-[1.6] text-ink-300 text-pretty">
+                  </p>
+                  <p className="mt-2 text-[16px] leading-[1.55] text-ink-300 text-pretty">
                     Describe what happened — we will tell you what it takes and what it costs.
                   </p>
-                  <p className="mt-5 font-display text-[19px] font-extrabold leading-none tracking-[0.02em] text-white transition-colors group-hover:text-brand-300">
-                    ☎ {BUSINESS.phone}
-                  </p>
-                </a>
-              </div>
+                </div>
+                <span className="font-display text-[22px] font-extrabold leading-none tracking-[0.02em] text-white transition-colors group-hover:text-brand-300 sm:text-[26px]">
+                  ☎ {BUSINESS.phone}
+                </span>
+              </a>
             </div>
           </section>
 
