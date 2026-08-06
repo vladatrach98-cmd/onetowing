@@ -16,12 +16,17 @@ const stats = [
 ];
 
 /**
- * Фото в hero. Когда положишь снимок нашего трака — поменяй только эту строку на
- * '/images/one-towing-ram4500-downtown-tampa.jpg'. Next.js сам сожмёт его и отдаст
- * браузеру в WebP или AVIF, поэтому экспортировать эти форматы вручную не нужно —
- * достаточно одного файла в максимальном качестве.
+ * Фото в hero — ночная панорама 1916×821, соотношение 2.33:1.
+ *
+ * Из-за такой ширины блок сделан во всю ширину экрана, а не колонкой: в узкой
+ * колонке от панорамы осталась бы треть кадра. Высота блока резиновая (43vw),
+ * чтобы пропорция держалась около родной и фото почти не обрезалось.
+ * Меняешь фото — проверь его соотношение: под этот блок нужно шире 2:1.
+ *
+ * Next.js сам отдаёт браузеру WebP или AVIF нужного размера, поэтому готовить
+ * эти форматы вручную не нужно — достаточно одного файла в лучшем качестве.
  */
-const HERO_PHOTO = '/images/one-towing-ram4500-downtown-tampa.jpg';
+const HERO_PHOTO = '/images/one-towing-night-downtown-tampa.jpg';
 
 /** Полоса фактов под кнопкой звонка. Цифры берём из constants, чтобы не разъезжались. */
 const heroFacts = [
@@ -80,28 +85,31 @@ export default function Home() {
         <SiteHeader />
 
         <main>
-          {/* HERO. Две колонки от 960px: текст слева (44%), фото справа (56%) в край экрана.
-              Ниже 960px — сначала фото 4:3, под ним текст. */}
-          <section className="relative bg-hero-ink min-[960px]:grid min-[960px]:min-h-[640px] min-[960px]:grid-cols-[44%_56%]">
-            <div className="relative order-first aspect-[4/3] w-full min-[960px]:order-last min-[960px]:aspect-auto min-[960px]:h-full">
+          {/* HERO. От 960px фото лежит фоном во всю ширину, текст поверх слева —
+              так широкая панорама показывается почти целиком. Ниже 960px фото
+              становится полосой сверху, а текст уезжает под неё: наложить буквы
+              на узкий кадр читаемо не получится. */}
+          <section className="relative bg-hero-ink">
+            <div className="relative aspect-[16/10] w-full min-[960px]:absolute min-[960px]:inset-0 min-[960px]:aspect-auto min-[960px]:h-full">
               <Image
                 src={HERO_PHOTO}
-                alt="ONE TOWING flatbed tow truck with the downtown Tampa skyline behind it"
+                alt="ONE TOWING tow truck at night with the downtown Tampa skyline behind it"
                 fill
                 priority
-                sizes="(min-width: 960px) 56vw, 100vw"
-                className="object-cover object-[52%_60%] min-[960px]:object-[58%_62%]"
+                sizes="100vw"
+                className="object-cover object-[64%_center] min-[960px]:object-[62%_center]"
               />
-              {/* Затемнение только со стороны текста. Дальше 44% фото не трогаем —
-                  белый борт трака на фоне небоскрёбов и есть весь смысл кадра.
-                  Начальный цвет = hero.ink, тот же, чем заканчивается текстовая
-                  колонка, поэтому стык колонки и фото не виден. */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,#101519_0%,rgba(16,21,25,.58)_30%,rgba(16,21,25,0)_70%)] min-[960px]:bg-[linear-gradient(90deg,#101519_0%,rgba(16,21,25,.66)_15%,rgba(16,21,25,0)_44%)]" />
+              {/* Затемняем только слева, под буквами. Трак стоит правее 62% кадра,
+                  туда затемнение уже не достаёт. */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,#101519_0%,rgba(16,21,25,.55)_34%,rgba(16,21,25,0)_78%)] min-[960px]:bg-[linear-gradient(90deg,#101519_0%,rgba(16,21,25,.90)_20%,rgba(16,21,25,.55)_42%,rgba(16,21,25,0)_64%)]" />
             </div>
 
-            {/* Мягкий градиент вместо плоской чёрной плиты — иначе левая половина
-                давит на глаза. Заканчивается ровно на hero.ink, чтобы уйти в фото. */}
-            <div className="relative order-last flex flex-col justify-center bg-[linear-gradient(155deg,#1b232b_0%,#151c22_48%,#101519_100%)] px-6 pb-16 pt-12 min-[960px]:order-first min-[960px]:bg-[linear-gradient(105deg,#1b232b_0%,#151c22_55%,#101519_100%)] min-[960px]:py-[104px] min-[960px]:pl-[max(24px,calc((100vw-1280px)/2))] min-[960px]:pr-12">
+            {/* На мобильном у текста свой фон-градиент, на десктопе он прозрачный —
+                там фоном работает само фото. */}
+            <div className="relative flex flex-col justify-center bg-[linear-gradient(155deg,#1b232b_0%,#151c22_48%,#101519_100%)] px-6 pb-16 pt-12 min-[960px]:mx-auto min-[960px]:h-[clamp(580px,43vw,780px)] min-[960px]:max-w-[1280px] min-[960px]:bg-none min-[960px]:px-8 min-[960px]:py-0">
+            {/* Ограничиваем ширину текста: трак стоит правее 62% кадра, буквы
+                не должны на него заезжать. */}
+            <div className="min-[960px]:max-w-[620px]">
               <p className="text-[12px] font-semibold uppercase leading-none tracking-[0.3em] text-brand-300">
                 Tow truck in Tampa Bay · 24/7
               </p>
@@ -143,7 +151,8 @@ export default function Home() {
                 ))}
               </dl>
             </div>
-          </section>
+          </div>
+        </section>
 
           <section className="border-t border-white/[0.08] bg-ink-900">
             <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
