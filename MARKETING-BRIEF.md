@@ -99,7 +99,7 @@ GA4 event `call_click` is marked as a key event and works independently of Ads.
 |---|---|
 | Ad campaigns | **None. Zero spend to date.** The account is clean |
 | Google Business Profile | Created, **not verified yet** — video verification pending |
-| Local Services Ads | Category "Towing" confirmed available in ZIP 33602. Application **paused** — waiting on insurance (on-hook / garage keepers) and county license clarification |
+| Local Services Ads | Category "Towing" confirmed available in ZIP 33602. Application **paused**: on-hook liability is in place ($100k), but the policy has **no commercial general liability** yet, and the certificate is being reissued under the correct legal name |
 | Reviews | None yet — the listing is not live |
 | Price calculator | Built, hidden behind a feature flag, no Google Maps key |
 
