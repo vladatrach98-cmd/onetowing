@@ -75,12 +75,16 @@ export default function Home() {
                 sizes="(min-width: 960px) 56vw, 100vw"
                 className="object-cover object-[52%_60%] min-[960px]:object-[58%_62%]"
               />
-              {/* Затемнение только со стороны текста. Дальше 46% фото не трогаем —
-                  белый борт трака на фоне небоскрёбов и есть весь смысл кадра. */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,#0A0C0D_0%,rgba(10,12,13,.62)_32%,rgba(10,12,13,0)_72%)] min-[960px]:bg-[linear-gradient(90deg,#0A0C0D_0%,rgba(10,12,13,.74)_18%,rgba(10,12,13,0)_46%)]" />
+              {/* Затемнение только со стороны текста. Дальше 44% фото не трогаем —
+                  белый борт трака на фоне небоскрёбов и есть весь смысл кадра.
+                  Начальный цвет = hero.ink, тот же, чем заканчивается текстовая
+                  колонка, поэтому стык колонки и фото не виден. */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,#101519_0%,rgba(16,21,25,.58)_30%,rgba(16,21,25,0)_70%)] min-[960px]:bg-[linear-gradient(90deg,#101519_0%,rgba(16,21,25,.66)_15%,rgba(16,21,25,0)_44%)]" />
             </div>
 
-            <div className="relative order-last flex flex-col justify-center px-6 pb-16 pt-12 min-[960px]:order-first min-[960px]:py-[104px] min-[960px]:pl-[max(24px,calc((100vw-1280px)/2))] min-[960px]:pr-12">
+            {/* Мягкий градиент вместо плоской чёрной плиты — иначе левая половина
+                давит на глаза. Заканчивается ровно на hero.ink, чтобы уйти в фото. */}
+            <div className="relative order-last flex flex-col justify-center bg-[linear-gradient(155deg,#1b232b_0%,#151c22_48%,#101519_100%)] px-6 pb-16 pt-12 min-[960px]:order-first min-[960px]:bg-[linear-gradient(105deg,#1b232b_0%,#151c22_55%,#101519_100%)] min-[960px]:py-[104px] min-[960px]:pl-[max(24px,calc((100vw-1280px)/2))] min-[960px]:pr-12">
               <p className="text-[12px] font-semibold uppercase leading-none tracking-[0.3em] text-brand-300">
                 Tow truck in Tampa Bay · 24/7
               </p>
@@ -109,13 +113,15 @@ export default function Home() {
                 </p>
               </div>
 
-              <dl className="mt-11 grid max-w-[520px] grid-cols-3 gap-px border-y border-white/10 bg-white/10">
+              {/* Разделители линиями, а не фоном плиток: под градиентом плитки
+                  выглядели бы заплатками другого оттенка. */}
+              <dl className="mt-11 grid max-w-[520px] grid-cols-3 divide-x divide-white/10 border-y border-white/10">
                 {heroFacts.map((fact) => (
-                  <div key={fact.label} className="bg-hero-ink px-1 py-[18px] text-center first:text-left last:text-right">
+                  <div key={fact.label} className="px-4 py-[18px] text-center first:pl-0 first:text-left last:pr-0 last:text-right">
                     <dt className="font-display text-[19px] font-extrabold leading-none text-white sm:text-[21px]">
                       {fact.value}
                     </dt>
-                    <dd className="mt-[7px] text-[12px] leading-[1.35] text-ink-400">{fact.label}</dd>
+                    <dd className="mt-[7px] text-[12px] leading-[1.35] text-ink-300">{fact.label}</dd>
                   </div>
                 ))}
               </dl>
