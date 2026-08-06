@@ -88,11 +88,16 @@ export const HIGHWAYS = [
 ] as const;
 
 /** Пункты меню — одностраничная навигация со скроллом к секции. */
+/**
+ * Порядок пунктов должен совпадать с порядком блоков на главной, иначе меню
+ * бросает посетителя то вниз, то вверх. Сначала «доедете ли до меня» и живые
+ * фото — это первое, что спрашивает человек на обочине; услуги и цены дальше.
+ */
 export const NAV_LINKS = [
-  { href: '/#services', label: 'Services' },
-  { href: '/#pricing', label: 'Pricing' },
   { href: '/#areas', label: 'Areas' },
   { href: '/#photos', label: 'Photos' },
+  { href: '/#services', label: 'Services' },
+  { href: '/#pricing', label: 'Pricing' },
   { href: '/#reviews', label: 'Reviews' },
 ] as const;
 

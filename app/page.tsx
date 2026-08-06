@@ -163,6 +163,57 @@ export default function Home() {
             </div>
           </section>
 
+          <section id="areas" className="scroll-mt-[120px] border-t border-bone-200 bg-white text-ink-700">
+            <div className="mx-auto grid max-w-[1280px] gap-14 px-6 pb-[100px] pt-[96px] lg:grid-cols-[1fr_1fr] lg:gap-20 lg:px-8">
+              <div>
+                <p className="mb-3.5 text-[12px] font-semibold uppercase leading-none tracking-[0.34em] text-brand-600">
+                  Service areas
+                </p>
+                <h2 className="font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.015em] text-balance sm:text-[36px]">
+                  Based in Downtown Tampa, working all of Tampa Bay.
+                </h2>
+                <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
+                  Not on the list? Call anyway — if it is within reach, we come.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-2.5">
+                  {SERVICE_AREAS.map((area) => (
+                    <span
+                      key={area}
+                      className="border border-bone-300 px-4 py-2.5 text-[15px] font-semibold text-ink-600"
+                    >
+                      {area}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-3.5 text-[12px] font-semibold uppercase leading-none tracking-[0.34em] text-brand-600">
+                  Highways we run
+                </p>
+                <h2 className="font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.015em] text-balance sm:text-[36px]">
+                  Broken down on the interstate?
+                </h2>
+                <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
+                  Stay in the car with your seatbelt on, hazards blinking, and call. Tell us the nearest exit number.
+                </p>
+                {/* В две колонки от sm: восемь дорог в один столбец вытягивали
+                    правую половину заметно ниже левой. */}
+                <ul className="mt-8 grid list-none border-t border-bone-300 p-0 sm:grid-cols-2 sm:gap-x-8">
+                  {HIGHWAYS.map((highway) => (
+                    <li
+                      key={highway}
+                      className="border-b border-bone-300 py-[15px] font-display text-[18px] font-bold text-ink-600"
+                    >
+                      {highway}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+          <GallerySection />
+
           <section id="services" className="scroll-mt-[120px] bg-white text-ink-700">
             <div className="mx-auto max-w-[1280px] px-6 pb-[110px] pt-[104px] lg:px-8">
               <div className="flex flex-wrap items-end justify-between gap-8 border-b-2 border-ink-700 pb-[34px]">
@@ -279,57 +330,6 @@ export default function Home() {
             </div>
           </section>
 
-          <section id="areas" className="scroll-mt-[120px] border-t border-bone-200 bg-white text-ink-700">
-            <div className="mx-auto grid max-w-[1280px] gap-14 px-6 pb-[100px] pt-[96px] lg:grid-cols-[1fr_1fr] lg:gap-20 lg:px-8">
-              <div>
-                <p className="mb-3.5 text-[12px] font-semibold uppercase leading-none tracking-[0.34em] text-brand-600">
-                  Service areas
-                </p>
-                <h2 className="font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.015em] text-balance sm:text-[36px]">
-                  Based in Downtown Tampa, working all of Tampa Bay.
-                </h2>
-                <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
-                  Not on the list? Call anyway — if it is within reach, we come.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-2.5">
-                  {SERVICE_AREAS.map((area) => (
-                    <span
-                      key={area}
-                      className="border border-bone-300 px-4 py-2.5 text-[15px] font-semibold text-ink-600"
-                    >
-                      {area}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-3.5 text-[12px] font-semibold uppercase leading-none tracking-[0.34em] text-brand-600">
-                  Highways we run
-                </p>
-                <h2 className="font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.015em] text-balance sm:text-[36px]">
-                  Broken down on the interstate?
-                </h2>
-                <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
-                  Stay in the car with your seatbelt on, hazards blinking, and call. Tell us the nearest exit number.
-                </p>
-                {/* В две колонки от sm: восемь дорог в один столбец вытягивали
-                    правую половину заметно ниже левой. */}
-                <ul className="mt-8 grid list-none border-t border-bone-300 p-0 sm:grid-cols-2 sm:gap-x-8">
-                  {HIGHWAYS.map((highway) => (
-                    <li
-                      key={highway}
-                      className="border-b border-bone-300 py-[15px] font-display text-[18px] font-bold text-ink-600"
-                    >
-                      {highway}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          <GallerySection />
 
           <ReviewsSection />
 
