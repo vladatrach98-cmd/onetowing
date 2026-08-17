@@ -27,3 +27,24 @@ html {
   accent-color: #c8181f;
 }
 
+
+/* Пульсирующая точка в плашке «Open now» на первом экране. */
+@keyframes live-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.live-dot {
+  animation: live-dot 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+}

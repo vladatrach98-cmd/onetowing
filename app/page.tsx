@@ -7,7 +7,6 @@ import ReviewsSection from './components/ReviewsSection';
 import {
   BUSINESS,
   ESTIMATOR_ENABLED,
-  GOOGLE_MAPS_PROFILE_URL,
   HIGHWAYS,
   PRICE_LINK,
   PRICING,
@@ -16,31 +15,42 @@ import {
 import { LONG_DISTANCE_FROM_MILES } from './lib/pricing';
 import { SERVICES } from './lib/services';
 
-const stats = [
-  { value: '24/7', label: 'Open every day' },
-  { value: `From $${PRICING.baseFee}`, label: 'Local tow' },
-  { value: `$${PRICING.extraMileRate}/mi`, label: 'Beyond 10 miles' },
-  { value: 'Tampa Bay', label: 'Service area' },
-];
-
 /**
- * Фото в hero — ночная панорама 1916×821, соотношение 2.33:1.
+ * Фото первого экрана — дневной кадр 1672×941 (16:9). Только фон.
  *
- * Из-за такой ширины блок сделан во всю ширину экрана, а не колонкой: в узкой
- * колонке от панорамы осталась бы треть кадра. Высота блока резиновая (43vw),
- * чтобы пропорция держалась около родной и фото почти не обрезалось.
- * Меняешь фото — проверь его соотношение: под этот блок нужно шире 2:1.
+ * ⚠️ Весь текст первого экрана — живой HTML, а не часть картинки. Текст,
+ * запечённый в изображение, для Google не существует: он потеряет и H1, и
+ * первый экран целиком. Баннер с надписями одной картинкой сюда ставить нельзя.
  *
  * Next.js сам отдаёт браузеру WebP или AVIF нужного размера, поэтому готовить
  * эти форматы вручную не нужно — достаточно одного файла в лучшем качестве.
  */
-const HERO_PHOTO = '/images/one-towing-night-downtown-tampa.jpg';
+const HERO_PHOTO = '/images/one-towing-tampa-skyline.jpg';
 
-/** Полоса фактов под кнопкой звонка. Цифры берём из constants, чтобы не разъезжались. */
-const heroFacts = [
-  { value: `From $${PRICING.baseFee}`, label: 'Local tow' },
-  { value: `$${PRICING.extraMileRate}/mi`, label: `Past ${PRICING.includedTowMiles} miles` },
-  { value: '10–20 min', label: 'Downtown Tampa' },
+/**
+ * Плашки с ценами. Цифры берутся из constants, чтобы сайт и реклама не разъехались:
+ * расхождение цены в объявлении и на сайте — причина отклонения объявлений в Google
+ * и повод для спора с клиентом.
+ *
+ * ⚠️ Времени подачи здесь нет намеренно. Конкретное число («15 минут») превращается
+ * в отзыв на одну звезду в первый же час пик на Selmon.
+ */
+const heroChips = [
+  { value: `$${PRICING.baseFee}`, label: 'Local tow from', lead: true },
+  { value: `$${PRICING.extraMileRate}/mi`, label: 'Extra miles' },
+  { value: `$${PRICING.longDistanceMileRate}/mi`, label: 'Long distance' },
+  { value: '24/7', label: 'Available' },
+];
+
+/**
+ * Полоса доверия. Каждый пункт — проверяемый факт.
+ * «Licensed & insured» здесь намеренно нет: пока лицензия не оформлена, это
+ * утверждение нельзя писать — за него снимают объявления и блокируют профиль.
+ */
+const trustPoints = [
+  'Price given on the call',
+  'Verified business on Google',
+  'Local drivers, Tampa based',
 ];
 
 /**
@@ -93,110 +103,102 @@ export default function Home() {
         <SiteHeader />
 
         <main>
-          {/* HERO. От 960px фото лежит фоном во всю ширину, текст поверх слева —
-              так широкая панорама показывается почти целиком. Ниже 960px фото
-              становится полосой сверху, а текст уезжает под неё: наложить буквы
-              на узкий кадр читаемо не получится. */}
+          {/* ПЕРВЫЙ ЭКРАН. Фото — только фон, весь текст живой HTML: иначе Google
+              не увидит ни H1, ни первый экран. Затемнение слева под буквами,
+              справа кадр не трогаем — трак и небоскрёбы и есть весь смысл. */}
           <section className="relative bg-hero-ink">
-            <div className="relative aspect-[16/10] w-full min-[960px]:absolute min-[960px]:inset-0 min-[960px]:aspect-auto min-[960px]:h-full">
+            <div className="relative aspect-[4/3] w-full sm:aspect-[16/9] min-[960px]:absolute min-[960px]:inset-0 min-[960px]:aspect-auto min-[960px]:h-full">
               <Image
                 src={HERO_PHOTO}
-                alt="ONE TOWING tow truck at night with the downtown Tampa skyline behind it"
+                alt="ONE TOWING tow truck with the downtown Tampa skyline and the Hillsborough River behind it"
                 fill
                 priority
                 sizes="100vw"
-                className="object-cover object-[64%_center] min-[960px]:object-[62%_center]"
+                className="object-cover object-[68%_center] min-[960px]:object-[62%_center]"
               />
-              {/* Затемняем только слева, под буквами. Трак стоит правее 62% кадра,
-                  туда затемнение уже не достаёт. */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,#101519_0%,rgba(16,21,25,.55)_34%,rgba(16,21,25,0)_78%)] min-[960px]:bg-[linear-gradient(90deg,#101519_0%,rgba(16,21,25,.90)_20%,rgba(16,21,25,.55)_42%,rgba(16,21,25,0)_64%)]" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,#0b0e11_2%,rgba(11,14,17,.62)_30%,rgba(11,14,17,0)_72%)] min-[960px]:bg-[linear-gradient(100deg,rgba(11,14,17,.95)_0%,rgba(11,14,17,.90)_28%,rgba(11,14,17,.52)_44%,rgba(11,14,17,0)_60%)]" />
             </div>
 
-            {/* На мобильном у текста свой фон-градиент, на десктопе он прозрачный —
-                там фоном работает само фото. */}
-            <div className="relative flex flex-col justify-center bg-[linear-gradient(155deg,#1b232b_0%,#151c22_48%,#101519_100%)] px-6 pb-16 pt-12 min-[960px]:mx-auto min-[960px]:h-[clamp(580px,43vw,780px)] min-[960px]:max-w-[1280px] min-[960px]:bg-none min-[960px]:px-8 min-[960px]:py-0">
-            {/* Ограничиваем ширину текста: трак стоит правее 62% кадра, буквы
-                не должны на него заезжать. */}
-            <div className="min-[960px]:max-w-[620px]">
-              <p className="text-[12px] font-semibold uppercase leading-none tracking-[0.3em] text-brand-300">
-                Tow truck in Tampa Bay · 24/7
-              </p>
-
-              <h1 className="mt-[22px] font-display text-[40px] font-extrabold leading-[1.03] tracking-[-0.02em] text-white text-balance sm:text-[52px] min-[960px]:text-[58px]">
-                Car trouble?{' '}
-                <span className="text-hero-accent">We&rsquo;re on the way.</span>
-              </h1>
-
-              <p className="mt-6 text-[17px] leading-[1.65] text-ink-200 text-pretty sm:text-[18px]">
-                Towing • Jump Starts • Fuel Delivery • Car Lockouts • Locked-Wheel Assistance
-              </p>
-
-              <div className="mt-9">
-                <a
-                  href={BUSINESS.phoneHref}
-                  className="inline-flex items-center gap-3 bg-brand-500 px-8 py-[22px] font-display text-[19px] font-extrabold uppercase leading-none tracking-[0.06em] text-white transition-colors hover:bg-brand-600 hover:text-white sm:text-[22px]"
-                >
-                  <span aria-hidden="true" className="text-[0.9em]">
-                    ☎
+            <div className="relative bg-[linear-gradient(160deg,#161d24_0%,#10151a_55%,#0b0e11_100%)] px-6 pb-14 pt-11 min-[960px]:bg-none min-[960px]:px-0 min-[960px]:py-0">
+              <div className="mx-auto flex max-w-[1280px] flex-col justify-center min-[960px]:min-h-[clamp(560px,44vw,760px)] min-[960px]:px-8">
+                <div className="min-[960px]:max-w-[600px]">
+                  <span className="inline-flex items-center gap-2.5 bg-brand-500 px-3 py-[7px] text-[11px] font-semibold uppercase leading-none tracking-[0.16em] text-white">
+                    <span aria-hidden="true" className="live-dot block h-[7px] w-[7px] rounded-full bg-white" />
+                    Open now · 24/7 dispatch
                   </span>
-                  Call {BUSINESS.phone}
-                </a>
-                <p className="mt-[14px] text-[14px] leading-[1.5] text-ink-300">
-                  A person answers — day, night, weekends
-                </p>
 
-                {/* Значок доверия. Пишем «verified» — это правда, карточка прошла
-                    проверку Google. Формулировки вроде «сертифицированные отзывы»
-                    недопустимы: Google отзывы не сертифицирует. */}
-                {GOOGLE_MAPS_PROFILE_URL ? (
-                  <a
-                    href={GOOGLE_MAPS_PROFILE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-[18px] inline-flex items-center gap-2.5 text-[13px] font-semibold leading-none text-ink-200 underline-offset-4 transition-colors hover:text-white hover:underline"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-hero-accent text-[11px] font-bold text-white"
+                  <h1 className="mt-[18px] font-display text-[40px] font-black leading-[0.98] tracking-[-0.03em] text-white text-balance sm:text-[54px] min-[960px]:text-[62px]">
+                    24/7 Towing <span className="text-hero-accent">in Tampa</span>
+                  </h1>
+
+                  <p className="mt-4 max-w-[34ch] text-[17px] font-semibold leading-[1.45] text-ink-100 text-pretty">
+                    Serving {SERVICE_AREAS.slice(0, 6).join(', ')} and the rest of Hillsborough County.
+                  </p>
+
+                  <p className="mt-2.5 text-[13px] leading-[1.65] text-ink-400">
+                    Fast access to{' '}
+                    {HIGHWAYS.slice(0, 4).map((highway, index) => (
+                      <span key={highway}>
+                        {index > 0 ? ' · ' : ''}
+                        <span className="font-semibold text-white">{highway}</span>
+                      </span>
+                    ))}
+                  </p>
+
+                  {/* Плашки с ценами: те же цифры, что в рекламе и в блоке Pricing. */}
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {heroChips.map((chip) => (
+                      <span
+                        key={chip.label}
+                        className={
+                          chip.lead
+                            ? 'flex items-baseline gap-1.5 bg-white px-[13px] py-[9px] text-[12.5px] text-ink-950'
+                            : 'flex items-baseline gap-1.5 border border-white/20 bg-white/[0.09] px-[13px] py-[9px] text-[12.5px] text-white'
+                        }
+                      >
+                        {chip.label}
+                        <b className={chip.lead ? 'font-bold text-brand-500' : 'font-bold text-hero-accent'}>
+                          {chip.value}
+                        </b>
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-7 flex flex-wrap items-center gap-3">
+                    <a
+                      href={BUSINESS.phoneHref}
+                      className="flex items-center gap-3 bg-brand-500 px-[26px] py-[18px] font-display text-[20px] font-black leading-none tracking-[0.01em] text-white shadow-[0_14px_34px_-14px_rgba(200,24,31,.9)] transition-colors hover:bg-brand-600 hover:text-white sm:text-[25px]"
                     >
-                      ✓
-                    </span>
-                    Verified business on Google Maps
-                  </a>
-                ) : null}
-              </div>
-
-              {/* Разделители линиями, а не фоном плиток: под градиентом плитки
-                  выглядели бы заплатками другого оттенка. */}
-              <dl className="mt-11 grid max-w-[520px] grid-cols-3 divide-x divide-white/10 border-y border-white/10">
-                {heroFacts.map((fact) => (
-                  <div key={fact.label} className="px-4 py-[18px] text-center first:pl-0 first:text-left last:pr-0 last:text-right">
-                    <dt className="font-display text-[19px] font-extrabold leading-none text-white sm:text-[21px]">
-                      {fact.value}
-                    </dt>
-                    <dd className="mt-[7px] text-[12px] leading-[1.35] text-ink-300">{fact.label}</dd>
+                      <span aria-hidden="true" className="text-[0.85em]">
+                        ☎
+                      </span>
+                      Call {BUSINESS.phone}
+                    </a>
+                    <Link
+                      href="/#pricing"
+                      className="flex items-center border-2 border-white/55 px-[22px] py-[18px] text-[14px] font-extrabold uppercase leading-none tracking-[0.09em] text-white transition-colors hover:border-white hover:bg-white/10 hover:text-white"
+                    >
+                      See pricing
+                    </Link>
                   </div>
-                ))}
-              </dl>
+
+                  <p className="mt-3.5 text-[11.5px] font-semibold uppercase leading-none tracking-[0.1em] text-ink-400">
+                    A person answers — day, night, weekends
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
+          {/* Полоса доверия. Только проверяемые факты — см. trustPoints. */}
           <section className="border-t border-white/[0.08] bg-ink-900">
-            <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
-              <div className="grid grid-cols-2 gap-px bg-white/10 lg:grid-cols-4">
-                {stats.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="bg-ink-900 px-5 py-8 lg:px-[34px] lg:py-[38px] lg:first:pl-0 lg:last:pr-0"
-                  >
-                    <p className="font-display text-[26px] font-extrabold text-white lg:text-[34px]">{stat.value}</p>
-                    <p className="mt-2 text-[13px] font-medium uppercase leading-[1.4] tracking-[0.16em] text-ink-400">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
+            <div className="mx-auto grid max-w-[1280px] gap-x-6 gap-y-3 px-6 py-4 sm:grid-cols-3 lg:px-8">
+              {trustPoints.map((point) => (
+                <p key={point} className="flex items-center gap-2.5 text-[14px] font-bold text-white">
+                  <span aria-hidden="true" className="block h-[9px] w-[9px] rotate-45 bg-brand-500" />
+                  {point}
+                </p>
+              ))}
             </div>
           </section>
 
@@ -207,7 +209,7 @@ export default function Home() {
                   Service areas
                 </p>
                 <h2 className="font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.015em] text-balance sm:text-[36px]">
-                  Based in Downtown Tampa, working all of Tampa Bay.
+                  Based in Downtown Tampa, working Hillsborough County.
                 </h2>
                 <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
                   Not on the list? Call anyway — if it is within reach, we come.
