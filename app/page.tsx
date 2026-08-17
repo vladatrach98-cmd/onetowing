@@ -116,58 +116,63 @@ export default function Home() {
                 sizes="100vw"
                 className="object-cover object-[68%_center] min-[960px]:object-[62%_center]"
               />
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,#0b0e11_2%,rgba(11,14,17,.62)_30%,rgba(11,14,17,0)_72%)] min-[960px]:bg-[linear-gradient(100deg,rgba(11,14,17,.95)_0%,rgba(11,14,17,.90)_28%,rgba(11,14,17,.52)_44%,rgba(11,14,17,0)_60%)]" />
+              {/* Затемнение тянется до 78% кадра: текстовая колонка занимает почти
+                  половину ширины, и на светлом небе буквы теряются. Трак стоит
+                  правее — его не гасим. */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,#0b0e11_2%,rgba(11,14,17,.74)_34%,rgba(11,14,17,0)_78%)] min-[960px]:bg-[linear-gradient(100deg,rgba(11,14,17,.96)_0%,rgba(11,14,17,.93)_34%,rgba(11,14,17,.72)_50%,rgba(11,14,17,.28)_66%,rgba(11,14,17,0)_78%)]" />
             </div>
 
             <div className="relative bg-[linear-gradient(160deg,#161d24_0%,#10151a_55%,#0b0e11_100%)] px-6 pb-14 pt-11 min-[960px]:bg-none min-[960px]:px-0 min-[960px]:py-0">
               <div className="mx-auto flex max-w-[1280px] flex-col justify-center min-[960px]:min-h-[clamp(560px,44vw,760px)] min-[960px]:px-8">
                 <div className="min-[960px]:max-w-[600px]">
-                  <span className="inline-flex items-center gap-2.5 bg-brand-500 px-3 py-[7px] text-[11px] font-semibold uppercase leading-none tracking-[0.16em] text-white">
-                    <span aria-hidden="true" className="live-dot block h-[7px] w-[7px] rounded-full bg-white" />
+                  <span className="inline-flex items-center gap-2.5 bg-brand-500 px-[15px] py-[9px] text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-white">
+                    <span aria-hidden="true" className="live-dot block h-2 w-2 rounded-full bg-white" />
                     Open now · 24/7 dispatch
                   </span>
 
-                  <h1 className="mt-[18px] font-display text-[40px] font-black leading-[0.98] tracking-[-0.03em] text-white text-balance sm:text-[54px] min-[960px]:text-[62px]">
+                  <h1 className="mt-5 font-display text-[42px] font-black leading-[0.98] tracking-[-0.03em] text-white text-balance sm:text-[56px] min-[960px]:text-[64px]">
                     24/7 Towing <span className="text-hero-accent">in Tampa</span>
                   </h1>
 
-                  <p className="mt-4 max-w-[34ch] text-[17px] font-semibold leading-[1.45] text-ink-100 text-pretty">
+                  <p className="mt-5 max-w-[36ch] text-[20px] font-semibold leading-[1.45] text-white text-pretty sm:text-[22px]">
                     Serving {SERVICE_AREAS.slice(0, 6).join(', ')} and the rest of Hillsborough County.
                   </p>
 
-                  <p className="mt-2.5 text-[13px] leading-[1.65] text-ink-400">
+                  <p className="mt-3 text-[16px] leading-[1.6] text-ink-200">
                     Fast access to{' '}
                     {HIGHWAYS.slice(0, 4).map((highway, index) => (
                       <span key={highway}>
                         {index > 0 ? ' · ' : ''}
-                        <span className="font-semibold text-white">{highway}</span>
+                        <span className="font-bold text-white">{highway}</span>
                       </span>
                     ))}
                   </p>
 
-                  {/* Плашки с ценами: те же цифры, что в рекламе и в блоке Pricing. */}
-                  <div className="mt-6 flex flex-wrap gap-2">
+                  {/* Плашки с ценами: те же цифры, что в рекламе и в блоке Pricing.
+                      Фон плотный, а не полупрозрачный — правые плашки попадают на
+                      светлую часть кадра и на прозрачном фоне пропадали. */}
+                  <div className="mt-7 flex flex-wrap gap-2.5">
                     {heroChips.map((chip) => (
                       <span
                         key={chip.label}
                         className={
                           chip.lead
-                            ? 'flex items-baseline gap-1.5 bg-white px-[13px] py-[9px] text-[12.5px] text-ink-950'
-                            : 'flex items-baseline gap-1.5 border border-white/20 bg-white/[0.09] px-[13px] py-[9px] text-[12.5px] text-white'
+                            ? 'flex items-baseline gap-2 bg-white px-4 py-[11px] text-[15px] font-semibold text-ink-950'
+                            : 'flex items-baseline gap-2 border border-white/30 bg-ink-950/85 px-4 py-[11px] text-[15px] font-semibold text-white'
                         }
                       >
                         {chip.label}
-                        <b className={chip.lead ? 'font-bold text-brand-500' : 'font-bold text-hero-accent'}>
+                        <b className={chip.lead ? 'font-black text-brand-500' : 'font-black text-hero-accent'}>
                           {chip.value}
                         </b>
                       </span>
                     ))}
                   </div>
 
-                  <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <div className="mt-8 flex flex-wrap items-center gap-3">
                     <a
                       href={BUSINESS.phoneHref}
-                      className="flex items-center gap-3 bg-brand-500 px-[26px] py-[18px] font-display text-[20px] font-black leading-none tracking-[0.01em] text-white shadow-[0_14px_34px_-14px_rgba(200,24,31,.9)] transition-colors hover:bg-brand-600 hover:text-white sm:text-[25px]"
+                      className="flex items-center gap-3 bg-brand-500 px-[30px] py-[21px] font-display text-[23px] font-black leading-none tracking-[0.01em] text-white shadow-[0_14px_34px_-14px_rgba(200,24,31,.9)] transition-colors hover:bg-brand-600 hover:text-white sm:text-[28px]"
                     >
                       <span aria-hidden="true" className="text-[0.85em]">
                         ☎
@@ -176,13 +181,13 @@ export default function Home() {
                     </a>
                     <Link
                       href="/#pricing"
-                      className="flex items-center border-2 border-white/55 px-[22px] py-[18px] text-[14px] font-extrabold uppercase leading-none tracking-[0.09em] text-white transition-colors hover:border-white hover:bg-white/10 hover:text-white"
+                      className="flex items-center border-2 border-white/60 bg-ink-950/40 px-[26px] py-[21px] text-[15px] font-extrabold uppercase leading-none tracking-[0.09em] text-white transition-colors hover:border-white hover:bg-white/10 hover:text-white"
                     >
                       See pricing
                     </Link>
                   </div>
 
-                  <p className="mt-3.5 text-[11.5px] font-semibold uppercase leading-none tracking-[0.1em] text-ink-400">
+                  <p className="mt-4 text-[15px] font-bold uppercase leading-none tracking-[0.08em] text-ink-100">
                     A person answers — day, night, weekends
                   </p>
                 </div>
