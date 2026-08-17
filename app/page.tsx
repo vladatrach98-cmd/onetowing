@@ -4,7 +4,15 @@ import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
 import GallerySection from './components/GallerySection';
 import ReviewsSection from './components/ReviewsSection';
-import { BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICE_LINK, PRICING, SERVICE_AREAS } from './lib/constants';
+import {
+  BUSINESS,
+  ESTIMATOR_ENABLED,
+  GOOGLE_MAPS_PROFILE_URL,
+  HIGHWAYS,
+  PRICE_LINK,
+  PRICING,
+  SERVICE_AREAS,
+} from './lib/constants';
 import { LONG_DISTANCE_FROM_MILES } from './lib/pricing';
 import { SERVICES } from './lib/services';
 
@@ -136,6 +144,26 @@ export default function Home() {
                 <p className="mt-[14px] text-[14px] leading-[1.5] text-ink-300">
                   A person answers — day, night, weekends
                 </p>
+
+                {/* Значок доверия. Пишем «verified» — это правда, карточка прошла
+                    проверку Google. Формулировки вроде «сертифицированные отзывы»
+                    недопустимы: Google отзывы не сертифицирует. */}
+                {GOOGLE_MAPS_PROFILE_URL ? (
+                  <a
+                    href={GOOGLE_MAPS_PROFILE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-[18px] inline-flex items-center gap-2.5 text-[13px] font-semibold leading-none text-ink-200 underline-offset-4 transition-colors hover:text-white hover:underline"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-hero-accent text-[11px] font-bold text-white"
+                    >
+                      ✓
+                    </span>
+                    Verified business on Google Maps
+                  </a>
+                ) : null}
               </div>
 
               {/* Разделители линиями, а не фоном плиток: под градиентом плитки
