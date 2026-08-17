@@ -92,7 +92,8 @@ app/
 | `TELEGRAM_CHAT_ID` | **группа** «ONE TOWING- заявки» = `-5515808068` (Роман + Влада + рабочий аккаунт) | ✅ |
 | `GOOGLE_MAPS_API_KEY` | Routes API + Geocoding API (серверный ключ) | ⏳ |
 | `NEXT_PUBLIC_ESTIMATOR_ENABLED` | `1` = калькулятор /estimate виден; пусто/`0` = 404 и ссылки скрыты | сейчас **выключен** |
-| `NEXT_PUBLIC_GOOGLE_REVIEWS_URL` | ссылка «оставить отзыв» | ⏳ после GBP |
+| `NEXT_PUBLIC_GOOGLE_REVIEWS_URL` | ссылка «оставить отзыв» `g.page/r/CQzM_uihnRqhEAE/review` | ✅ работает |
+| `NEXT_PUBLIC_GOOGLE_MAPS_URL` | карточка в Картах `maps.google.com/?cid=11608764308225182732` → идёт в `sameAs` | ✅ работает |
 | `NEXT_PUBLIC_DEMO_CONTENT` | `1` = демо-плитки фото/отзывов, **только локально** | локально =1 |
 | `NEXT_PUBLIC_GA_ID` | GA4 `G-676GCTBX4Z` (аккаунт «One Towing», ресурс onetowingfl.com) | ✅ работает |
 | `NEXT_PUBLIC_GOOGLE_ADS_ID` | Google Ads (аккаунт **564-992-8278**, под `roman@`), тег **AW-18365157406** | ✅ работает |
