@@ -207,6 +207,28 @@ export default function Home() {
             </div>
           </section>
 
+          {/* Абзац «кто мы» простым текстом.
+              Первый экран сильный для человека, но для машины он беден: заголовок
+              из трёх слов и плашки. Поисковики и ИИ-ассистенты берут описание
+              сущности из связного текста — здесь одним абзацем сказано, кто
+              компания, что делает и где работает. */}
+          <section className="border-t border-bone-200 bg-bone-100 text-ink-700">
+            <div className="mx-auto max-w-[1280px] px-6 py-[52px] lg:px-8">
+              <p className="max-w-[92ch] text-[19px] leading-[1.6] text-ink-600 text-pretty sm:text-[21px]">
+                <strong className="font-bold text-ink-700">{BUSINESS.name}</strong> is a towing and
+                roadside assistance company based in Downtown Tampa, Florida. We provide 24/7 towing,
+                jump starts, vehicle lockouts, fuel delivery, locked-wheel assistance, accident
+                recovery, motorcycle transport and long-distance towing across Tampa and Hillsborough
+                County. Local towing starts at ${PRICING.baseFee}, and a real person answers the phone
+                at{' '}
+                <a href={BUSINESS.phoneHref} className="font-bold text-brand-600 hover:underline">
+                  {BUSINESS.phone}
+                </a>{' '}
+                day, night, weekends and holidays.
+              </p>
+            </div>
+          </section>
+
           <section id="areas" className="scroll-mt-[120px] border-t border-bone-200 bg-white text-ink-700">
             <div className="mx-auto grid max-w-[1280px] gap-14 px-6 pb-[100px] pt-[96px] lg:grid-cols-[1fr_1fr] lg:gap-20 lg:px-8">
               <div>
