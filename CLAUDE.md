@@ -53,7 +53,8 @@ app/
 ├── components/
 │   ├── SiteHeader.tsx          # шапка: лого, меню (5 пунктов), кнопка звонка
 │   ├── SiteFooter.tsx          # футер: контакты, районы, шоссе
-│   ├── EmergencySplash.tsx     # полноэкранный первый экран с кнопкой звонка
+│   ├── GoogleTagManager.tsx    # ★ контейнер GTM — все счётчики только отсюда
+│   ├── CallNotifier.tsx        # ★ клик по tel: → «сейчас позвонят» в Telegram
 │   ├── GallerySection.tsx      # «Фото с работы» (прячется, если фото нет)
 │   └── ReviewsSection.tsx      # отзывы (демо / Google)
 ├── estimate/
@@ -95,10 +96,10 @@ app/
 | `NEXT_PUBLIC_GOOGLE_REVIEWS_URL` | ссылка «оставить отзыв» `g.page/r/CQzM_uihnRqhEAE/review` | ✅ работает |
 | `NEXT_PUBLIC_GOOGLE_MAPS_URL` | карточка в Картах `maps.google.com/?cid=11608764308225182732` → идёт в `sameAs` | ✅ работает |
 | `NEXT_PUBLIC_DEMO_CONTENT` | `1` = демо-плитки фото/отзывов, **только локально** | локально =1 |
-| `NEXT_PUBLIC_GA_ID` | GA4 `G-676GCTBX4Z` (аккаунт «One Towing», ресурс onetowingfl.com) | ✅ работает |
-| `NEXT_PUBLIC_GOOGLE_ADS_ID` | Google Ads (аккаунт **564-992-8278**, под `roman@`), тег **AW-18365157406** | ✅ работает |
-| `NEXT_PUBLIC_GOOGLE_ADS_CALL_LABEL` | ярлык конверсии «нажатие на телефон» — `A_YuCJzc7twcEJ6gmLVE` | ✅ работает |
-| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager, контейнер **GTM-KG9FC63K**. ⚠️ В контейнере НЕ заводить теги с `G-676GCTBX4Z` и `AW-18365157406` — они уже стоят прямым кодом в `Analytics.tsx`, будет двойной счёт | ✅ работает |
+| `NEXT_PUBLIC_GA_ID` | GA4 `G-676GCTBX4Z`. ⚠️ Кодом **больше не используется** — счётчик настраивается тегом внутри GTM. Переменная осталась в Vercel как справка | не используется |
+| `NEXT_PUBLIC_GOOGLE_ADS_ID` | Ads `AW-18365157406` (аккаунт **564-992-8278**). ⚠️ Кодом **больше не используется** — конверсия настраивается тегом внутри GTM | не используется |
+| `NEXT_PUBLIC_GOOGLE_ADS_CALL_LABEL` | ярлык конверсии `A_YuCJzc7twcEJ6gmLVE`. ⚠️ Кодом **больше не используется** — задаётся в теге GTM | не используется |
+| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager, контейнер **GTM-KG9FC63K** — ★ единственное место, откуда ставятся счётчики. GA4 и Ads настраиваются тегами внутри контейнера, в коде их больше нет | ⏳ добавить в Vercel |
 | `NEXT_PUBLIC_GSC_VERIFICATION` | не нужна: Search Console подтверждён через TXT-запись в DNS | — |
 
 Без ключей ничего не падает: маршрут считается по прямой линии (пометка «rough estimate»),
