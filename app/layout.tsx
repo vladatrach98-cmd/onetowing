@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Archivo, Barlow } from 'next/font/google';
 import './globals.css';
 import Analytics from './components/Analytics';
+import { GoogleTagManagerNoScript, GoogleTagManagerScript } from './components/GoogleTagManager';
 import { BUSINESS, PRICING } from './lib/constants';
 import { businessJsonLd } from './lib/seo';
 
@@ -55,6 +56,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${archivo.variable} ${barlow.variable}`}>
       <body>
+        {/* По инструкции Google — сразу после открывающего <body>. */}
+        <GoogleTagManagerNoScript />
+        <GoogleTagManagerScript />
         {children}
         {/* Карточка бизнеса для Google: телефон, адрес, часы работы, зона выезда. */}
         <script
