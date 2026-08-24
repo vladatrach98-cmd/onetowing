@@ -64,11 +64,55 @@ even though the truck livery still mentions it.
 
 | What | ID |
 |---|---|
+| **Google Tag Manager** | **`GTM-KG9FC63K`** — installed site-wide, your workspace |
 | Google Analytics 4 | `G-676GCTBX4Z` (property `547499411`) |
 | Google Ads account | `564-992-8278` |
-| Google tag on site | `AW-18365157406` |
+| Google Ads conversion tag | `AW-18365157406` |
 | Conversion label, phone tap | `A_YuCJzc7twcEJ6gmLVE` |
 | Google payments profile | `9884-4597-7667` |
+
+⛔ **Never create a second GA4 property, a second Ads conversion tag, or a second GTM
+container.** All of the above already exist and carry history. Recreating any of them
+splits the data and resets Smart Bidding learning.
+
+### GTM is the only place tags go
+
+The GTM container is live on every page. GA4 and Google Ads were previously hardcoded
+in the site; that code has been removed so you can manage everything from GTM without
+a developer or a rebuild.
+
+**You are expected to configure inside the container:**
+
+| Tag | Settings |
+|---|---|
+| Google Tag | Tag ID `G-676GCTBX4Z`, trigger *Initialization – All Pages* |
+| GA4 Event | Event name **exactly** `call_click`, trigger below |
+| Google Ads Conversion | Conversion ID `18365157406`, label `A_YuCJzc7twcEJ6gmLVE`, trigger below |
+
+**Trigger — phone tap:** type *Click – Just Links*, condition `Click URL` **starts with**
+`tel:`.
+
+⚠️ Enable the built-in **Click URL / Click Element / Click Text** variables first
+(*Variables → Configure*). They are off by default and the trigger silently never fires
+without them. This is the single most common setup mistake here.
+
+⚠️ Event name must be `call_click` character-for-character — it is already marked as a
+key event in GA4 and has history under that name.
+
+### ⛔ Do not duplicate — double counting
+
+If `call_click` is imported into Google Ads from GA4 **and** the Ads Conversion tag
+fires, every phone tap counts twice. Ads then bids on numbers that are not real.
+
+Pick one path, not both. Check *Ads → Goals → Conversions* and confirm the phone tap
+appears exactly once.
+
+### ⛔ Do not add these to GTM
+
+The **Telegram alert** on every `tel:` tap lives in the site code on purpose
+(`app/components/CallNotifier.tsx`) and is not analytics — it is the owner's live lead
+notification. Do not recreate it as a GTM tag; it would fire twice and spam the owner's
+phone at 3 a.m.
 
 ### Conversion actions in place
 
