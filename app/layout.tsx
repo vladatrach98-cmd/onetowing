@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Archivo, Barlow } from 'next/font/google';
 import './globals.css';
-import Analytics from './components/Analytics';
+import CallNotifier from './components/CallNotifier';
 import { GoogleTagManagerNoScript, GoogleTagManagerScript } from './components/GoogleTagManager';
 import { BUSINESS, PRICING } from './lib/constants';
 import { businessJsonLd } from './lib/seo';
@@ -65,7 +65,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd()) }}
         />
-        <Analytics />
+        {/* Только Telegram-уведомление о звонке. Счётчики — в GTM. */}
+        <CallNotifier />
       </body>
     </html>
   );
