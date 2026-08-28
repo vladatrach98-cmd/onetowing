@@ -24,6 +24,23 @@ const title = `${BUSINESS.name} | 24/7 Tow Truck & Roadside Assistance in Tampa,
 const description = `Towing and roadside assistance across Tampa Bay, 24 hours a day. Local tow from $${PRICING.baseFee}, $${PRICING.extraMileRate} per extra mile. Call ${BUSINESS.phone}.`;
 const gscVerification = process.env.NEXT_PUBLIC_GSC_VERIFICATION ?? '';
 
+/**
+ * Подтверждение прав в Bing Webmaster Tools.
+ *
+ * Записан прямо в коде, а не в переменной окружения, намеренно: это публичный
+ * ключ (он и так виден в исходном коде каждой страницы), он никогда не меняется,
+ * и держать его в репозитории надёжнее — переменную в Vercel можно случайно
+ * удалить, и сайт молча потеряет подтверждение.
+ *
+ * ⚠️ НЕ УДАЛЯТЬ после успешной проверки. Bing перепроверяет тег периодически:
+ * пропадёт строка — слетит подтверждение, и данные по сайту исчезнут.
+ *
+ * Импорт из Google Search Console не сработал: там ресурс подтверждён как
+ * «домен» (через TXT-запись в DNS), а Bing умеет забирать только ресурсы вида
+ * «URL-префикс». Поэтому подтверждаем отдельно, мета-тегом.
+ */
+const BING_SITE_VERIFICATION = '40C94E4494904AF089BCAB8CC0281A49';
+
 export const metadata: Metadata = {
   metadataBase: new URL(BUSINESS.siteUrl),
   title,
@@ -49,7 +66,10 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title, description, images: ['/images/one-towing-og.jpg'] },
   robots: { index: true, follow: true },
   // Подтверждение прав в Google Search Console (появится, когда зададим переменную).
-  ...(gscVerification ? { verification: { google: gscVerification } } : {}),
+  verification: {
+    ...(gscVerification ? { google: gscVerification } : {}),
+    other: { 'msvalidate.01': BING_SITE_VERIFICATION },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
