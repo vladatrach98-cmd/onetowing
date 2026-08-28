@@ -84,7 +84,11 @@ export default function ReviewsSection() {
             {reviews.map((review, index) => (
               <article key={`${review.author}-${index}`} className="bg-white px-8 pb-8 pt-7">
                 <Stars rating={review.rating} />
-                <p className="mt-4 text-[16px] leading-[1.6] text-ink-600 text-pretty">{review.text}</p>
+                {/* whitespace-pre-line — чтобы абзацы внутри отзыва не слиплись
+                    в сплошной текст. Отзывы переносятся дословно, включая разбивку. */}
+                <p className="mt-4 whitespace-pre-line text-[16px] leading-[1.6] text-ink-600 text-pretty">
+                  {review.text}
+                </p>
                 <p className="mt-5 text-[14px] font-semibold uppercase tracking-[0.1em] text-ink-700">{review.author}</p>
                 <p className="mt-1 text-[13px] uppercase tracking-[0.1em] text-bone-label">{review.date} · Google</p>
               </article>
