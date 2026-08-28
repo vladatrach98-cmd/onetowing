@@ -48,6 +48,8 @@ Next.js **14.2.15** (App Router, TS) · React 18 · Tailwind **v3** (`tailwind.c
 ```
 app/
 ├── page.tsx                    # ГЛАВНАЯ — одна страница: hero → услуги → цены → районы → фото → отзывы → CTA
+├── about/page.tsx              # ★ «кто мы» — с неё поисковики и ИИ берут ответ о компании
+├── faq/page.tsx                # ★ 12 частых вопросов + разметка FAQPage
 ├── layout.tsx                  # шрифты + метаданные
 ├── globals.css                 # базовые стили + CSS-анимации
 ├── components/
