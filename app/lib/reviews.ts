@@ -66,6 +66,19 @@ export const REVIEWS: Review[] = [
     date: 'August 2026',
     source: 'google',
   },
+  {
+    /**
+     * ⚠️ В тексте есть «tire blowout», но услуга здесь — БУКСИРОВКА, а не замена
+     * колеса: клиент прямо пишет, что машину надо было отвезти в Downtown Tampa.
+     * Правило «tire change не предлагаем» не нарушено — это слова клиента о своей
+     * поломке, а не наша услуга. Править чужой отзыв нельзя в любом случае.
+     */
+    author: 'Mr. Tsymbal',
+    rating: 5,
+    text: 'Best towing service! I had a tire blowout while I was in the Brandon area and needed to get my car to Downtown Tampa.\nThe driver arrived quickly, carefully secured my car, and made sure everything was loaded safely before the tow. The whole process was fast and easy. Really appreciate the quick response and reliable service. Definitely recommend ONE TOWING!',
+    date: 'August 2026',
+    source: 'google',
+  },
 ];
 
 /** Только для предпросмотра вёрстки. Не для продакшена. */
