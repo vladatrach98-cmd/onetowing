@@ -10,6 +10,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const pages: MetadataRoute.Sitemap = [
     { url: `${BUSINESS.siteUrl}/`, lastModified: now, changeFrequency: 'weekly', priority: 1 },
+    // Страницы «кто мы» и «частые вопросы» — с них поисковики и ИИ берут ответ
+    // на вопрос «что такое ONE TOWING». Без них Google подставлял чужую компанию.
+    { url: `${BUSINESS.siteUrl}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BUSINESS.siteUrl}/faq`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
   ];
 
   if (ESTIMATOR_ENABLED) {

@@ -38,6 +38,12 @@ export default function SiteFooter() {
                 {link.label}
               </Link>
             ))}
+            <Link href="/about" className="text-ink-400 transition-colors hover:text-white">
+              About
+            </Link>
+            <Link href="/faq" className="text-ink-400 transition-colors hover:text-white">
+              FAQ
+            </Link>
             {ESTIMATOR_ENABLED ? (
               <Link href="/estimate" className="text-ink-400 transition-colors hover:text-white">
                 Price Estimate
