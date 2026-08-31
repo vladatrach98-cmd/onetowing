@@ -43,7 +43,7 @@ const facts: Array<[string, string]> = [
   ['Hours', 'Open 24 hours, 7 days a week, including holidays'],
   ['Phone', BUSINESS.phone],
   ['Service area', 'Tampa and Hillsborough County, Florida'],
-  ['Truck', '2022 RAM 4500 — flatbed and wheel-lift, cars, SUVs, vans, motorcycles'],
+  ['Truck', '2022 RAM 4500 — wheel-lift and dollies, cars, SUVs, vans, motorcycles'],
   ['Languages', 'English, Russian, Ukrainian'],
   ['Payment', 'Cash, debit and credit cards'],
 ];

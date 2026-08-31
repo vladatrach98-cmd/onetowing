@@ -54,7 +54,7 @@ export const ESTIMATE_OPTIONS: EstimateOption[] = [
   {
     id: 'motorcycle',
     label: 'Motorcycle transport',
-    description: 'Soft straps and a wheel chock — the bike arrives exactly as it left.',
+    description: 'Strapped down and moved on dollies — the bike arrives exactly as it left.',
     kind: 'tow',
     needsDestination: true,
   },
