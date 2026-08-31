@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import SiteHeader from '../../components/SiteHeader';
@@ -59,6 +60,9 @@ function serviceJsonLd(page: ServicePage) {
         description: page.metaDescription,
         serviceType: page.name,
         url,
+        ...(page.photos && page.photos.length > 0
+          ? { image: page.photos.map((photo) => `${BUSINESS.siteUrl}${photo.src}`) }
+          : {}),
         provider: { '@id': `${BUSINESS.siteUrl}/#business` },
         areaServed: {
           '@type': 'City',
@@ -117,6 +121,43 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
             </a>
           </div>
         </section>
+
+        {/* Фото с работы сразу под первым экраном. Живой кадр с настоящей
+            машиной делает для доверия больше, чем любой абзац текста —
+            особенно у эвакуатора, где половина рынка это стоковые картинки.
+            Вертикальные и горизонтальные кадры считают пропорции сами. */}
+        {page.photos && page.photos.length > 0 ? (
+          <section className="border-b border-bone-200 bg-bone-100">
+            <div className="mx-auto max-w-[1280px] px-6 py-[64px] lg:px-8">
+              <div
+                className={`grid gap-6 ${page.photos.length > 1 ? 'sm:grid-cols-2' : 'max-w-[900px]'}`}
+              >
+                {page.photos.map((photo) => (
+                  <figure key={photo.src} className="m-0">
+                    <div
+                      className={`relative w-full overflow-hidden bg-ink-950 ${
+                        photo.height > photo.width ? 'aspect-[3/4]' : 'aspect-[4/3]'
+                      }`}
+                    >
+                      <Image
+                        src={photo.src}
+                        alt={photo.alt}
+                        fill
+                        sizes="(min-width: 1280px) 620px, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
+                    {photo.caption ? (
+                      <figcaption className="mt-3 text-[15px] leading-[1.55] text-ink-500 text-pretty">
+                        {photo.caption}
+                      </figcaption>
+                    ) : null}
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {/* «Какие машины возим» и «когда это про вас» — рядом: человек ищет
             себя либо по машине, либо по симптому, и должен найти сразу. */}

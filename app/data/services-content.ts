@@ -27,6 +27,25 @@
 
 export type ServiceFaq = { question: string; answer: string };
 
+/**
+ * Фото с работы на странице услуги.
+ *
+ * `alt` — то, по чему Google понимает, что на снимке, и то, что читают вслух
+ * незрячим. Описывать надо ЧЕСТНО и конкретно: «ONE TOWING wrecker loading a
+ * sedan on Water Street», а не «tow truck». Врать здесь нельзя — за подписи,
+ * не совпадающие с картинкой, Google выкидывает из поиска по изображениям.
+ *
+ * `width`/`height` — настоящие размеры файла. Нужны, чтобы страница не
+ * подпрыгивала при загрузке: браузер заранее резервирует место под кадр.
+ */
+export type ServicePhoto = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption?: string;
+};
+
 export type ServicePage = {
   slug: string;
   /** Короткая подпись над заголовком. */
@@ -50,6 +69,8 @@ export type ServicePage = {
   /** Как считается цена именно за эту работу. Абзацами. */
   pricing: string[];
   faq: ServiceFaq[];
+  /** Фото с работы. Нет фото — блок не рисуется, пустой рамки не остаётся. */
+  photos?: ServicePhoto[];
   /** Слаги соседних услуг — внутренняя перелинковка. */
   related: string[];
 };
@@ -122,6 +143,22 @@ export const SERVICE_PAGES: ServicePage[] = [
         question: 'Can you get the car out of a parking garage?',
         answer:
           'Usually. Low ceilings and tight ramps are the limit, not the car. Tell us the garage and the level when you call and we will say honestly whether the truck fits.',
+      },
+    ],
+    photos: [
+      {
+        src: '/images/services/one-towing-local-tow-tampa.jpg',
+        alt: 'ONE TOWING wrecker on a local tow call in Tampa, Florida',
+        width: 1280,
+        height: 960,
+        caption: 'A local tow in Tampa — the everyday half of the job.',
+      },
+      {
+        src: '/images/services/one-towing-dollies-locked-wheels-tampa.jpg',
+        alt: 'Car loaded on dollies behind the ONE TOWING wrecker in Tampa, wheels off the ground',
+        width: 1069,
+        height: 1280,
+        caption: 'Wheels that will not turn go up on dollies — nothing drags.',
       },
     ],
     related: ['wont-start-towing', 'long-distance-towing', 'accident-recovery'],
@@ -292,6 +329,15 @@ export const SERVICE_PAGES: ServicePage[] = [
         question: 'I put the wrong fuel in. Can you fix that?',
         answer:
           'Not on the roadside, and you should not start the engine. That car needs its tank drained at a shop. We can tow it there, which is much cheaper than what running the engine would cost you.',
+      },
+    ],
+    photos: [
+      {
+        src: '/images/services/one-towing-fuel-delivery-tampa.jpg',
+        alt: 'ONE TOWING truck delivering fuel to a stranded car in Tampa, Florida',
+        width: 1280,
+        height: 960,
+        caption: 'Enough fuel to reach the nearest station under your own power.',
       },
     ],
     related: ['jump-start', 'lockout-service', 'light-duty-towing'],
@@ -781,6 +827,15 @@ export const SERVICE_PAGES: ServicePage[] = [
         question: 'Why will you not put prices on the website?',
         answer:
           'Because a single printed number would be wrong more often than right, and a wrong number quoted online turns into an argument at the roadside. One phone call and you have the real figure.',
+      },
+    ],
+    photos: [
+      {
+        src: '/images/services/one-towing-roadside-assistance-tampa.jpg',
+        alt: 'ONE TOWING truck on a roadside assistance call in Tampa, Florida',
+        width: 1280,
+        height: 960,
+        caption: 'Most roadside calls end without the car ever going on the truck.',
       },
     ],
     related: ['jump-start', 'lockout-service', 'fuel-delivery'],

@@ -5,6 +5,7 @@ import SiteFooter from './components/SiteFooter';
 import GallerySection from './components/GallerySection';
 import ReviewsSection from './components/ReviewsSection';
 import {
+  BASE_LOCATION,
   BUSINESS,
   ESTIMATOR_ENABLED,
   HIGHWAYS,
@@ -227,6 +228,49 @@ export default function Home() {
                 </a>{' '}
                 day, night, weekends and holidays.
               </p>
+            </div>
+          </section>
+
+          {/* Настоящий кадр с работы в Downtown Tampa.
+              Стоит здесь, а не в первом экране, по простой причине: снимок
+              вертикальный, а герой — широкая полоса 16:9 с градиентом. Вертикаль
+              там обрезалась бы до узкой ленты посередине, и от кадра остался бы
+              кусок капота. В сплите она видна целиком. */}
+          <section className="border-t border-white/[0.08] bg-ink-950 text-white">
+            <div className="mx-auto grid max-w-[1280px] items-center gap-10 px-6 py-[64px] lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-16 lg:px-8">
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-ink-900">
+                <Image
+                  src="/images/one-towing-water-street-downtown-tampa.jpg"
+                  alt="ONE TOWING wrecker working on Water Street in downtown Tampa in the evening"
+                  fill
+                  sizes="(min-width: 1024px) 420px, 100vw"
+                  className="object-cover"
+                />
+              </div>
+
+              <div>
+                <p className="mb-4 text-[12px] font-semibold uppercase leading-none tracking-[0.34em] text-brand-400">
+                  Downtown Tampa
+                </p>
+                <h2 className="max-w-[620px] font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.015em] text-balance sm:text-[36px]">
+                  Water Street at night — this is our patch.
+                </h2>
+                <p className="mt-6 max-w-[62ch] text-[18px] leading-[1.6] text-ink-200 text-pretty">
+                  Our truck runs out of {BASE_LOCATION.address}, a few blocks from here. Downtown is
+                  where most of our nights are spent: garages on Water Street, the Channel District,
+                  Ybor after closing time, and the Selmon ramps in between.
+                </p>
+                <p className="mt-5 max-w-[62ch] text-[18px] leading-[1.6] text-ink-200 text-pretty">
+                  That is a real photograph of our own truck, not a stock image — which is more than
+                  most of this trade can say.
+                </p>
+                <a
+                  href={BUSINESS.phoneHref}
+                  className="mt-8 inline-block bg-brand-500 px-8 py-[19px] text-[15px] font-bold uppercase leading-none tracking-[0.12em] text-white transition-colors hover:bg-brand-600 hover:text-white"
+                >
+                  Call {BUSINESS.phone}
+                </a>
+              </div>
             </div>
           </section>
 
