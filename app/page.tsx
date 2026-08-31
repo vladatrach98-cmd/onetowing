@@ -13,6 +13,7 @@ import {
   SERVICE_AREAS,
 } from './lib/constants';
 import { LONG_DISTANCE_FROM_MILES } from './lib/pricing';
+import { serviceAreaHref } from './data/service-areas';
 import { SERVICES } from './lib/services';
 
 /**
@@ -241,15 +242,29 @@ export default function Home() {
                 <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
                   Not on the list? Call anyway — if it is within reach, we come.
                 </p>
+                {/* Район, у которого есть своя страница, становится ссылкой.
+                    Без этой ссылки страница района — сирота: на неё неоткуда
+                    прийти ни человеку, ни поисковому роботу. */}
                 <div className="mt-8 flex flex-wrap gap-2.5">
-                  {SERVICE_AREAS.map((area) => (
-                    <span
-                      key={area}
-                      className="border border-bone-300 px-4 py-2.5 text-[15px] font-semibold text-ink-600"
-                    >
-                      {area}
-                    </span>
-                  ))}
+                  {SERVICE_AREAS.map((area) => {
+                    const href = serviceAreaHref(area);
+                    const chip =
+                      'border border-bone-300 px-4 py-2.5 text-[15px] font-semibold text-ink-600';
+
+                    return href ? (
+                      <Link
+                        key={area}
+                        href={href}
+                        className={`${chip} transition-colors hover:border-brand-500 hover:text-brand-600`}
+                      >
+                        {area}
+                      </Link>
+                    ) : (
+                      <span key={area} className={chip}>
+                        {area}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -312,15 +327,34 @@ export default function Home() {
                     </div>
 
                     <ul className="m-0 list-none p-0">
-                      {group.items.map((service) => (
-                        <li
-                          key={service.id}
-                          className="border-b border-bone-200 py-[13px] text-[16px] leading-[1.5] last:border-0"
-                        >
-                          <span className="font-semibold text-ink-700">{service.title}</span>
-                          <span className="text-ink-500"> — {service.description}</span>
-                        </li>
-                      ))}
+                      {group.items.map((service) => {
+                        const line = (
+                          <>
+                            <span className="font-semibold text-ink-700">{service.title}</span>
+                            <span className="text-ink-500"> — {service.description}</span>
+                          </>
+                        );
+
+                        return (
+                          <li
+                            key={service.id}
+                            className="border-b border-bone-200 py-[13px] text-[16px] leading-[1.5] last:border-0"
+                          >
+                            {/* У услуги есть подробная страница — строка ведёт на неё.
+                                Нет — остаётся обычным текстом, а не ссылкой в 404. */}
+                            {service.page ? (
+                              <Link
+                                href={`/services/${service.page}`}
+                                className="text-inherit underline-offset-4 hover:underline"
+                              >
+                                {line}
+                              </Link>
+                            ) : (
+                              line
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 ))}

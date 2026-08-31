@@ -96,7 +96,7 @@ export const HIGHWAYS = [
 export const NAV_LINKS = [
   { href: '/#areas', label: 'Areas' },
   { href: '/#photos', label: 'Photos' },
-  { href: '/#services', label: 'Services' },
+  { href: '/services', label: 'Services' },
   { href: '/#pricing', label: 'Pricing' },
   { href: '/#reviews', label: 'Reviews' },
 ] as const;
