@@ -187,6 +187,16 @@ export default function Home() {
                     >
                       See pricing
                     </Link>
+                    {/* Запись — третьей, намеренно тише двух первых. Срочный
+                        клиент должен нажать «Call», а не уйти заполнять форму.
+                        Но для тех, кто планирует заранее, ссылка нужна на виду:
+                        в подвале её никто не находит. */}
+                    <Link
+                      href="/book"
+                      className="flex items-center border border-white/35 px-[26px] py-[21px] text-[15px] font-bold uppercase leading-none tracking-[0.09em] text-ink-100 transition-colors hover:border-white/70 hover:text-white"
+                    >
+                      Book a pickup
+                    </Link>
                   </div>
 
                   <p className="mt-4 text-[15px] font-bold uppercase leading-none tracking-[0.08em] text-ink-100">
@@ -552,10 +562,16 @@ export default function Home() {
                   Call {BUSINESS.phone}
                 </a>
                 <Link
-                  href={ESTIMATOR_ENABLED ? '/estimate' : '/#services'}
+                  href={ESTIMATOR_ENABLED ? '/estimate' : '/services'}
                   className="border border-ember-line px-8 py-[21px] text-[14px] font-bold uppercase leading-none tracking-[0.12em] text-ember-ink transition-colors hover:border-ember-hover hover:bg-ember-hover hover:text-white"
                 >
                   {ESTIMATOR_ENABLED ? 'Check the price' : 'See all services'}
+                </Link>
+                <Link
+                  href="/book"
+                  className="border border-ember-line px-8 py-[21px] text-[14px] font-bold uppercase leading-none tracking-[0.12em] text-ember-ink transition-colors hover:border-ember-hover hover:bg-ember-hover hover:text-white"
+                >
+                  Book a pickup
                 </Link>
               </div>
             </div>
