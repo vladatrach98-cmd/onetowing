@@ -193,7 +193,7 @@ export default function Home() {
                         в подвале её никто не находит. */}
                     <Link
                       href="/book"
-                      className="flex items-center border border-white/35 px-[26px] py-[21px] text-[15px] font-bold uppercase leading-none tracking-[0.09em] text-ink-100 transition-colors hover:border-white/70 hover:text-white"
+                      className="flex items-center border-2 border-white/60 bg-ink-950/40 px-[26px] py-[21px] text-[15px] font-extrabold uppercase leading-none tracking-[0.09em] text-white transition-colors hover:border-white hover:bg-white/10 hover:text-white"
                     >
                       Book a pickup
                     </Link>
