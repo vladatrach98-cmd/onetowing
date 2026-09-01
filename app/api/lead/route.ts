@@ -19,6 +19,10 @@ type Body = {
   towMiles?: number;
   phone?: string;
   note?: string;
+  /** Поля со страницы записи /book. */
+  name?: string;
+  email?: string;
+  when?: string;
   /** Honeypot: настоящий человек это поле не видит и не заполняет. */
   company?: string;
   /** Сколько миллисекунд форма была открыта — боты отправляют мгновенно. */
@@ -73,6 +77,9 @@ export async function POST(request: Request) {
     estimateHigh: price?.high,
     phone: clean(body.phone, 40) || undefined,
     note: clean(body.note, 300) || undefined,
+    name: clean(body.name, 80) || undefined,
+    email: clean(body.email, 120) || undefined,
+    when: clean(body.when, 40) || undefined,
   });
 
   return NextResponse.json({ ok: true, delivered });

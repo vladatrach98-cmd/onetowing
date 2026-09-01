@@ -34,7 +34,18 @@ export type Lead = {
   estimateHigh?: number;
   phone?: string;
   note?: string;
+  /** Заявки со страницы записи /book: имя, почта и желаемое время. */
+  name?: string;
+  email?: string;
+  /** Значение поля datetime-local, вида «2026-09-02T14:30». */
+  when?: string;
 };
+
+/** «2026-09-02T14:30» → «02.09 в 14:30». Часовой пояс — тот, что выбрал клиент. */
+function humanWhen(value: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(value);
+  return m ? `${m[3]}.${m[2]} в ${m[4]}:${m[5]}` : value;
+}
 
 const escapeHtml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -51,6 +62,13 @@ function buildMessage(lead: Lead): string {
   );
   lines.push('');
   lines.push(`🚗 <b>Проблема:</b> ${escapeHtml(lead.service)}`);
+
+  if (lead.name) {
+    lines.push(`👤 <b>Имя:</b> ${escapeHtml(lead.name)}`);
+  }
+  if (lead.when) {
+    lines.push(`🗓 <b>Хочет на:</b> ${escapeHtml(humanWhen(lead.when))}`);
+  }
 
   if (lead.customerAddress) {
     lines.push(`📍 <b>Клиент:</b> ${escapeHtml(lead.customerAddress)}`);
@@ -74,6 +92,9 @@ function buildMessage(lead: Lead): string {
 
   if (lead.phone) {
     lines.push(`📞 <b>Его телефон:</b> ${escapeHtml(lead.phone)}`);
+  }
+  if (lead.email) {
+    lines.push(`✉️ <b>Почта:</b> ${escapeHtml(lead.email)}`);
   }
   if (lead.note) {
     lines.push(`📝 ${escapeHtml(lead.note)}`);

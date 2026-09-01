@@ -44,6 +44,9 @@ export default function SiteFooter() {
             <Link href="/faq" className="text-ink-400 transition-colors hover:text-white">
               FAQ
             </Link>
+            <Link href="/book" className="text-ink-400 transition-colors hover:text-white">
+              Book a pickup
+            </Link>
             {ESTIMATOR_ENABLED ? (
               <Link href="/estimate" className="text-ink-400 transition-colors hover:text-white">
                 Price Estimate

@@ -16,6 +16,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // на вопрос «что такое ONE TOWING». Без них Google подставлял чужую компанию.
     { url: `${BUSINESS.siteUrl}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BUSINESS.siteUrl}/faq`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    // Страница записи. Её адрес стоит в карточке Google как ссылка
+    // на бронирование, поэтому она должна быть в карте сайта.
+    { url: `${BUSINESS.siteUrl}/book`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     // Страницы услуг. Оглавление и по странице на каждую услугу — список
     // берётся из самих страниц, забыть новую невозможно.
     { url: `${BUSINESS.siteUrl}/services`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
