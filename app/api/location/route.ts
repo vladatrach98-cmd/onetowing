@@ -24,6 +24,8 @@ type Body = {
   pickupAccuracy?: number;
   pickupText?: string;
   dropoffText?: string;
+  dropoffLat?: number;
+  dropoffLng?: number;
   note?: string;
   /** Honeypot: человек этого поля не видит. */
   company?: string;
@@ -65,6 +67,8 @@ export async function POST(request: Request) {
     pickupAccuracy: num(body.pickupAccuracy),
     pickupText: pickupText || undefined,
     dropoffText: clean(body.dropoffText, 200) || undefined,
+    dropoffLat: num(body.dropoffLat),
+    dropoffLng: num(body.dropoffLng),
     note: clean(body.note, 300) || undefined,
   });
 

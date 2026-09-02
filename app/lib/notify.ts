@@ -239,6 +239,8 @@ export type CustomerLocation = {
   /** Адрес, если клиент вписал его руками вместо GPS. */
   pickupText?: string;
   dropoffText?: string;
+  dropoffLat?: number;
+  dropoffLng?: number;
   note?: string;
 };
 
@@ -266,18 +268,28 @@ export async function sendCustomerLocation(loc: CustomerLocation): Promise<{ del
     }
   }
 
-  if (loc.dropoffText) {
+  const hasDrop = loc.dropoffText || (loc.dropoffLat != null && loc.dropoffLng != null);
+  if (hasDrop) {
     lines.push('');
     lines.push('🏁 <b>Везти сюда:</b>');
-    lines.push(escapeHtml(loc.dropoffText));
-    lines.push(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.dropoffText)}`);
+    if (loc.dropoffText) lines.push(escapeHtml(loc.dropoffText));
+    // Координаты точнее строки: клиент мог подвинуть точку после выбора адреса.
+    lines.push(
+      loc.dropoffLat != null && loc.dropoffLng != null
+        ? mapsPoint(loc.dropoffLat, loc.dropoffLng)
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.dropoffText ?? '')}`,
+    );
   }
 
   // Готовый маршрут от машины до точки назначения — одно нажатие, и навигация ведёт.
-  if (loc.pickupLat != null && loc.pickupLng != null && loc.dropoffText) {
+  if (loc.pickupLat != null && loc.pickupLng != null && hasDrop) {
+    const destination =
+      loc.dropoffLat != null && loc.dropoffLng != null
+        ? `${loc.dropoffLat},${loc.dropoffLng}`
+        : encodeURIComponent(loc.dropoffText ?? '');
     lines.push('');
     lines.push(
-      `🗺 <b>Маршрут:</b> https://www.google.com/maps/dir/?api=1&origin=${loc.pickupLat},${loc.pickupLng}&destination=${encodeURIComponent(loc.dropoffText)}`,
+      `🗺 <b>Маршрут:</b> https://www.google.com/maps/dir/?api=1&origin=${loc.pickupLat},${loc.pickupLng}&destination=${destination}`,
     );
   }
 

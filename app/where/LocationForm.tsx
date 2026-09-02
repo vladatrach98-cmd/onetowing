@@ -1,87 +1,148 @@
 'use client';
 
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 import { BUSINESS } from '../lib/constants';
 
 /**
  * ОТПРАВКА ЛОКАЦИИ — то, что видит человек на обочине.
  *
- * Правила, из которых собран экран:
+ * Здесь ровно ДВА вопроса и больше ничего:
+ *   1. Где машина — одна кнопка, дальше карта, точку можно поправить пальцем.
+ *   2. Куда везти — необязательно.
  *
- *   — Одна большая кнопка. Человек стоит на трассе, часто в темноте, часто
- *     одной рукой, вторая держит телефон у уха. Всё, что мельче пальца, тут
- *     не работает.
- *   — Ни регистрации, ни почты, ни имени, ни марки машины. Всё это владелец
- *     уже спрашивает голосом. Задача страницы одна: ГДЕ МАШИНА.
- *   — «Куда везти» необязательно. Человек на обочине часто ещё не знает,
- *     и терять из-за этого его точку нельзя.
- *   — Отказ в геолокации не тупик. Браузер имеет полное право не дать
- *     координаты, и тогда просто показываем поле для адреса.
+ * Телефона, имени, примечаний и марки машины тут намеренно нет: владелец в
+ * этот момент разговаривает с клиентом по телефону и всё это уже спрашивает
+ * голосом. Каждое лишнее поле — это люди, которые не дошли до кнопки.
+ *
+ * ⚠️ «Куда везти» не блокирует отправку. Человек на трассе часто ещё не знает,
+ * и терять из-за этого его координаты нельзя.
  *
  * ⚠️ Кнопка называется «моё местоположение», а вопрос — «где машина».
  * Это не одно и то же: звонит иногда не тот, кто стоит рядом с машиной.
+ * Поэтому точку и можно перетащить.
  */
 
-type Geo = { lat: number; lng: number; accuracy: number };
+// Leaflet трогает window при импорте — только на клиенте.
+const PinMap = dynamic(() => import('./PinMap'), {
+  ssr: false,
+  loading: () => <div className="h-[260px] w-full animate-pulse bg-bone-200 sm:h-[300px]" />,
+});
+
+type Point = { lat: number; lng: number };
+type Hit = { label: string; lat: number; lng: number };
+
+/** Даунтаун Тампы — куда смотрит карта, пока клиент не дал координаты. */
+const FALLBACK: Point = { lat: 27.9506, lng: -82.4572 };
+
+function useAddressSearch() {
+  const [query, setQuery] = useState('');
+  const [hits, setHits] = useState<Hit[]>([]);
+  const [busy, setBusy] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (timer.current) clearTimeout(timer.current);
+    if (query.trim().length < 3) {
+      setHits([]);
+      return;
+    }
+    // Пауза перед запросом: геокодер OpenStreetMap просит не чаще раза
+    // в секунду, а человек печатает быстрее.
+    timer.current = setTimeout(async () => {
+      setBusy(true);
+      try {
+        const response = await fetch(`/api/geocode?q=${encodeURIComponent(query.trim())}`);
+        const data = (await response.json()) as { hits?: Hit[] };
+        setHits(data.hits ?? []);
+      } catch {
+        setHits([]);
+      } finally {
+        setBusy(false);
+      }
+    }, 700);
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, [query]);
+
+  return { query, setQuery, hits, setHits, busy };
+}
 
 export default function LocationForm() {
-  const [geo, setGeo] = useState<Geo | null>(null);
+  const [pickup, setPickup] = useState<Point | null>(null);
+  const [pickupAccuracy, setPickupAccuracy] = useState<number | null>(null);
+  const [pickupAddress, setPickupAddress] = useState<string | null>(null);
   const [geoState, setGeoState] = useState<'idle' | 'asking' | 'denied' | 'failed'>('idle');
-  const [pickupText, setPickupText] = useState('');
-  const [dropoffText, setDropoffText] = useState('');
-  const [phone, setPhone] = useState('');
-  const [note, setNote] = useState('');
-  const [company, setCompany] = useState(''); // honeypot
+
+  const [dropoff, setDropoff] = useState<Point | null>(null);
+  const [dropoffLabel, setDropoffLabel] = useState('');
+
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
-  const field =
-    'mt-2 w-full border-2 border-bone-300 bg-white px-4 py-[16px] text-[17px] text-ink-700 outline-none focus:border-brand-500';
-  const label = 'block text-[14px] font-bold uppercase tracking-[0.1em] text-bone-label';
+  const pickupSearch = useAddressSearch();
+  const dropSearch = useAddressSearch();
+
+  /** Координаты → человеческий адрес. Нужен и клиенту для проверки, и владельцу. */
+  async function resolveAddress(lat: number, lng: number) {
+    try {
+      const response = await fetch(`/api/geocode?lat=${lat}&lng=${lng}`);
+      const data = (await response.json()) as { address?: string | null };
+      setPickupAddress(data.address ?? null);
+    } catch {
+      setPickupAddress(null);
+    }
+  }
 
   function askLocation() {
     if (!navigator.geolocation) {
       setGeoState('failed');
+      setPickup(FALLBACK);
       return;
     }
-
     setGeoState('asking');
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setGeo({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-        });
+        const point = { lat: position.coords.latitude, lng: position.coords.longitude };
+        setPickup(point);
+        setPickupAccuracy(position.coords.accuracy);
         setGeoState('idle');
+        void resolveAddress(point.lat, point.lng);
       },
       (error) => {
         // 1 = человек отказал. Остальное — техника: нет сигнала, вышло время.
         setGeoState(error.code === 1 ? 'denied' : 'failed');
+        // Карту всё равно показываем: точку можно поставить пальцем.
+        setPickup(FALLBACK);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     );
   }
 
+  function movePickup(lat: number, lng: number) {
+    setPickup({ lat, lng });
+    setPickupAccuracy(null); // передвинули рукой — точность GPS больше не про эту точку
+    void resolveAddress(lat, lng);
+  }
+
   async function send() {
-    if (!geo && !pickupText.trim()) {
+    if (!pickup) {
       setSendState('error');
       return;
     }
-
     setSendState('sending');
     try {
       const response = await fetch('/api/location', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          phone: phone.trim() || undefined,
-          pickupLat: geo?.lat,
-          pickupLng: geo?.lng,
-          pickupAccuracy: geo?.accuracy,
-          pickupText: pickupText.trim() || undefined,
-          dropoffText: dropoffText.trim() || undefined,
-          note: note.trim() || undefined,
-          company,
+          pickupLat: pickup.lat,
+          pickupLng: pickup.lng,
+          pickupAccuracy: pickupAccuracy ?? undefined,
+          pickupText: pickupAddress ?? undefined,
+          dropoffLat: dropoff?.lat,
+          dropoffLng: dropoff?.lng,
+          dropoffText: dropoffLabel || undefined,
         }),
       });
       setSendState(response.ok ? 'sent' : 'error');
@@ -92,15 +153,14 @@ export default function LocationForm() {
 
   if (sendState === 'sent') {
     return (
-      <div className="border-2 border-brand-500 bg-white px-7 py-10 text-center">
-        <p className="font-display text-[30px] font-extrabold leading-[1.1] text-ink-700">Got it.</p>
-        <p className="mx-auto mt-4 max-w-[40ch] text-[18px] leading-[1.6] text-ink-600 text-pretty">
-          Your location is with {BUSINESS.name}. Stay on the phone with us — if the call has ended, we will ring you
-          back.
+      <div className="border-2 border-brand-500 bg-white px-7 py-12 text-center">
+        <p className="font-display text-[34px] font-extrabold leading-[1.05] text-ink-700">Got it.</p>
+        <p className="mx-auto mt-4 max-w-[36ch] text-[18px] leading-[1.55] text-ink-600 text-pretty">
+          {BUSINESS.name} has your location. Stay on the phone with us.
         </p>
         <a
           href={BUSINESS.phoneHref}
-          className="mt-8 inline-block w-full bg-brand-500 px-8 py-[22px] text-[17px] font-bold uppercase leading-none tracking-[0.1em] text-white transition-colors hover:bg-brand-600 hover:text-white sm:w-auto"
+          className="mt-8 inline-block w-full bg-brand-500 px-8 py-[22px] text-[17px] font-bold uppercase leading-none tracking-[0.1em] text-white transition-colors hover:bg-brand-600 hover:text-white"
         >
           Call {BUSINESS.phone}
         </a>
@@ -108,137 +168,143 @@ export default function LocationForm() {
     );
   }
 
-  return (
-    <div className="border border-bone-300 bg-white px-6 py-8 sm:px-8">
-      <h2 className="font-display text-[24px] font-extrabold leading-[1.15] text-ink-700 sm:text-[28px]">
-        Where is the vehicle?
-      </h2>
-
-      {geo ? (
-        <div className="mt-5 border-2 border-brand-500 bg-brand-50 px-5 py-5">
-          <p className="font-display text-[19px] font-extrabold leading-[1.2] text-ink-700">✓ Location found</p>
-          <p className="mt-2 text-[16px] leading-[1.5] text-ink-600">
-            Accurate to about {Math.round(geo.accuracy)} metres.
-          </p>
-          {geo.accuracy > 200 ? (
-            <p className="mt-2 text-[16px] leading-[1.5] text-brand-600">
-              That is not very precise. Try again outdoors, or type the address below.
-            </p>
-          ) : null}
-          <div className="mt-4 flex flex-wrap gap-4">
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query=${geo.lat},${geo.lng}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[16px] font-bold text-brand-600 underline underline-offset-4"
-            >
-              Check it on the map
-            </a>
-            <button type="button" onClick={askLocation} className="text-[16px] font-bold text-ink-500 underline underline-offset-4">
-              Try again
-            </button>
-          </div>
-        </div>
-      ) : (
-        <>
-          {/* Главная кнопка экрана. Всё остальное — запасные пути. */}
-          <button
-            type="button"
-            onClick={askLocation}
-            disabled={geoState === 'asking'}
-            className="mt-5 w-full bg-brand-500 px-6 py-[26px] text-center font-display text-[20px] font-extrabold uppercase leading-none tracking-[0.06em] text-white transition-colors hover:bg-brand-600 disabled:opacity-70 sm:text-[22px]"
-          >
-            {geoState === 'asking' ? 'Finding you…' : '📍 Use my current location'}
-          </button>
-          <p className="mt-3 text-[15px] leading-[1.5] text-ink-500 text-pretty">
-            Your phone will ask permission. We only use it to send the truck to the right place.
-          </p>
-
-          {geoState === 'denied' ? (
-            <p className="mt-4 text-[16px] leading-[1.55] text-brand-600 text-pretty">
-              No problem — your phone did not share the location. Type where the vehicle is instead.
-            </p>
-          ) : null}
-          {geoState === 'failed' ? (
-            <p className="mt-4 text-[16px] leading-[1.55] text-brand-600 text-pretty">
-              We could not get a fix. Try again outside, or just type where the vehicle is.
-            </p>
-          ) : null}
-        </>
-      )}
-
-      <div className="mt-7">
-        <label htmlFor="pickupText" className={label}>
-          {geo ? 'Anything to add about the spot?' : 'Or type where the vehicle is'}
-        </label>
-        <input
-          id="pickupText"
-          value={pickupText}
-          onChange={(e) => setPickupText(e.target.value)}
-          placeholder={geo ? 'Garage level 3 · behind the building' : 'Address, exit number, or the shop next to you'}
-          className={field}
-        />
-      </div>
-
-      <div className="mt-6">
-        <label htmlFor="dropoffText" className={label}>
-          Where are we taking it? <span className="font-semibold normal-case tracking-normal text-ink-400">— optional</span>
-        </label>
-        <input
-          id="dropoffText"
-          value={dropoffText}
-          onChange={(e) => setDropoffText(e.target.value)}
-          placeholder="Shop, dealership, or your home address"
-          className={field}
-        />
-        <p className="mt-2 text-[15px] leading-[1.5] text-ink-500">
-          Do not know yet? Leave it empty and send anyway.
-        </p>
-      </div>
-
-      <div className="mt-6">
-        <label htmlFor="phone" className={label}>
-          Your phone
-        </label>
-        <input
-          id="phone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="(813) 000-0000"
-          className={field}
-        />
-      </div>
-
-      <div className="mt-6">
-        <label htmlFor="note" className={label}>
-          Anything else <span className="font-semibold normal-case tracking-normal text-ink-400">— optional</span>
-        </label>
-        <input
-          id="note"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="Will not roll · no key · low clearance"
-          className={field}
-        />
-      </div>
-
-      {/* Honeypot */}
+  const searchBox = (
+    search: ReturnType<typeof useAddressSearch>,
+    placeholder: string,
+    onPick: (hit: Hit) => void,
+  ) => (
+    <div className="relative">
       <input
-        type="text"
-        name="company"
-        value={company}
-        onChange={(e) => setCompany(e.target.value)}
-        tabIndex={-1}
-        autoComplete="off"
-        aria-hidden="true"
-        className="hidden"
+        value={search.query}
+        onChange={(e) => search.setQuery(e.target.value)}
+        placeholder={placeholder}
+        className="w-full border-2 border-bone-300 bg-white px-4 py-[16px] text-[17px] text-ink-700 outline-none focus:border-brand-500"
       />
+      {search.hits.length > 0 ? (
+        <ul className="m-0 list-none border-2 border-t-0 border-bone-300 bg-white p-0">
+          {search.hits.map((hit) => (
+            <li key={`${hit.lat},${hit.lng}`} className="border-b border-bone-200 last:border-0">
+              <button
+                type="button"
+                onClick={() => {
+                  onPick(hit);
+                  search.setQuery(hit.label.split(',').slice(0, 3).join(',').trim());
+                  search.setHits([]);
+                }}
+                className="block w-full px-4 py-[14px] text-left text-[16px] leading-[1.4] text-ink-600 hover:bg-bone-100"
+              >
+                {hit.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {search.busy ? <p className="mt-2 text-[15px] text-ink-400">Searching…</p> : null}
+    </div>
+  );
+
+  return (
+    <div className="grid gap-5">
+      {/* ────────── 1. Где машина ────────── */}
+      <section className="border border-bone-300 bg-white px-5 py-7 sm:px-7">
+        <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-brand-600">Step 1</p>
+        <h2 className="mt-2 font-display text-[24px] font-extrabold leading-[1.15] text-ink-700 sm:text-[27px]">
+          Where is the vehicle?
+        </h2>
+
+        {!pickup ? (
+          <>
+            <button
+              type="button"
+              onClick={askLocation}
+              disabled={geoState === 'asking'}
+              className="mt-5 w-full bg-brand-500 px-6 py-[28px] text-center font-display text-[20px] font-extrabold uppercase leading-none tracking-[0.05em] text-white transition-colors hover:bg-brand-600 disabled:opacity-70 sm:text-[23px]"
+            >
+              {geoState === 'asking' ? 'Finding you…' : '📍 Use my current location'}
+            </button>
+            <p className="mt-3 text-[15px] leading-[1.5] text-ink-500 text-pretty">
+              Your phone will ask permission. We only use it to send the truck to the right place.
+            </p>
+          </>
+        ) : (
+          <div className="mt-5">
+            <div className="overflow-hidden border-2 border-bone-300">
+              <PinMap lat={pickup.lat} lng={pickup.lng} onMove={movePickup} tone="pickup" />
+            </div>
+
+            <p className="mt-3 text-[16px] font-bold leading-[1.4] text-ink-700">
+              {geoState === 'denied' || geoState === 'failed'
+                ? 'Tap the map where the vehicle is'
+                : '✓ Location found'}
+              {pickupAccuracy != null ? (
+                <span className="font-semibold text-ink-500"> — accurate to about {Math.round(pickupAccuracy)} m</span>
+              ) : null}
+            </p>
+            {pickupAddress ? (
+              <p className="mt-1 text-[16px] leading-[1.45] text-ink-500 text-pretty">{pickupAddress}</p>
+            ) : null}
+            <p className="mt-2 text-[15px] leading-[1.45] text-ink-500">
+              Not exactly right? Drag the dot or tap the map.
+            </p>
+
+            {geoState === 'denied' || geoState === 'failed' ? (
+              <div className="mt-4">
+                {searchBox(pickupSearch, 'Or search an address or place…', (hit) => {
+                  setPickup({ lat: hit.lat, lng: hit.lng });
+                  setPickupAccuracy(null);
+                  setPickupAddress(hit.label);
+                })}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={askLocation}
+                className="mt-3 text-[16px] font-bold text-brand-600 underline underline-offset-4"
+              >
+                Try my location again
+              </button>
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* ────────── 2. Куда везти ────────── */}
+      <section className="border border-bone-300 bg-white px-5 py-7 sm:px-7">
+        <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-brand-600">Step 2 — optional</p>
+        <h2 className="mt-2 font-display text-[24px] font-extrabold leading-[1.15] text-ink-700 sm:text-[27px]">
+          Where are we taking it?
+        </h2>
+
+        <div className="mt-5">
+          {searchBox(dropSearch, 'Shop, dealership, or your home address…', (hit) => {
+            setDropoff({ lat: hit.lat, lng: hit.lng });
+            setDropoffLabel(hit.label);
+          })}
+        </div>
+
+        {dropoff ? (
+          <div className="mt-4">
+            <div className="overflow-hidden border-2 border-bone-300">
+              <PinMap
+                lat={dropoff.lat}
+                lng={dropoff.lng}
+                onMove={(lat, lng) => setDropoff({ lat, lng })}
+                tone="dropoff"
+              />
+            </div>
+            <p className="mt-3 text-[15px] leading-[1.45] text-ink-500">Drag the dot if it is not exact.</p>
+          </div>
+        ) : (
+          <p className="mt-3 text-[15px] leading-[1.5] text-ink-500 text-pretty">
+            Do not know yet? Skip this and send anyway.
+          </p>
+        )}
+      </section>
 
       {sendState === 'error' ? (
-        <p className="mt-6 text-[16px] leading-[1.55] text-brand-600 text-pretty">
-          {!geo && !pickupText.trim()
-            ? 'We need to know where the vehicle is — tap the button above or type the address.'
+        <p className="text-[16px] leading-[1.55] text-brand-600 text-pretty">
+          {!pickup
+            ? 'Tap the button above so we know where the vehicle is.'
             : 'That did not send. Try once more, or tell us on the phone.'}
         </p>
       ) : null}
@@ -246,8 +312,8 @@ export default function LocationForm() {
       <button
         type="button"
         onClick={send}
-        disabled={sendState === 'sending'}
-        className="mt-7 w-full bg-ink-950 px-8 py-[24px] text-center font-display text-[20px] font-extrabold uppercase leading-none tracking-[0.08em] text-white transition-colors hover:bg-ink-800 disabled:opacity-60"
+        disabled={sendState === 'sending' || !pickup}
+        className="w-full bg-ink-950 px-8 py-[26px] text-center font-display text-[22px] font-extrabold uppercase leading-none tracking-[0.08em] text-white transition-colors hover:bg-ink-800 disabled:opacity-40"
       >
         {sendState === 'sending' ? 'Sending…' : 'Send'}
       </button>
