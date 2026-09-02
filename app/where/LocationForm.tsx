@@ -225,6 +225,33 @@ export default function LocationForm() {
             <p className="mt-3 text-[15px] leading-[1.5] text-ink-500 text-pretty">
               Your phone will ask permission. We only use it to send the truck to the right place.
             </p>
+
+            {/* Два запасных способа стоят рядом с кнопкой, а не появляются
+                после отказа. Человек на трассе часто не хочет давать
+                геолокацию, но прекрасно узнаёт развязку на карте. */}
+            <div className="my-5 flex items-center gap-4">
+              <span className="h-px flex-1 bg-bone-300" />
+              <span className="text-[14px] font-bold uppercase tracking-[0.14em] text-bone-label">or</span>
+              <span className="h-px flex-1 bg-bone-300" />
+            </div>
+
+            {searchBox(pickupSearch, 'Type an address or place…', (hit) => {
+              setPickup({ lat: hit.lat, lng: hit.lng });
+              setPickupAccuracy(null);
+              setPickupAddress(hit.label);
+            })}
+
+            <button
+              type="button"
+              onClick={() => {
+                setPickup(FALLBACK);
+                setPickupAccuracy(null);
+                void resolveAddress(FALLBACK.lat, FALLBACK.lng);
+              }}
+              className="mt-4 w-full border-2 border-ink-700 px-6 py-[18px] text-center text-[16px] font-bold uppercase leading-none tracking-[0.08em] text-ink-700 transition-colors hover:bg-ink-700 hover:text-white"
+            >
+              🗺 Point it out on the map
+            </button>
           </>
         ) : (
           <div className="mt-5">
@@ -247,23 +274,21 @@ export default function LocationForm() {
               Not exactly right? Drag the dot or tap the map.
             </p>
 
-            {geoState === 'denied' || geoState === 'failed' ? (
-              <div className="mt-4">
-                {searchBox(pickupSearch, 'Or search an address or place…', (hit) => {
-                  setPickup({ lat: hit.lat, lng: hit.lng });
-                  setPickupAccuracy(null);
-                  setPickupAddress(hit.label);
-                })}
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={askLocation}
-                className="mt-3 text-[16px] font-bold text-brand-600 underline underline-offset-4"
-              >
-                Try my location again
-              </button>
-            )}
+            <div className="mt-4">
+              {searchBox(pickupSearch, 'Or type an address or place…', (hit) => {
+                setPickup({ lat: hit.lat, lng: hit.lng });
+                setPickupAccuracy(null);
+                setPickupAddress(hit.label);
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={askLocation}
+              className="mt-4 text-[16px] font-bold text-brand-600 underline underline-offset-4"
+            >
+              Try my location again
+            </button>
           </div>
         )}
       </section>
@@ -281,6 +306,16 @@ export default function LocationForm() {
             setDropoffLabel(hit.label);
           })}
         </div>
+
+        {!dropoff ? (
+          <button
+            type="button"
+            onClick={() => setDropoff(pickup ?? FALLBACK)}
+            className="mt-4 w-full border-2 border-ink-700 px-6 py-[18px] text-center text-[16px] font-bold uppercase leading-none tracking-[0.08em] text-ink-700 transition-colors hover:bg-ink-700 hover:text-white"
+          >
+            🗺 Point it out on the map
+          </button>
+        ) : null}
 
         {dropoff ? (
           <div className="mt-4">

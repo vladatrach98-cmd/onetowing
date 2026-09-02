@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
+import { BASE_LOCATION, BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
 import { getNavLinks } from '../lib/nav';
 
 export default function SiteFooter() {
@@ -81,8 +81,19 @@ export default function SiteFooter() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-wrap justify-between gap-4 px-6 py-[22px] text-[13px] tracking-[0.06em] text-ink-450 lg:px-8">
-          <span>© 2026 {BUSINESS.name}. All rights reserved.</span>
-          <span>Prices on this site are estimates, not final quotes</span>
+          {/* Полное юридическое имя на видном месте: при регистрации SMS
+              проверяющий сверяет сайт с письмом IRS, а «ONE TOWING» без «LLC»
+              с ним не совпадает — это отдельная причина отказа. */}
+          <span>© 2026 ONE TOWING LLC · {BASE_LOCATION.address}</span>
+          <span className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href="/privacy" className="text-ink-450 transition-colors hover:text-white">
+              Privacy
+            </Link>
+            <Link href="/terms" className="text-ink-450 transition-colors hover:text-white">
+              Terms
+            </Link>
+            <span>Prices on this site are estimates, not final quotes</span>
+          </span>
         </div>
       </div>
     </footer>

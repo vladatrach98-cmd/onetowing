@@ -23,6 +23,7 @@ type Body = {
   name?: string;
   email?: string;
   when?: string;
+  smsConsent?: boolean;
   /** Honeypot: настоящий человек это поле не видит и не заполняет. */
   company?: string;
   /** Сколько миллисекунд форма была открыта — боты отправляют мгновенно. */
@@ -80,6 +81,7 @@ export async function POST(request: Request) {
     name: clean(body.name, 80) || undefined,
     email: clean(body.email, 120) || undefined,
     when: clean(body.when, 40) || undefined,
+    smsConsent: body.smsConsent === true,
   });
 
   return NextResponse.json({ ok: true, delivered });

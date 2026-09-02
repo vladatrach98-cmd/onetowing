@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Link from 'next/link';
 import { BUSINESS } from '../lib/constants';
 
 /**
@@ -43,6 +44,7 @@ export default function BookingForm() {
   const [vehicle, setVehicle] = useState('');
   const [phone, setPhone] = useState('');
   const [note, setNote] = useState('');
+  const [smsConsent, setSmsConsent] = useState(false);
   const [company, setCompany] = useState(''); // honeypot
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const openedAt = useRef(Date.now());
@@ -71,6 +73,7 @@ export default function BookingForm() {
           name: name.trim() || undefined,
           email: email.trim() || undefined,
           when: when || undefined,
+          smsConsent,
           // Время и машина идут в примечание: отдельных полей у заявки нет,
           // а владельцу это нужно видеть одной строкой.
           note: [vehicle.trim() && `Vehicle: ${vehicle.trim()}`, note.trim()].filter(Boolean).join(' · '),
@@ -234,6 +237,35 @@ export default function BookingForm() {
           className="hidden"
         />
       </div>
+
+      {/* СОГЛАСИЕ НА SMS.
+          Без него не пройдёт регистрация 10DLC: правило CallRail — собираете
+          телефоны без явного согласия на переписку на той же странице, значит
+          зарегистрировать бизнес нельзя. Три условия, все обязательны:
+          снята по умолчанию, форма отправляется и без неё, и речь только про
+          SMS — почту и звонки в тот же пункт складывать запрещено. */}
+      <label className="mt-7 flex cursor-pointer items-start gap-3 border border-bone-300 bg-bone-50 px-5 py-5">
+        <input
+          type="checkbox"
+          checked={smsConsent}
+          onChange={(e) => setSmsConsent(e.target.checked)}
+          className="mt-[3px] h-5 w-5 shrink-0 accent-brand-500"
+        />
+        <span className="text-[15px] leading-[1.55] text-ink-600 text-pretty">
+          I agree to receive text messages from <strong className="font-bold text-ink-700">ONE TOWING LLC</strong>{' '}
+          about my service request, including a link to share my location. Message frequency varies — about one
+          message per request. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not
+          a condition of service. See our{' '}
+          <Link href="/privacy" className="font-bold text-brand-600 underline underline-offset-2">
+            Privacy Policy
+          </Link>{' '}
+          and{' '}
+          <Link href="/terms" className="font-bold text-brand-600 underline underline-offset-2">
+            Terms
+          </Link>
+          .
+        </span>
+      </label>
 
       {state === 'error' ? (
         <p className="mt-6 text-[16px] leading-[1.55] text-brand-600">

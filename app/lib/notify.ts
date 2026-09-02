@@ -39,6 +39,12 @@ export type Lead = {
   email?: string;
   /** Значение поля datetime-local, вида «2026-09-02T14:30». */
   when?: string;
+  /**
+   * Клиент поставил галочку согласия на SMS. Это ЗАПИСЬ О СОГЛАСИИ —
+   * при жалобе именно её просят предъявить, поэтому она идёт в сообщение
+   * владельцу, а не теряется.
+   */
+  smsConsent?: boolean;
 };
 
 /** «2026-09-02T14:30» → «02.09 в 14:30». Часовой пояс — тот, что выбрал клиент. */
@@ -95,6 +101,9 @@ function buildMessage(lead: Lead): string {
   }
   if (lead.email) {
     lines.push(`✉️ <b>Почта:</b> ${escapeHtml(lead.email)}`);
+  }
+  if (lead.smsConsent) {
+    lines.push('✅ <b>Согласие на SMS дано</b> (галочка на сайте)');
   }
   if (lead.note) {
     lines.push(`📝 ${escapeHtml(lead.note)}`);
