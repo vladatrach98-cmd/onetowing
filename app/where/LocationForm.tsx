@@ -40,7 +40,8 @@ function useAddressSearch() {
   const [hits, setHits] = useState<Hit[]>([]);
   const [busy, setBusy] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const skipNext = useRef(false);
+  /** Последний адрес, который вписала карта. По нему искать заново не надо. */
+  const fromMap = useRef<string | null>(null);
 
   /**
    * Вписать текст в поле, НЕ запуская поиск.
@@ -48,9 +49,14 @@ function useAddressSearch() {
    * Нужно, когда адрес пришёл от карты: подставить его в поле надо, а искать
    * по нему заново — нет. Иначе под полем тут же вылезает список подсказок
    * с тем же самым адресом, и человек не понимает, что от него хотят.
+   *
+   * ⚠️ Запоминаем само значение, а не одноразовый флажок «пропусти следующий
+   * раз». Флажок ломался, когда карта возвращала адрес, уже стоящий в поле:
+   * на равном значении React не перерисовывает, эффект не срабатывает, флажок
+   * остаётся поднятым — и съедает следующий поиск, набранный человеком руками.
    */
   function setQuietly(value: string) {
-    skipNext.current = true;
+    fromMap.current = value;
     setQuery(value);
     setHits([]);
   }
@@ -60,10 +66,11 @@ function useAddressSearch() {
     // пришёл от карты, отложенный запрос всё равно бы выстрелил и показал
     // подсказки по недопечатанному тексту поверх подставленного адреса.
     if (timer.current) clearTimeout(timer.current);
-    if (skipNext.current) {
-      skipNext.current = false;
+    if (query === fromMap.current) {
+      setHits([]);
       return;
     }
+    fromMap.current = null;
     if (query.trim().length < 3) {
       setHits([]);
       return;
@@ -94,10 +101,23 @@ export default function LocationForm() {
   const [pickup, setPickup] = useState<Point | null>(null);
   const [pickupAccuracy, setPickupAccuracy] = useState<number | null>(null);
   const [pickupAddress, setPickupAddress] = useState<string | null>(null);
+  const [pickupBusy, setPickupBusy] = useState(false);
   const [geoState, setGeoState] = useState<'idle' | 'asking' | 'denied' | 'failed'>('idle');
 
   const [dropoff, setDropoff] = useState<Point | null>(null);
   const [dropoffLabel, setDropoffLabel] = useState('');
+  const [dropoffBusy, setDropoffBusy] = useState(false);
+
+  /**
+   * Номер последнего запроса адреса — отдельно на каждую точку.
+   *
+   * Человек тычет в карту несколько раз подряд, а геокодер отвечает не в том
+   * порядке, в каком его спросили. Без этого счётчика ответ на первый тык
+   * запросто приходит последним и затирает адрес того места, куда ткнули
+   * в итоге. Ответ с устаревшим номером просто выбрасываем.
+   */
+  const pickupRun = useRef(0);
+  const dropoffRun = useRef(0);
 
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
@@ -122,7 +142,13 @@ export default function LocationForm() {
    * номер дома или сотрёт и напишет «Walmart on Dale Mabry».
    */
   async function resolvePickup(lat: number, lng: number) {
+    const run = ++pickupRun.current;
+    setPickupBusy(true);
     const address = await lookupAddress(lat, lng);
+    // За это время ткнули ещё раз — этот ответ уже не про ту точку.
+    // Спиннер не гасим: его погасит тот запрос, который сейчас в пути.
+    if (run !== pickupRun.current) return;
+    setPickupBusy(false);
     setPickupAddress(address);
     if (address) pickupSearch.setQuietly(address);
   }
@@ -132,7 +158,11 @@ export default function LocationForm() {
    * уходили голые координаты — по ним не понять, это шиномонтаж или чей-то дом.
    */
   async function resolveDropoff(lat: number, lng: number) {
+    const run = ++dropoffRun.current;
+    setDropoffBusy(true);
     const address = await lookupAddress(lat, lng);
+    if (run !== dropoffRun.current) return;
+    setDropoffBusy(false);
     setDropoffLabel(address ?? '');
     if (address) dropSearch.setQuietly(address);
   }
@@ -310,9 +340,17 @@ export default function LocationForm() {
                 <span className="font-semibold text-ink-500"> — accurate to about {Math.round(pickupAccuracy)} m</span>
               ) : null}
             </p>
-            {pickupAddress ? (
+            {/* Геокодер думает секунду-две. Без этой строки человек тыкает
+                в карту, ничего не происходит, и он решает, что сломалось. */}
+            {pickupBusy ? (
+              <p className="mt-1 text-[16px] leading-[1.45] text-ink-400">Reading the address…</p>
+            ) : pickupAddress ? (
               <p className="mt-1 text-[16px] leading-[1.45] text-ink-500 text-pretty">{pickupAddress}</p>
-            ) : null}
+            ) : (
+              <p className="mt-1 text-[16px] leading-[1.45] text-ink-400">
+                No street address here — the dot is enough.
+              </p>
+            )}
             <p className="mt-2 text-[15px] leading-[1.45] text-ink-500">
               Not exactly right? Drag the dot or tap the map.
             </p>
@@ -377,7 +415,13 @@ export default function LocationForm() {
                 tone="dropoff"
               />
             </div>
-            <p className="mt-3 text-[15px] leading-[1.45] text-ink-500">Drag the dot if it is not exact.</p>
+            <p className="mt-3 text-[15px] leading-[1.45] text-ink-500">
+              {dropoffBusy
+                ? 'Reading the address…'
+                : dropoffLabel
+                  ? 'Drag the dot if it is not exact.'
+                  : 'No street address here — the dot is enough. Drag it if it is not exact.'}
+            </p>
           </div>
         ) : (
           <p className="mt-3 text-[15px] leading-[1.5] text-ink-500 text-pretty">
