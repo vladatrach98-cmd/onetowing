@@ -222,3 +222,90 @@ export async function sendLead(lead: Lead): Promise<{ delivered: boolean }> {
     return { delivered: false };
   }
 }
+
+/**
+ * ЛОКАЦИЯ СО СТРАНИЦЫ /where.
+ *
+ * Владелец разговаривает с клиентом и одновременно ведёт машину. Поэтому
+ * сообщение построено так, чтобы им можно было пользоваться одним пальцем:
+ * сначала телефон (перезвонить), потом ссылка на карту (открыть навигацию).
+ * Координаты показаны текстом на случай, если ссылка не откроется.
+ */
+export type CustomerLocation = {
+  phone?: string;
+  pickupLat?: number;
+  pickupLng?: number;
+  pickupAccuracy?: number;
+  /** Адрес, если клиент вписал его руками вместо GPS. */
+  pickupText?: string;
+  dropoffText?: string;
+  note?: string;
+};
+
+const mapsPoint = (lat: number, lng: number) =>
+  `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+export async function sendCustomerLocation(loc: CustomerLocation): Promise<{ delivered: boolean }> {
+  const lines: string[] = ['📍 <b>ЛОКАЦИЯ ОТ КЛИЕНТА</b>', ''];
+
+  if (loc.phone) {
+    lines.push(`📞 <b>Телефон:</b> ${escapeHtml(loc.phone)}`);
+    lines.push('');
+  }
+
+  lines.push('🚗 <b>Машина здесь:</b>');
+  if (loc.pickupLat != null && loc.pickupLng != null) {
+    const acc = loc.pickupAccuracy != null ? ` · точность ~${Math.round(loc.pickupAccuracy)} м` : '';
+    lines.push(`${loc.pickupLat.toFixed(5)}, ${loc.pickupLng.toFixed(5)}${acc}`);
+    lines.push(mapsPoint(loc.pickupLat, loc.pickupLng));
+  }
+  if (loc.pickupText) {
+    lines.push(escapeHtml(loc.pickupText));
+    if (loc.pickupLat == null) {
+      lines.push(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.pickupText)}`);
+    }
+  }
+
+  if (loc.dropoffText) {
+    lines.push('');
+    lines.push('🏁 <b>Везти сюда:</b>');
+    lines.push(escapeHtml(loc.dropoffText));
+    lines.push(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.dropoffText)}`);
+  }
+
+  // Готовый маршрут от машины до точки назначения — одно нажатие, и навигация ведёт.
+  if (loc.pickupLat != null && loc.pickupLng != null && loc.dropoffText) {
+    lines.push('');
+    lines.push(
+      `🗺 <b>Маршрут:</b> https://www.google.com/maps/dir/?api=1&origin=${loc.pickupLat},${loc.pickupLng}&destination=${encodeURIComponent(loc.dropoffText)}`,
+    );
+  }
+
+  if (loc.note) {
+    lines.push('');
+    lines.push(`📝 ${escapeHtml(loc.note)}`);
+  }
+
+  if (!telegramReady) {
+    console.info('[notify] Telegram не настроен, локация только в логе:', loc);
+    return { delivered: false };
+  }
+
+  try {
+    await callTelegram('sendMessage', {
+      text: lines.join('\n'),
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+    });
+
+    // Отдельная метка на карте: в Telegram открывается как точка, а не ссылка.
+    if (loc.pickupLat != null && loc.pickupLng != null) {
+      await callTelegram('sendLocation', { latitude: loc.pickupLat, longitude: loc.pickupLng });
+    }
+
+    return { delivered: true };
+  } catch (error) {
+    console.error('[notify] Telegram не принял локацию:', error);
+    return { delivered: false };
+  }
+}
