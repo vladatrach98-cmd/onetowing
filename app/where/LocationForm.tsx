@@ -40,9 +40,30 @@ function useAddressSearch() {
   const [hits, setHits] = useState<Hit[]>([]);
   const [busy, setBusy] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipNext = useRef(false);
+
+  /**
+   * Вписать текст в поле, НЕ запуская поиск.
+   *
+   * Нужно, когда адрес пришёл от карты: подставить его в поле надо, а искать
+   * по нему заново — нет. Иначе под полем тут же вылезает список подсказок
+   * с тем же самым адресом, и человек не понимает, что от него хотят.
+   */
+  function setQuietly(value: string) {
+    skipNext.current = true;
+    setQuery(value);
+    setHits([]);
+  }
 
   useEffect(() => {
+    // Сброс висящего поиска идёт ПЕРВЫМ. Если человек печатал, а потом адрес
+    // пришёл от карты, отложенный запрос всё равно бы выстрелил и показал
+    // подсказки по недопечатанному тексту поверх подставленного адреса.
     if (timer.current) clearTimeout(timer.current);
+    if (skipNext.current) {
+      skipNext.current = false;
+      return;
+    }
     if (query.trim().length < 3) {
       setHits([]);
       return;
@@ -66,7 +87,7 @@ function useAddressSearch() {
     };
   }, [query]);
 
-  return { query, setQuery, hits, setHits, busy };
+  return { query, setQuery, setQuietly, hits, setHits, busy };
 }
 
 export default function LocationForm() {
@@ -83,15 +104,37 @@ export default function LocationForm() {
   const pickupSearch = useAddressSearch();
   const dropSearch = useAddressSearch();
 
-  /** Координаты → человеческий адрес. Нужен и клиенту для проверки, и владельцу. */
-  async function resolveAddress(lat: number, lng: number) {
+  /** Координаты → человеческий адрес. Одна функция на обе точки. */
+  async function lookupAddress(lat: number, lng: number): Promise<string | null> {
     try {
       const response = await fetch(`/api/geocode?lat=${lat}&lng=${lng}`);
       const data = (await response.json()) as { address?: string | null };
-      setPickupAddress(data.address ?? null);
+      return data.address ?? null;
     } catch {
-      setPickupAddress(null);
+      return null;
     }
+  }
+
+  /**
+   * Адрес машины: показываем под картой И подставляем в поле поиска.
+   * Второе важнее, чем кажется. Человеку проще исправить готовый адрес, чем
+   * вспоминать его с нуля: определилось «South Morgan Street» — он допишет
+   * номер дома или сотрёт и напишет «Walmart on Dale Mabry».
+   */
+  async function resolvePickup(lat: number, lng: number) {
+    const address = await lookupAddress(lat, lng);
+    setPickupAddress(address);
+    if (address) pickupSearch.setQuietly(address);
+  }
+
+  /**
+   * Адрес точки назначения. Без этого при постановке точки пальцем владельцу
+   * уходили голые координаты — по ним не понять, это шиномонтаж или чей-то дом.
+   */
+  async function resolveDropoff(lat: number, lng: number) {
+    const address = await lookupAddress(lat, lng);
+    setDropoffLabel(address ?? '');
+    if (address) dropSearch.setQuietly(address);
   }
 
   function askLocation() {
@@ -107,7 +150,7 @@ export default function LocationForm() {
         setPickup(point);
         setPickupAccuracy(position.coords.accuracy);
         setGeoState('idle');
-        void resolveAddress(point.lat, point.lng);
+        void resolvePickup(point.lat, point.lng);
       },
       (error) => {
         // 1 = человек отказал. Остальное — техника: нет сигнала, вышло время.
@@ -122,7 +165,7 @@ export default function LocationForm() {
   function movePickup(lat: number, lng: number) {
     setPickup({ lat, lng });
     setPickupAccuracy(null); // передвинули рукой — точность GPS больше не про эту точку
-    void resolveAddress(lat, lng);
+    void resolvePickup(lat, lng);
   }
 
   async function send() {
@@ -246,7 +289,7 @@ export default function LocationForm() {
               onClick={() => {
                 setPickup(FALLBACK);
                 setPickupAccuracy(null);
-                void resolveAddress(FALLBACK.lat, FALLBACK.lng);
+                void resolvePickup(FALLBACK.lat, FALLBACK.lng);
               }}
               className="mt-4 w-full border-2 border-ink-700 px-6 py-[18px] text-center text-[16px] font-bold uppercase leading-none tracking-[0.08em] text-ink-700 transition-colors hover:bg-ink-700 hover:text-white"
             >
@@ -310,7 +353,11 @@ export default function LocationForm() {
         {!dropoff ? (
           <button
             type="button"
-            onClick={() => setDropoff(pickup ?? FALLBACK)}
+            onClick={() => {
+              const start = pickup ?? FALLBACK;
+              setDropoff(start);
+              void resolveDropoff(start.lat, start.lng);
+            }}
             className="mt-4 w-full border-2 border-ink-700 px-6 py-[18px] text-center text-[16px] font-bold uppercase leading-none tracking-[0.08em] text-ink-700 transition-colors hover:bg-ink-700 hover:text-white"
           >
             🗺 Point it out on the map
@@ -323,7 +370,10 @@ export default function LocationForm() {
               <PinMap
                 lat={dropoff.lat}
                 lng={dropoff.lng}
-                onMove={(lat, lng) => setDropoff({ lat, lng })}
+                onMove={(lat, lng) => {
+                  setDropoff({ lat, lng });
+                  void resolveDropoff(lat, lng);
+                }}
                 tone="dropoff"
               />
             </div>
