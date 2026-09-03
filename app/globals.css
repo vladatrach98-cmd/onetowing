@@ -48,3 +48,31 @@ html {
     animation: none;
   }
 }
+
+/*
+ * Кнопка «Send my location» в нижней плашке /where.
+ *
+ * Клиент стоит на обочине, говорит по телефону и на форму смотрит вполглаза.
+ * Кнопка должна тихо дышать: не мигать и не дёргаться, но и не давать себя
+ * не заметить. Кольцо расходится от края и гаснет — движение есть, а рябь
+ * в глазах не появляется.
+ */
+@keyframes send-ready {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(200, 24, 31, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(200, 24, 31, 0);
+  }
+}
+
+.send-ready {
+  animation: send-ready 2.2s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .send-ready {
+    animation: none;
+  }
+}

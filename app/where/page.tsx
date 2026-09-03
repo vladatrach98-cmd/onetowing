@@ -45,7 +45,9 @@ export default function WherePage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-[560px] px-5 py-8">
+      {/* Запас снизу под плашку с кнопкой: она прибита к экрану и накрыла бы
+          собой последние строки. Высота плашки ~120 px, берём с полем. */}
+      <div className="mx-auto max-w-[560px] px-5 pb-[170px] pt-8">
         <h1 className="font-display text-[27px] font-extrabold leading-[1.12] tracking-[-0.015em] text-ink-700 text-balance sm:text-[32px]">
           Send us your location
         </h1>

@@ -430,22 +430,49 @@ export default function LocationForm() {
         )}
       </section>
 
-      {sendState === 'error' ? (
-        <p className="text-[16px] leading-[1.55] text-brand-600 text-pretty">
-          {!pickup
-            ? 'Tap the button above so we know where the vehicle is.'
-            : 'That did not send. Try once more, or tell us on the phone.'}
-        </p>
-      ) : null}
+      {/* ────────── Кнопка отправки — прибита к низу экрана ──────────
+          Раньше она стояла последней в форме, и клиент до неё не доезжал:
+          карта занимает пол-экрана, человек ставит точку и на этом
+          останавливается — ему кажется, что дело сделано. Теперь плашка
+          видна с первой секунды. Пока точки нет, кнопка серая: так сразу
+          понятно, куда всё идёт и чем закончится.
 
-      <button
-        type="button"
-        onClick={send}
-        disabled={sendState === 'sending' || !pickup}
-        className="w-full bg-ink-950 px-8 py-[26px] text-center font-display text-[22px] font-extrabold uppercase leading-none tracking-[0.08em] text-white transition-colors hover:bg-ink-800 disabled:opacity-40"
-      >
-        {sendState === 'sending' ? 'Sending…' : 'Send'}
-      </button>
+          ⚠️ z-1200 не с потолка. У Leaflet свои слои до 1000 (тайлы 400,
+          кнопки масштаба 800, всплывашки 700). С меньшим числом карта
+          закрывала бы кнопку собой ровно в тот момент, когда она нужна.
+
+          ⚠️ Отступ снизу через env(safe-area-inset-bottom) — на айфонах
+          внизу живёт полоска-«домой», и без этого кнопка лезет под неё. */}
+      <div className="fixed inset-x-0 bottom-0 z-[1200] border-t-2 border-bone-300 bg-bone-100/95 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] shadow-[0_-10px_28px_rgba(11,16,22,0.16)] backdrop-blur-sm">
+        <div className="mx-auto max-w-[560px]">
+          {sendState === 'error' ? (
+            <p className="mb-2 text-center text-[15px] font-bold leading-[1.4] text-brand-600 text-pretty">
+              {!pickup
+                ? 'Tell us where the vehicle is first.'
+                : 'That did not send. Try once more, or tell us on the phone.'}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={send}
+            disabled={sendState === 'sending' || !pickup}
+            className={[
+              'w-full px-6 py-[22px] text-center font-display text-[19px] font-extrabold uppercase',
+              'leading-none tracking-[0.06em] text-white transition-colors sm:text-[22px]',
+              pickup
+                ? `bg-brand-500 hover:bg-brand-600 ${sendState === 'sending' ? '' : 'send-ready'}`
+                : 'cursor-not-allowed bg-ink-400',
+            ].join(' ')}
+          >
+            {sendState === 'sending' ? 'Sending…' : 'Send my location'}
+          </button>
+
+          <p className="mt-2 text-center text-[14px] leading-[1.35] text-ink-500">
+            {pickup ? 'We get it the second you tap.' : 'Set your location above, then tap here.'}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
