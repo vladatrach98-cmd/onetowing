@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { BASE_LOCATION } from '../../lib/constants';
 import { geocode, hasMapsKey, reverseGeocode, routeBetween, type LatLng } from '../../lib/maps';
 import { sendLead } from '../../lib/notify';
-import { allow, clientIp } from '../../lib/rate-limit';
+import { allow, clientIp, isLocalRequest } from '../../lib/rate-limit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
   // Тихое сообщение владельцу: он видит движение на сайте ещё до звонка.
   // Ждём отправку (await), а не «вдогонку»: serverless-функция засыпает сразу
   // после ответа браузеру и незавершённый запрос к Telegram потерялся бы.
-  if (body.notifyOwner && allow(`locate-notify:${ip}`, 1, 15 * 60_000)) {
+  if (body.notifyOwner && !isLocalRequest(request.headers) && allow(`locate-notify:${ip}`, 1, 15 * 60_000)) {
     await sendLead({
       kind: 'auto',
       service: clean(body.service, 120) || 'не выбрано',

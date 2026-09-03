@@ -30,6 +30,24 @@ export function allow(key: string, limit: number, windowMs: number): boolean {
   return true;
 }
 
+/**
+ * Запрос пришёл с локальной машины, а не с живого сайта?
+ *
+ * ⚠️ Появилось не от хорошей жизни. Локальный сервер читает тот же
+ * `.env.local` с настоящим токеном бота — значит нажатие «Send» на
+ * http://localhost во время проверки уходит настоящим сообщением в рабочую
+ * группу «ONE TOWING- заявки». Владелец видит заявку, которой нет, и едет
+ * или звонит впустую. Один раз так и случилось: проверяющий гонял форму
+ * на локальном сервере, а Роману пришла локация.
+ *
+ * Поэтому уведомления с localhost не уходят — пишутся в консоль.
+ * На Vercel host всегда onetowingfl.com, так что живой сайт не задет.
+ */
+export function isLocalRequest(headers: Headers): boolean {
+  const host = (headers.get('host') ?? '').toLowerCase();
+  return host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]');
+}
+
 export function clientIp(headers: Headers): string {
   return headers.get('x-forwarded-for')?.split(',')[0]?.trim() || headers.get('x-real-ip') || 'unknown';
 }

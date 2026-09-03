@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sendCustomerLocation } from '../../lib/notify';
-import { allow, clientIp } from '../../lib/rate-limit';
+import { allow, clientIp, isLocalRequest } from '../../lib/rate-limit';
 
 /**
  * Приём локации со страницы /where.
@@ -36,6 +36,17 @@ const clean = (value: unknown, max = 200) => (typeof value === 'string' ? value.
 
 export async function POST(request: Request) {
   const ip = clientIp(request.headers);
+
+  /**
+   * Проверка с локальной машины не должна будить владельца.
+   * Локальный сервер читает тот же .env.local с настоящим токеном бота,
+   * поэтому без этой заглушки нажатие «Send» на localhost уходит настоящей
+   * заявкой в рабочую группу. Один раз так и вышло.
+   */
+  if (isLocalRequest(request.headers)) {
+    console.info('[location] локальный запрос — в Telegram не шлём');
+    return NextResponse.json({ ok: true, delivered: false, local: true });
+  }
 
   // Человек на обочине может отправить дважды — это нормально. Но не двадцать раз.
   if (!allow(`loc:${ip}`, 6, 10 * 60_000)) {

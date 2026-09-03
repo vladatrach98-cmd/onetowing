@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { estimate } from '../../lib/pricing';
 import { sendLead } from '../../lib/notify';
-import { allow, clientIp } from '../../lib/rate-limit';
+import { allow, clientIp, isLocalRequest } from '../../lib/rate-limit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -35,6 +35,17 @@ const clean = (value: unknown, max = 200) => (typeof value === 'string' ? value.
 
 export async function POST(request: Request) {
   const ip = clientIp(request.headers);
+
+  /**
+   * Проверка с локальной машины не должна будить владельца.
+   * Локальный сервер читает тот же .env.local с настоящим токеном бота,
+   * поэтому без этой заглушки нажатие «Send» на localhost уходит настоящей
+   * заявкой в рабочую группу. Один раз так и вышло.
+   */
+  if (isLocalRequest(request.headers)) {
+    console.info('[lead] локальный запрос — в Telegram не шлём');
+    return NextResponse.json({ ok: true, delivered: false, local: true });
+  }
   if (!allow(`lead:${ip}`, 5, 10 * 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }

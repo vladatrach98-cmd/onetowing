@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sendCallPing } from '../../lib/notify';
-import { allow, clientIp } from '../../lib/rate-limit';
+import { allow, clientIp, isLocalRequest } from '../../lib/rate-limit';
 
 /**
  * «Сейчас позвонят» — сигнал в Telegram в момент нажатия на номер телефона.
@@ -46,6 +46,17 @@ function shortSource(referrer: string): string {
 
 export async function POST(request: Request) {
   const ip = clientIp(request.headers);
+
+  /**
+   * Проверка с локальной машины не должна будить владельца.
+   * Локальный сервер читает тот же .env.local с настоящим токеном бота,
+   * поэтому без этой заглушки нажатие «Send» на localhost уходит настоящей
+   * заявкой в рабочую группу. Один раз так и вышло.
+   */
+  if (isLocalRequest(request.headers)) {
+    console.info('[call-click] локальный запрос — в Telegram не шлём');
+    return NextResponse.json({ ok: true, delivered: false, local: true });
+  }
 
   // Один сигнал в 90 секунд с адреса: человек в панике жмёт кнопку несколько раз,
   // а владельцу нужен один звонок — одно сообщение.
