@@ -19,6 +19,8 @@ export const dynamic = 'force-dynamic';
 
 type Body = {
   phone?: string;
+  /** Клиент отметил галочку «согласен получать SMS». Определяет, можно ли писать. */
+  smsConsent?: boolean;
   pickupLat?: number;
   pickupLng?: number;
   pickupAccuracy?: number;
@@ -73,6 +75,7 @@ export async function POST(request: Request) {
 
   const { delivered } = await sendCustomerLocation({
     phone: clean(body.phone, 40) || undefined,
+    smsConsent: body.smsConsent === true,
     pickupLat,
     pickupLng,
     pickupAccuracy: num(body.pickupAccuracy),

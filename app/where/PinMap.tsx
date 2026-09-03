@@ -35,6 +35,18 @@ export default function PinMap({ lat, lng, onMove, tone = 'pickup' }: Props) {
   const markerRef = useRef<any>(null);
   const onMoveRef = useRef(onMove);
   onMoveRef.current = onMove;
+  /**
+   * Свежие координаты на момент, когда Leaflet наконец догрузился.
+   *
+   * ⚠️ Карта строится в асинхронном эффекте: сначала уходит запрос за кодом
+   * Leaflet, и только потом создаётся карта. На медленном мобильном интернете
+   * это секунды, и за это время клиент успевает выбрать адрес в поиске рядом.
+   * Эффект синхронизации на это не поможет — он выходит сразу, пока карты нет.
+   * Без этой ссылки карта построится по координатам ПЕРВОГО рендера, то есть
+   * по заглушке в даунтауне, а выбор клиента молча пропадёт.
+   */
+  const latest = useRef({ lat, lng });
+  latest.current = { lat, lng };
 
   useEffect(() => {
     let cancelled = false;
@@ -51,8 +63,9 @@ export default function PinMap({ lat, lng, onMove, tone = 'pickup' }: Props) {
         iconAnchor: [13, 13],
       });
 
+      const fresh = latest.current;
       const map = L.map(boxRef.current, {
-        center: [lat, lng],
+        center: [fresh.lat, fresh.lng],
         zoom: 17,
         // Прокрутка колесом выключена: на телефоне страница скроллится пальцем,
         // и карта не должна перехватывать это движение.
@@ -62,10 +75,10 @@ export default function PinMap({ lat, lng, onMove, tone = 'pickup' }: Props) {
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; OpenStreetMap',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      const marker = L.marker([lat, lng], { icon, draggable: true }).addTo(map);
+      const marker = L.marker([fresh.lat, fresh.lng], { icon, draggable: true }).addTo(map);
 
       marker.on('dragend', () => {
         const p = marker.getLatLng();

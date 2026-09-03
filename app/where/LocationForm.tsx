@@ -103,6 +103,18 @@ export default function LocationForm() {
   const [pickupAddress, setPickupAddress] = useState<string | null>(null);
   const [pickupBusy, setPickupBusy] = useState(false);
   const [geoState, setGeoState] = useState<'idle' | 'asking' | 'denied' | 'failed'>('idle');
+  /**
+   * На карте стоит НАША заглушка (центр Тампы), а не ответ клиента.
+   *
+   * ⚠️ Ради этого флага всё и затевалось. Раньше «точка на карте есть»
+   * означало «локация известна», а это не одно и то же: и кнопка «покажу
+   * на карте», и отказ в геолокации ставят точку в даунтауне — в четырёх
+   * сотнях метров от нашей же базы. Страница при этом писала «✓ Location
+   * found», подставляла настоящий адрес в даунтауне, а кнопка отправки
+   * загоралась красным. Человек с трассы отправлял нам наш собственный
+   * район, читал «Got it» и ждал. Эвакуатор ехал к себе домой.
+   */
+  const [pickupPending, setPickupPending] = useState(false);
 
   const [dropoff, setDropoff] = useState<Point | null>(null);
   const [dropoffLabel, setDropoffLabel] = useState('');
@@ -119,7 +131,23 @@ export default function LocationForm() {
   const pickupRun = useRef(0);
   const dropoffRun = useRef(0);
 
+  /**
+   * Телефон — необязательный и по умолчанию свёрнутый.
+   *
+   * Обычно он не нужен: владелец в эту минуту разговаривает с клиентом и номер
+   * уже видит. Нужен он в двух случаях — звонок оборвался, или локацию шлёт
+   * не тот, кто стоит у машины (жена, друг, прохожий). Поэтому поле есть,
+   * но развернуть его надо самому: на два обязательных шага оно не влияет.
+   */
+  const [phoneOpen, setPhoneOpen] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [smsConsent, setSmsConsent] = useState(false);
+
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  // Считаем только цифры: человек пишет и «(656) 777-2980», и «6567772980».
+  const phoneDigits = phone.replace(/\D/g, '');
+  const phoneUsable = phoneDigits.length >= 10;
 
   const pickupSearch = useAddressSearch();
   const dropSearch = useAddressSearch();
@@ -171,6 +199,7 @@ export default function LocationForm() {
     if (!navigator.geolocation) {
       setGeoState('failed');
       setPickup(FALLBACK);
+      setPickupPending(true);
       return;
     }
     setGeoState('asking');
@@ -179,6 +208,7 @@ export default function LocationForm() {
         const point = { lat: position.coords.latitude, lng: position.coords.longitude };
         setPickup(point);
         setPickupAccuracy(position.coords.accuracy);
+        setPickupPending(false);
         setGeoState('idle');
         void resolvePickup(point.lat, point.lng);
       },
@@ -186,7 +216,9 @@ export default function LocationForm() {
         // 1 = человек отказал. Остальное — техника: нет сигнала, вышло время.
         setGeoState(error.code === 1 ? 'denied' : 'failed');
         // Карту всё равно показываем: точку можно поставить пальцем.
+        // Но это ещё не локация — отправлять пока нечего.
         setPickup(FALLBACK);
+        setPickupPending(true);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     );
@@ -195,11 +227,12 @@ export default function LocationForm() {
   function movePickup(lat: number, lng: number) {
     setPickup({ lat, lng });
     setPickupAccuracy(null); // передвинули рукой — точность GPS больше не про эту точку
+    setPickupPending(false); // ткнул пальцем — значит показал, где машина
     void resolvePickup(lat, lng);
   }
 
   async function send() {
-    if (!pickup) {
+    if (!pickup || pickupPending) {
       setSendState('error');
       return;
     }
@@ -209,6 +242,10 @@ export default function LocationForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          // Недописанный номер не шлём: владельцу «656-77» бесполезен,
+          // а согласие на SMS без телефона — бессмыслица.
+          phone: phoneUsable ? phone.trim() : undefined,
+          smsConsent: phoneUsable ? smsConsent : undefined,
           pickupLat: pickup.lat,
           pickupLng: pickup.lng,
           pickupAccuracy: pickupAccuracy ?? undefined,
@@ -276,6 +313,12 @@ export default function LocationForm() {
     </div>
   );
 
+  /**
+   * Готовы ли мы отправлять. Заглушка на карте — это НЕ локация,
+   * поэтому кнопка от неё не загорается и отправку не пускает.
+   */
+  const ready = pickup !== null && !pickupPending;
+
   return (
     <div className="grid gap-5">
       {/* ────────── 1. Где машина ────────── */}
@@ -312,14 +355,19 @@ export default function LocationForm() {
               setPickup({ lat: hit.lat, lng: hit.lng });
               setPickupAccuracy(null);
               setPickupAddress(hit.label);
+              setPickupPending(false);
             })}
 
             <button
               type="button"
               onClick={() => {
+                // Только открываем карту. Адрес заглушки НЕ определяем:
+                // «701 North Marion Street» выглядит как настоящий ответ,
+                // хотя это просто центр Тампы.
                 setPickup(FALLBACK);
                 setPickupAccuracy(null);
-                void resolvePickup(FALLBACK.lat, FALLBACK.lng);
+                setPickupAddress(null);
+                setPickupPending(true);
               }}
               className="mt-4 w-full border-2 border-ink-700 px-6 py-[18px] text-center text-[16px] font-bold uppercase leading-none tracking-[0.08em] text-ink-700 transition-colors hover:bg-ink-700 hover:text-white"
             >
@@ -333,16 +381,18 @@ export default function LocationForm() {
             </div>
 
             <p className="mt-3 text-[16px] font-bold leading-[1.4] text-ink-700">
-              {geoState === 'denied' || geoState === 'failed'
-                ? 'Tap the map where the vehicle is'
-                : '✓ Location found'}
+              {pickupPending ? '👆 Tap the map where the vehicle is' : '✓ Location found'}
               {pickupAccuracy != null ? (
                 <span className="font-semibold text-ink-500"> — accurate to about {Math.round(pickupAccuracy)} m</span>
               ) : null}
             </p>
             {/* Геокодер думает секунду-две. Без этой строки человек тыкает
                 в карту, ничего не происходит, и он решает, что сломалось. */}
-            {pickupBusy ? (
+            {pickupPending ? (
+              <p className="mt-1 text-[16px] leading-[1.45] text-ink-500 text-pretty">
+                The dot is just the middle of Tampa — we still do not know where you are.
+              </p>
+            ) : pickupBusy ? (
               <p className="mt-1 text-[16px] leading-[1.45] text-ink-400">Reading the address…</p>
             ) : pickupAddress ? (
               <p className="mt-1 text-[16px] leading-[1.45] text-ink-500 text-pretty">{pickupAddress}</p>
@@ -352,7 +402,9 @@ export default function LocationForm() {
               </p>
             )}
             <p className="mt-2 text-[15px] leading-[1.45] text-ink-500">
-              Not exactly right? Drag the dot or tap the map.
+              {pickupPending
+                ? 'Zoom in and tap the spot. Or type the address below.'
+                : 'Not exactly right? Drag the dot or tap the map.'}
             </p>
 
             <div className="mt-4">
@@ -360,6 +412,7 @@ export default function LocationForm() {
                 setPickup({ lat: hit.lat, lng: hit.lng });
                 setPickupAccuracy(null);
                 setPickupAddress(hit.label);
+                setPickupPending(false);
               })}
             </div>
 
@@ -430,6 +483,88 @@ export default function LocationForm() {
         )}
       </section>
 
+      {/* ────────── Телефон — по желанию ──────────
+          Обычно он не нужен: владелец в эту минуту разговаривает с клиентом.
+          Нужен в двух случаях — звонок оборвался, или локацию шлёт не тот, кто
+          стоит у машины (жена, друг, прохожий). Поэтому блок свёрнут: два
+          обязательных шага он не удлиняет, а кому надо — развернёт.
+
+          ⚠️ Галочка про SMS обязательна не для красоты. Правило регистрации
+          10DLC: «собираете телефоны на сайте без явного согласия на переписку —
+          зарегистрировать бизнес не сможете». Галочка стоит НЕСНЯТОЙ, форма
+          отправляется и без неё: согласие не может быть условием услуги. */}
+      {!phoneOpen ? (
+        <button
+          type="button"
+          onClick={() => setPhoneOpen(true)}
+          className="w-full border border-dashed border-bone-400 bg-white px-5 py-[16px] text-center text-[16px] font-bold leading-[1.35] text-ink-600 transition-colors hover:bg-bone-hover"
+        >
+          ☎ Share my phone number <span className="font-semibold text-ink-400">— optional</span>
+        </button>
+      ) : (
+        <section className="border border-bone-300 bg-white px-5 py-7 sm:px-7">
+          <div className="flex items-start justify-between gap-4">
+            <h2 className="font-display text-[21px] font-extrabold leading-[1.15] text-ink-700 sm:text-[23px]">
+              Your phone number
+            </h2>
+            <button
+              type="button"
+              onClick={() => {
+                setPhoneOpen(false);
+                setPhone('');
+                setSmsConsent(false);
+              }}
+              className="shrink-0 text-[15px] font-bold text-ink-400 underline underline-offset-4"
+            >
+              Remove
+            </button>
+          </div>
+          <p className="mt-2 text-[15px] leading-[1.5] text-ink-500 text-pretty">
+            Optional. Useful if we get cut off, or if you are sending this for someone else.
+          </p>
+
+          <input
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="(656) 777-2980"
+            className="mt-4 w-full border-2 border-bone-300 bg-white px-4 py-[16px] text-[17px] text-ink-700 outline-none focus:border-brand-500"
+          />
+          {phone.trim() && !phoneUsable ? (
+            <p className="mt-2 text-[15px] leading-[1.45] text-ink-500">
+              That is not a full number yet — we will still send your location.
+            </p>
+          ) : null}
+
+          <label className="mt-4 flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              checked={smsConsent}
+              onChange={(e) => setSmsConsent(e.target.checked)}
+              className="mt-[3px] h-5 w-5 shrink-0 accent-brand-500"
+            />
+            <span className="text-[15px] leading-[1.55] text-ink-600 text-pretty">
+              I agree to receive text messages from{' '}
+              <strong className="font-bold text-ink-700">ONE TOWING LLC</strong> about this
+              request. Message frequency varies — about one message per request. Message and data
+              rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of
+              service. See our{' '}
+              <a href="/privacy" className="font-bold text-brand-600 underline underline-offset-2">
+                Privacy Policy
+              </a>{' '}
+              and{' '}
+              <a href="/terms" className="font-bold text-brand-600 underline underline-offset-2">
+                Terms
+              </a>
+              .
+            </span>
+          </label>
+        </section>
+      )}
+
+
       {/* ────────── Кнопка отправки — прибита к низу экрана ──────────
           Раньше она стояла последней в форме, и клиент до неё не доезжал:
           карта занимает пол-экрана, человек ставит точку и на этом
@@ -447,8 +582,8 @@ export default function LocationForm() {
         <div className="mx-auto max-w-[560px]">
           {sendState === 'error' ? (
             <p className="mb-2 text-center text-[15px] font-bold leading-[1.4] text-brand-600 text-pretty">
-              {!pickup
-                ? 'Tell us where the vehicle is first.'
+              {!ready
+                ? 'Show us where the vehicle is — tap the map.'
                 : 'That did not send. Try once more, or tell us on the phone.'}
             </p>
           ) : null}
@@ -456,11 +591,11 @@ export default function LocationForm() {
           <button
             type="button"
             onClick={send}
-            disabled={sendState === 'sending' || !pickup}
+            disabled={sendState === 'sending' || !ready}
             className={[
               'w-full px-6 py-[22px] text-center font-display text-[19px] font-extrabold uppercase',
               'leading-none tracking-[0.06em] text-white transition-colors sm:text-[22px]',
-              pickup
+              ready
                 ? `bg-brand-500 hover:bg-brand-600 ${sendState === 'sending' ? '' : 'send-ready'}`
                 : 'cursor-not-allowed bg-ink-400',
             ].join(' ')}
@@ -469,7 +604,7 @@ export default function LocationForm() {
           </button>
 
           <p className="mt-2 text-center text-[14px] leading-[1.35] text-ink-500">
-            {pickup ? 'We get it the second you tap.' : 'Set your location above, then tap here.'}
+            {ready ? 'We get it the second you tap.' : 'Set your location above, then tap here.'}
           </p>
         </div>
       </div>

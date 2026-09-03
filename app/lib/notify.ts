@@ -242,6 +242,14 @@ export async function sendLead(lead: Lead): Promise<{ delivered: boolean }> {
  */
 export type CustomerLocation = {
   phone?: string;
+  /**
+   * Клиент разрешил писать ему SMS.
+   *
+   * ⚠️ Не украшение. Написать человеку без согласия — прямой путь к жалобе
+   * и к блокировке номера оператором. Владельцу надо видеть это рядом
+   * с телефоном, а не вспоминать, ставил клиент галочку или нет.
+   */
+  smsConsent?: boolean;
   pickupLat?: number;
   pickupLng?: number;
   pickupAccuracy?: number;
@@ -261,6 +269,11 @@ export async function sendCustomerLocation(loc: CustomerLocation): Promise<{ del
 
   if (loc.phone) {
     lines.push(`📞 <b>Телефон:</b> ${escapeHtml(loc.phone)}`);
+    lines.push(
+      loc.smsConsent
+        ? '✅ разрешил SMS — можно писать'
+        : '⚠️ SMS не разрешил — только звонить',
+    );
     lines.push('');
   }
 
