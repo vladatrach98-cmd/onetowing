@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
-import { BUSINESS } from '../lib/constants';
+import { BUSINESS, SMS_NUMBERS_SENTENCE } from '../lib/constants';
 
 /**
  * ОТПРАВКА ЛОКАЦИИ — то, что видит человек на обочине.
@@ -519,16 +519,20 @@ export default function LocationForm() {
           10DLC: «собираете телефоны на сайте без явного согласия на переписку —
           зарегистрировать бизнес не сможете». Галочка стоит НЕСНЯТОЙ, форма
           отправляется и без неё: согласие не может быть условием услуги. */}
-      {!phoneOpen ? (
-        <button
-          type="button"
-          onClick={() => setPhoneOpen(true)}
-          className="w-full border border-dashed border-bone-400 bg-white px-5 py-[16px] text-center text-[16px] font-bold leading-[1.35] text-ink-600 transition-colors hover:bg-bone-hover"
-        >
-          ☎ Share my phone number <span className="font-semibold text-ink-400">— optional</span>
-        </button>
-      ) : (
-        <section className="border border-bone-300 bg-white px-5 py-7 sm:px-7">
+      {/* ⚠️ Обе части рендерятся ВСЕГДА, свёрнутая просто спрятана классом.
+          Раньше блок появлялся в разметке только после клика — и проверяющий
+          регистрации SMS, который открывает страницу программой, а не руками,
+          не видел текста согласия вообще. Проверено: `curl` этой страницы
+          не находил ни «I agree to receive», ни «Reply STOP». Текст согласия
+          обязан быть в самой странице, даже когда блок закрыт. */}
+      <button
+        type="button"
+        onClick={() => setPhoneOpen(true)}
+        className={`w-full border border-dashed border-bone-400 bg-white px-5 py-[16px] text-center text-[16px] font-bold leading-[1.35] text-ink-600 transition-colors hover:bg-bone-hover ${phoneOpen ? 'hidden' : ''}`}
+      >
+        ☎ Share my phone number <span className="font-semibold text-ink-400">— optional</span>
+      </button>
+      <section className={`border border-bone-300 bg-white px-5 py-7 sm:px-7 ${phoneOpen ? '' : 'hidden'}`}>
           <div className="flex items-start justify-between gap-4">
             <h2 className="font-display text-[21px] font-extrabold leading-[1.15] text-ink-700 sm:text-[23px]">
               Your phone number
@@ -574,23 +578,22 @@ export default function LocationForm() {
               className="mt-[3px] h-5 w-5 shrink-0 accent-brand-500"
             />
             <span className="text-[15px] leading-[1.55] text-ink-600 text-pretty">
-              I agree to receive text messages from{' '}
-              <strong className="font-bold text-ink-700">ONE TOWING LLC</strong> about this
-              request. Message frequency varies — about one message per request. Message and data
-              rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of
-              service. See our{' '}
+              I agree to receive one text message from{' '}
+              <strong className="font-bold text-ink-700">ONE TOWING LLC</strong> containing a link to share my
+              vehicle’s location. Message frequency varies — about one message per call or request.{' '}
+              {SMS_NUMBERS_SENTENCE} Message and data rates may apply. Reply STOP to opt out, HELP for help.
+              Consent is not a condition of service. See our{' '}
               <a href="/privacy" className="font-bold text-brand-600 underline underline-offset-2">
                 Privacy Policy
               </a>{' '}
               and{' '}
               <a href="/terms" className="font-bold text-brand-600 underline underline-offset-2">
-                Terms
+                Terms of Service
               </a>
               .
             </span>
           </label>
         </section>
-      )}
 
 
       {/* ────────── Кнопка отправки — прибита к низу экрана ──────────
