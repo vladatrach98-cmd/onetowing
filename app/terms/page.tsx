@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
-import { BASE_LOCATION, BUSINESS, PRICING } from '../lib/constants';
+import { BASE_LOCATION, BUSINESS, PRICING, SMS_NUMBERS_SENTENCE, SMS_SENDING_NUMBERS } from '../lib/constants';
 
 /**
  * УСЛОВИЯ ОБСЛУЖИВАНИЯ.
@@ -72,12 +72,30 @@ export default function TermsPage() {
               <strong className="font-bold text-ink-700">What it is.</strong> ONE TOWING LLC sends a text message
               containing a link that lets you share the location of your vehicle with us, so we can send the truck to
               the right place. That is the entire purpose of the programme. We do not send promotions, offers or
-              newsletters.
+              newsletters. {SMS_NUMBERS_SENTENCE}
             </P>
             <P>
               <strong className="font-bold text-ink-700">How you join.</strong> Either you agree during a phone call
               with us, or you tick the optional consent box on our booking page. The box is never ticked in advance,
               and the form works without it. Agreeing to texts is not a condition of getting service.
+            </P>
+            {/* ⚠️ Дословный текст записи в трубке. Не «примерно так», а именно то,
+                что слышит человек. Проверяющий оператора требует показать полный
+                сценарий согласия, если оно берётся голосом, а не галочкой
+                (Twilio 30909: «недостаточно объясняет, как собирается согласие,
+                особенно для устных, бумажных и офлайновых сценариев»).
+
+                ⚠️⚠️ ЗАПИСЬ ДОЛЖНА СУЩЕСТВОВАТЬ ДО ПОДАЧИ ЗАЯВКИ. Эта страница
+                утверждает, что человек слышит именно эти слова. Проверяющий
+                может позвонить и послушать. Текст на сайте и запись в трубке
+                обязаны совпадать дословно. */}
+            <P>
+              <strong className="font-bold text-ink-700">What you hear on the phone.</strong> Before we connect your
+              call you hear: “This is ONE TOWING LLC. To get a text message with a link for sharing your vehicle’s
+              location, press 1. Messages come from {SMS_SENDING_NUMBERS[0]} or {SMS_SENDING_NUMBERS[1]}. Message
+              frequency varies, about one message per call. Message and data rates may apply. Reply STOP to opt out or
+              HELP for help. Consent is not a condition of service. Terms at onetowingfl.com/terms, privacy at
+              onetowingfl.com/privacy.” Pressing 1 is your consent. Pressing nothing means no text is sent.
             </P>
             <P>
               <strong className="font-bold text-ink-700">How often.</strong> Message frequency varies — normally one

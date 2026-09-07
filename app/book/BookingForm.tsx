@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { BUSINESS } from '../lib/constants';
+import { BUSINESS, SMS_NUMBERS_SENTENCE } from '../lib/constants';
 
 /**
  * ФОРМА ЗАПЛАНИРОВАННОЙ ПЕРЕВОЗКИ.
@@ -252,16 +252,17 @@ export default function BookingForm() {
           className="mt-[3px] h-5 w-5 shrink-0 accent-brand-500"
         />
         <span className="text-[15px] leading-[1.55] text-ink-600 text-pretty">
-          I agree to receive text messages from <strong className="font-bold text-ink-700">ONE TOWING LLC</strong>{' '}
-          about my service request, including a link to share my location. Message frequency varies — about one
-          message per request. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not
-          a condition of service. See our{' '}
+          I agree to receive one text message from{' '}
+          <strong className="font-bold text-ink-700">ONE TOWING LLC</strong> containing a link to share my vehicle’s
+          location. Message frequency varies — about one message per call or request. {SMS_NUMBERS_SENTENCE} Message
+          and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of service. See
+          our{' '}
           <Link href="/privacy" className="font-bold text-brand-600 underline underline-offset-2">
             Privacy Policy
           </Link>{' '}
           and{' '}
           <Link href="/terms" className="font-bold text-brand-600 underline underline-offset-2">
-            Terms
+            Terms of Service
           </Link>
           .
         </span>

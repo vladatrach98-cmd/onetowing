@@ -115,6 +115,21 @@ export const ESTIMATOR_ENABLED = process.env.NEXT_PUBLIC_ESTIMATOR_ENABLED === '
 export const PRICE_LINK = ESTIMATOR_ENABLED ? '/estimate' : '/#pricing';
 
 /**
+ * Номера CallRail, с которых будут уходить SMS.
+ *
+ * ⚠️ Их обязательно называть в тексте согласия. Правило CTIA §5.1.1: человек
+ * до согласия должен знать, «с какого номера придёт сообщение». Если номер
+ * в SMS не совпадает ни с одним названным на сайте, это выглядит как чужая
+ * рассылка — и для проверяющего, и для получателя.
+ *
+ * 656-777-2980 — основная линия, её набирают клиенты. Два номера ниже —
+ * подменные номера CallRail: первый для органики, второй для рекламы.
+ */
+export const SMS_SENDING_NUMBERS = ['656-232-3046', '656-261-4503'] as const;
+export const SMS_NUMBERS_SENTENCE =
+  `Messages are sent from ${SMS_SENDING_NUMBERS.join(' or ')}. Our main line is ${BUSINESS.phone}.`;
+
+/**
  * Ссылка на карточку Google Business Profile («оставить отзыв»).
  * Появится в .env.local и в Vercel, когда карточка будет создана.
  */

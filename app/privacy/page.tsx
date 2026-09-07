@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
-import { BASE_LOCATION, BUSINESS } from '../lib/constants';
+import { BASE_LOCATION, BUSINESS, SMS_NUMBERS_SENTENCE } from '../lib/constants';
 
 /**
  * ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ.
@@ -80,7 +80,13 @@ export default function PrivacyPage() {
             <P>
               <strong className="font-bold text-ink-700">How you consent.</strong> Either you call us and agree during
               the call to receive the link, or you tick the optional consent box on our booking page. Consent is never
-              required in order to get service — you can always simply talk to us on the phone.
+              required in order to get service — you can always simply talk to us on the phone. On the phone you hear a
+              recorded message naming us, saying one text will follow, that message and data rates may apply and that
+              you can reply STOP — and you press 1 to agree. The full wording is on our{' '}
+              <Link href="/terms" className="font-bold text-brand-600 hover:underline">
+                Terms of Service
+              </Link>{' '}
+              page. {SMS_NUMBERS_SENTENCE}
             </P>
             <P>
               <strong className="font-bold text-ink-700">How often.</strong> About one message per call or request.

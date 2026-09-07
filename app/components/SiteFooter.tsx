@@ -94,10 +94,10 @@ export default function SiteFooter() {
           <span>© 2026 ONE TOWING LLC · {BASE_LOCATION.address}</span>
           <span className="flex flex-wrap gap-x-5 gap-y-2">
             <Link href="/privacy" className="text-ink-450 transition-colors hover:text-white">
-              Privacy
+              SMS Privacy Policy
             </Link>
             <Link href="/terms" className="text-ink-450 transition-colors hover:text-white">
-              Terms
+              SMS Terms
             </Link>
             <span>Prices on this site are estimates, not final quotes</span>
           </span>

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
-import { BUSINESS, PRICING } from '../lib/constants';
+import { BUSINESS, PRICING, SMS_SENDING_NUMBERS } from '../lib/constants';
 import { LONG_DISTANCE_FROM_MILES } from '../lib/pricing';
 
 /**
@@ -86,6 +86,11 @@ const FAQS: Faq[] = [
   {
     question: 'Do you speak Russian or Ukrainian?',
     answer: 'Yes. We speak English, Russian and Ukrainian.',
+  },
+
+  {
+    question: 'Do you text me?',
+    answer: `Only one message, and only if you ask for it: a link so you can show us exactly where your vehicle is. You agree either on the call, by pressing 1 when we offer it, or by ticking the box when you book. Messages come from ${SMS_SENDING_NUMBERS.join(' or ')}. We never send offers, discounts or newsletters. Reply STOP and we stop. Agreeing is never a condition of getting your car towed.`,
   },
 ];
 

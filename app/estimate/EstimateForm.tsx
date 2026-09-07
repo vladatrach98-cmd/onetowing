@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { BUSINESS, PRICING } from '../lib/constants';
+import { BUSINESS, PRICING, SMS_NUMBERS_SENTENCE } from '../lib/constants';
 import { estimate, LONG_DISTANCE_FROM_MILES, usd } from '../lib/pricing';
 import { ESTIMATE_OPTIONS } from './estimate-options';
 
@@ -32,6 +33,17 @@ export default function EstimateForm() {
   const [useManual, setUseManual] = useState(false);
 
   const [phone, setPhone] = useState('');
+  /**
+   * Согласие на SMS рядом с полем телефона.
+   *
+   * ⚠️ Страница сейчас за флагом и отдаёт 404 — но правило CallRail смотрит
+   * на живой сайт в любой момент, а не только в день подачи: «собираете
+   * телефоны на сайте и не берёте на этой же странице явного согласия на
+   * переписку — зарегистрировать бизнес не сможете». Достаточно один раз
+   * включить флаг в неудачный день, и заявку отклонят. Поэтому галочка
+   * стоит здесь заранее, а не «когда включим».
+   */
+  const [smsConsent, setSmsConsent] = useState(false);
   const [note, setNote] = useState('');
   const [company, setCompany] = useState(''); // honeypot
   const [sendStatus, setSendStatus] = useState<Status>('idle');
@@ -130,6 +142,7 @@ export default function EstimateForm() {
           destinationAddress: result?.destination ?? destinationInput,
           towMiles: towMiles ?? undefined,
           phone,
+          smsConsent,
           note,
           company,
           elapsedMs: Date.now() - openedAt.current,
@@ -417,6 +430,30 @@ export default function EstimateForm() {
                 placeholder="Car make, parking garage level, low clearance…"
                 className="mt-2 w-full border border-white/20 bg-ink-900 px-4 py-[14px] text-[16px] text-white outline-none focus:border-brand-500"
               />
+
+              <label className="mt-5 flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={smsConsent}
+                  onChange={(event) => setSmsConsent(event.target.checked)}
+                  className="mt-[3px] h-5 w-5 shrink-0 accent-brand-500"
+                />
+                <span className="text-[15px] leading-[1.55] text-ink-300 text-pretty">
+                  I agree to receive one text message from{' '}
+                  <strong className="font-bold text-white">ONE TOWING LLC</strong> containing a link to share my
+                  vehicle’s location. Message frequency varies — about one message per call or request.{' '}
+                  {SMS_NUMBERS_SENTENCE} Message and data rates may apply. Reply STOP to opt out, HELP for help.
+                  Consent is not a condition of service. See our{' '}
+                  <Link href="/privacy" className="font-bold text-brand-400 underline underline-offset-2">
+                    Privacy Policy
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/terms" className="font-bold text-brand-400 underline underline-offset-2">
+                    Terms of Service
+                  </Link>
+                  .
+                </span>
+              </label>
 
               {/* Honeypot — скрыт от людей, ловит ботов. */}
               <input
