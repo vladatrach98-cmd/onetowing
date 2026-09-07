@@ -140,6 +140,32 @@ export default function LocationForm() {
    * но развернуть его надо самому: на два обязательных шага оно не влияет.
    */
   const [phoneOpen, setPhoneOpen] = useState(false);
+
+  /**
+   * Пришёл с нашего же сайта — значит, скорее всего, ещё НЕ звонил.
+   *
+   * Это две разные ситуации, и путать их нельзя. Кто пришёл по ссылке из SMS —
+   * уже говорит с владельцем, его телефон известен, поле лишнее. А кто нажал
+   * кнопку на главной — просто прохожий с координатами: без номера владелец
+   * получит точку на карте и никакой возможности перезвонить.
+   * Поэтому таким разворачиваем поле телефона сразу.
+   *
+   * ⚠️ По document.referrer это НЕ определить. Внутри сайта Next.js переходит
+   * без перезагрузки страницы, referrer остаётся от самого первого захода
+   * и при прямом открытии главной он пустой. Проверено: поле не раскрывалось.
+   * Поэтому метка стоит прямо в ссылке — ?from=site.
+   */
+  const [cameFromSite, setCameFromSite] = useState(false);
+  useEffect(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get('from') === 'site') {
+        setCameFromSite(true);
+        setPhoneOpen(true);
+      }
+    } catch {
+      // Адрес без параметров — оставляем как есть, поле свёрнуто.
+    }
+  }, []);
   const [phone, setPhone] = useState('');
   const [smsConsent, setSmsConsent] = useState(false);
 
@@ -520,7 +546,9 @@ export default function LocationForm() {
             </button>
           </div>
           <p className="mt-2 text-[15px] leading-[1.5] text-ink-500 text-pretty">
-            Optional. Useful if we get cut off, or if you are sending this for someone else.
+            {cameFromSite
+              ? 'Leave it and we will call you back. Without a number we get a dot on a map and no way to reach you.'
+              : 'Optional. Useful if we get cut off, or if you are sending this for someone else.'}
           </p>
 
           <input

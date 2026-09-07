@@ -9,7 +9,6 @@ import {
   BUSINESS,
   ESTIMATOR_ENABLED,
   HIGHWAYS,
-  PRICE_LINK,
   PRICING,
   SERVICE_AREAS,
 } from './lib/constants';
@@ -181,11 +180,21 @@ export default function Home() {
                       </span>
                       Call {BUSINESS.phone}
                     </a>
+                    {/* Отправка локации — сразу за звонком. Для человека на
+                        обочине это важнее цен и записи: он часто не может
+                        объяснить голосом, где стоит («где-то на 275-й, после
+                        съезда»), а показать точку на карте может.
+
+                        Рамка красная, а не белая: это второе по важности
+                        действие на экране, и оно не должно теряться среди
+                        двух одинаковых белых кнопок. Но фон не залит —
+                        соперничать со «Call» она не должна. */}
                     <Link
-                      href="/#pricing"
-                      className="flex items-center border-2 border-white/60 bg-ink-950/40 px-[26px] py-[21px] text-[15px] font-extrabold uppercase leading-none tracking-[0.09em] text-white transition-colors hover:border-white hover:bg-white/10 hover:text-white"
+                      href="/where?from=site"
+                      className="flex items-center gap-2 border-2 border-brand-500 bg-brand-500/10 px-[26px] py-[21px] text-[15px] font-extrabold uppercase leading-none tracking-[0.09em] text-white transition-colors hover:bg-brand-500 hover:text-white"
                     >
-                      See pricing
+                      <span aria-hidden="true">📍</span>
+                      Stuck? Show us where
                     </Link>
                     {/* Запись — третьей, намеренно тише двух первых. Срочный
                         клиент должен нажать «Call», а не уйти заполнять форму.

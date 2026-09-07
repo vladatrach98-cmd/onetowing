@@ -63,7 +63,7 @@ export default function WherePage() {
           Send us your location
         </h1>
         <p className="mt-3 text-[17px] leading-[1.55] text-ink-600 text-pretty">
-          Takes about fifteen seconds. Stay on the phone with us while you do it.
+          Takes about fifteen seconds. If you are on the phone with us, stay on it.
         </p>
 
         <div className="mt-7">
