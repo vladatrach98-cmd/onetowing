@@ -28,7 +28,14 @@ export function businessJsonLd() {
      * Первым идёт превью для соцсетей, дальше — настоящие фото с работы.
      * ⚠️ Проверять при смене файлов: битая ссылка здесь = 404 для Google.
      */
+    /**
+     * Логотип отдельным полем. Google берёт именно `logo` для карточки знаний
+     * и для панели рядом с выдачей — из общего `image` он его не угадывает.
+     * Квадрат 1200×1200 с прозрачным фоном лежит в public/images/logo.
+     */
+    logo: `${BUSINESS.siteUrl}/images/logo/one-towing-logo-1200.png`,
     image: [
+      `${BUSINESS.siteUrl}/images/logo/one-towing-logo-1200-white.jpg`,
       `${BUSINESS.siteUrl}/images/one-towing-og.jpg`,
       `${BUSINESS.siteUrl}/images/gallery/one-towing-bmw-x4-wheel-lift.jpg`,
       `${BUSINESS.siteUrl}/images/gallery/one-towing-accident-recovery-highway.jpg`,

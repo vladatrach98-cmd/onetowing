@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { BASE_LOCATION, BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
 import { getNavLinks } from '../lib/nav';
@@ -10,7 +11,13 @@ export default function SiteFooter() {
       <div className="mx-auto grid max-w-[1280px] gap-12 px-6 pb-[30px] pt-16 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
         <div>
           <div className="flex items-center gap-[14px]">
-            <span className="block h-[30px] w-[6px] bg-brand-500" />
+            <Image
+              src="/images/logo/one-towing-badge-128.png"
+              alt=""
+              width={128}
+              height={128}
+              className="h-[42px] w-[42px] shrink-0"
+            />
             <span className="font-display text-[17px] font-extrabold uppercase tracking-[0.24em] text-white">
               {BUSINESS.name}
             </span>

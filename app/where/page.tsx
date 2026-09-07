@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import LocationForm from './LocationForm';
 import { BUSINESS } from '../lib/constants';
@@ -33,8 +34,18 @@ export default function WherePage() {
     <main className="min-h-screen bg-bone-100">
       <div className="bg-ink-950 px-6 py-6">
         <div className="mx-auto flex max-w-[560px] items-center justify-between gap-4">
-          <span className="font-display text-[17px] font-extrabold uppercase tracking-[0.22em] text-white">
-            {BUSINESS.name}
+          <span className="flex items-center gap-[10px]">
+            <Image
+              src="/images/logo/one-towing-badge-128.png"
+              alt=""
+              width={128}
+              height={128}
+              priority
+              className="h-[34px] w-[34px] shrink-0"
+            />
+            <span className="font-display text-[15px] font-extrabold uppercase tracking-[0.18em] text-white sm:text-[17px] sm:tracking-[0.22em]">
+              {BUSINESS.name}
+            </span>
           </span>
           <a
             href={BUSINESS.phoneHref}

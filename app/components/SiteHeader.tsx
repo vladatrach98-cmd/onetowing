@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { BUSINESS } from '../lib/constants';
 import { getNavLinks } from '../lib/nav';
@@ -19,13 +20,22 @@ export default function SiteHeader({ showTopBar = true }: { showTopBar?: boolean
 
       <div className="border-b border-white/10">
         <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4 px-6 py-3.5 lg:h-[78px] lg:gap-6 lg:px-8 lg:py-0">
-          <Link href="/" className="flex shrink-0 items-center gap-[14px] text-inherit">
-            <span className="block h-[34px] w-[6px] bg-brand-500" />
+          <Link href="/" className="flex shrink-0 items-center gap-[10px] text-inherit sm:gap-[14px]">
+            {/* alt пустой намеренно: рядом стоит то же название текстом,
+                и читалка для незрячих не должна произносить его дважды. */}
+            <Image
+              src="/images/logo/one-towing-badge-128.png"
+              alt=""
+              width={128}
+              height={128}
+              priority
+              className="h-[34px] w-[34px] shrink-0 sm:h-[46px] sm:w-[46px]"
+            />
             <span className="block">
-              <span className="block font-display text-[17px] font-extrabold uppercase tracking-[0.24em] text-white sm:text-[19px]">
+              <span className="block font-display text-[15px] font-extrabold uppercase tracking-[0.18em] text-white sm:text-[19px] sm:tracking-[0.24em]">
                 {BUSINESS.name}
               </span>
-              <span className="mt-[3px] hidden text-[12px] uppercase tracking-[0.16em] text-ink-400 sm:block">
+              <span className="mt-[3px] hidden text-[12px] uppercase tracking-[0.16em] text-ink-400 sm:block lg:hidden xl:block">
                 {BUSINESS.tagline}
               </span>
             </span>
@@ -33,7 +43,7 @@ export default function SiteHeader({ showTopBar = true }: { showTopBar?: boolean
 
           <nav
             aria-label="Main"
-            className="hidden items-center gap-x-[30px] text-[13px] font-semibold uppercase leading-none tracking-[0.14em] lg:flex"
+            className="hidden items-center gap-x-[20px] text-[13px] font-semibold uppercase leading-none tracking-[0.14em] lg:flex xl:gap-x-[30px]"
           >
             {navLinks.map((link) => (
               <Link
