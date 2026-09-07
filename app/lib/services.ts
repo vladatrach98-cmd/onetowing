@@ -109,11 +109,11 @@ export const SERVICES: Service[] = [
     page: 'long-distance-towing',
   },
   {
-    id: 'sober-driver',
-    title: 'Sober Driver — Car Home Service',
-    description: 'Had a drink? We bring you and your car home — you ride in the cab.',
+    id: 'car-home-service',
+    title: 'Car Home Service',
+    description: 'Cannot drive it home tonight? We bring you and your car — you ride in the cab.',
     kind: 'tow',
-    page: 'sober-driver',
+    page: 'car-home-service',
   },
   {
     id: 'long-distance',

@@ -29,7 +29,7 @@ const BOOKABLE = [
   'Vehicle relocation / snowbird move',
   'Motorcycle transport',
   'AWD, EV or a car that will not roll',
-  'Sober driver — car home service',
+  'Car home service — you ride with us',
   'Price quote only, not booking yet',
   'Something else',
 ];

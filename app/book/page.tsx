@@ -25,7 +25,7 @@ import { BUSINESS, PRICING } from '../lib/constants';
 const title = `Book a Scheduled Tow in Tampa, FL | ${BUSINESS.name}`;
 const description =
   `Schedule a tow in Tampa: long-distance runs, a car you have just bought, delivery to a shop or dealership, ` +
-  `motorcycle transport, or our sober driver service. Tell us when suits you and we call back to confirm. ` +
+  `motorcycle transport, or our car home service. Tell us when suits you and we call back to confirm. ` +
   `From $${PRICING.baseFee}. Urgent? Call ${BUSINESS.phone}.`;
 
 export const metadata: Metadata = {
