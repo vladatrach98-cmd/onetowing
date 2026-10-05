@@ -194,7 +194,7 @@ export const GOOGLE_MAPS_PROFILE_URL = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL ?
  * 'https://www.yelp.com/biz/one-towing-tampa'.
  */
 export const SOCIAL_PROFILES = {
-  yelp: '',
+  yelp: 'https://www.yelp.com/biz/one-towing-tampa',
   facebook: '',
   instagram: '',
 } as const;
