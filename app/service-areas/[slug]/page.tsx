@@ -94,7 +94,8 @@ function areaJsonLd(area: ServiceArea) {
         '@id': `${url}#breadcrumbs`,
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: BUSINESS.name, item: `${BUSINESS.siteUrl}/` },
-          { '@type': 'ListItem', position: 2, name: area.city, item: url },
+          { '@type': 'ListItem', position: 2, name: 'Service areas', item: `${BUSINESS.siteUrl}/service-areas` },
+          { '@type': 'ListItem', position: 3, name: area.city, item: url },
         ],
       },
     ],
@@ -187,7 +188,8 @@ export default function ServiceAreaPage({ params }: { params: { slug: string } }
                 to ${PRICING.longDistanceMileRate} per mile, because that comes out cheaper for you.
               </p>
               <p className="mt-5 text-[17px] leading-[1.65] text-ink-600 text-pretty">
-                Roadside work — a jump start, a lockout, fuel — is quoted on the call. You get the figure{' '}
+                {PRICING.jumpStartFrom ? `A jump start starts at $${PRICING.jumpStartFrom}. ` : ''}Fuel delivery and
+                putting on your spare are quoted on the call. You get the figure{' '}
                 <strong className="font-bold text-ink-700">before anything moves</strong>, not after.
               </p>
             </div>
@@ -200,8 +202,8 @@ export default function ServiceAreaPage({ params }: { params: { slug: string } }
                 holidays included, with no surcharge on the base price.
               </p>
               <p className="mt-5 text-[17px] leading-[1.65] text-ink-600 text-pretty">
-                We do consent towing only: the owner of the car calls us and asks for the tow. No repossessions, no
-                impound lot. Your car goes where you tell us.
+                You call, you decide where the car goes — your mechanic, a dealer, a body shop or home. We have no
+                storage yard, so there is no reason for us to steer you anywhere else.
               </p>
             </div>
           </div>

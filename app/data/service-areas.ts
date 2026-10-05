@@ -85,11 +85,11 @@ export const SERVICE_AREA_PAGES: ServiceArea[] = [
     ],
     calls: [
       'Cars that quit in commuter traffic on the Selmon and on Brandon Blvd, morning and evening.',
-      'Dead batteries and keys locked inside in the mall and plaza parking off Brandon Blvd and Town Center Boulevard.',
+      'Dead batteries and flat tires in the mall and plaza parking off Brandon Blvd and Town Center Boulevard.',
       'Cars that will not start in driveways across Brandon’s subdivisions — often a jump start, sometimes a tow.',
-      'Accident recovery on I-75 around the Exit 257 interchange.',
+      'Accident towing on I-75 around the Exit 257 interchange.',
       'Vehicles moved to a repair shop or dealership in Brandon, or hauled back into Tampa.',
-      'Cars that will not roll — seized brakes, a missing key, a locked steering column — loaded onto dollies.',
+      'Cars that will not roll — seized brakes or a locked steering column — loaded onto dollies.',
     ],
     neighbors:
       'From this side of town we also run to Riverview and Palm River, and back west into Ybor City, Downtown Tampa and South Tampa.',

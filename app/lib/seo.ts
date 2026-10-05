@@ -1,5 +1,12 @@
-import { BASE_LOCATION, BUSINESS, GOOGLE_MAPS_PROFILE_URL, PRICING, SERVICE_AREAS } from './constants';
-import { SERVICES } from './services';
+import {
+  BASE_LOCATION,
+  BUSINESS,
+  GOOGLE_MAPS_PROFILE_URL,
+  MAIN_SERVICE_AREAS,
+  PRICING,
+  SOCIAL_PROFILES,
+} from './constants';
+import { SERVICE_PAGES, servicePrice } from '../data/services-content';
 
 /**
  * JSON-LD — «паспорт» бизнеса для Google: кто мы, где, когда работаем, что делаем.
@@ -8,6 +15,8 @@ import { SERVICES } from './services';
  * ⚠️ Никогда не добавлять сюда aggregateRating/review с выдуманными цифрами —
  * это прямое нарушение правил Google и закона США о фейковых отзывах.
  */
+const SAME_AS = [GOOGLE_MAPS_PROFILE_URL, ...Object.values(SOCIAL_PROFILES)].filter(Boolean);
+
 export function businessJsonLd() {
   return {
     '@context': 'https://schema.org',
@@ -18,9 +27,8 @@ export function businessJsonLd() {
     // Описание пишем так, чтобы машина поняла с первой фразы: кто, что делает, где.
     description:
       `${BUSINESS.name} is a towing and roadside assistance company based in Downtown Tampa, ` +
-      `Florida. We provide 24/7 towing, jump starts, vehicle lockouts, fuel delivery, ` +
-      `locked-wheel assistance, accident recovery, motorcycle transport and long-distance ` +
-      `towing across Tampa and Hillsborough County. Local tow from $${PRICING.baseFee}.`,
+      `Florida. We provide 24/7 local towing, accident towing, roadside assistance, jump starts, ` +
+      `fuel delivery and spare tire changes across Tampa Bay. Local tow from $${PRICING.baseFee}.`,
     url: BUSINESS.siteUrl,
     telephone: BUSINESS.phoneE164,
     email: BUSINESS.email,
@@ -66,31 +74,47 @@ export function businessJsonLd() {
         closes: '23:59',
       },
     ],
-    areaServed: SERVICE_AREAS.map((area) => ({
+    // Только главные города — те же, что в карточке Google. Районы Тампы
+    // сюда не пишем: это части города, а не отдельные места обслуживания.
+    areaServed: MAIN_SERVICE_AREAS.map((area) => ({
       '@type': 'City',
       name: area,
       containedInPlace: { '@type': 'State', name: 'Florida' },
     })),
+    /**
+     * Каталог услуг — из страниц услуг, каждая со ссылкой на свою страницу.
+     * ⚠️ Страницы `adsExcluded` (lockout) сюда не попадают: эта разметка стоит
+     * на КАЖДОЙ странице сайта, включая рекламные посадочные.
+     */
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: 'Towing & roadside services',
-      itemListElement: SERVICES.map((service) => ({
-        '@type': 'Offer',
-        itemOffered: { '@type': 'Service', name: service.title, description: service.description },
-        ...(service.kind === 'tow'
-          ? {
-              priceSpecification: {
-                '@type': 'PriceSpecification',
-                minPrice: PRICING.baseFee,
-                priceCurrency: 'USD',
-              },
-            }
-          : {}),
-      })),
+      itemListElement: SERVICE_PAGES.filter((page) => !page.adsExcluded).map((page) => {
+        const price = servicePrice(page);
+        return {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            '@id': `${BUSINESS.siteUrl}/services/${page.slug}#service`,
+            name: page.name,
+            description: page.cardLine,
+            url: `${BUSINESS.siteUrl}/services/${page.slug}`,
+          },
+          ...(price.amount
+            ? {
+                priceSpecification: {
+                  '@type': 'PriceSpecification',
+                  minPrice: price.amount,
+                  priceCurrency: 'USD',
+                },
+              }
+            : {}),
+        };
+      }),
     },
     // Карточка в Картах — и как ссылка на профиль, и как карта бизнеса.
-    ...(GOOGLE_MAPS_PROFILE_URL
-      ? { sameAs: [GOOGLE_MAPS_PROFILE_URL], hasMap: GOOGLE_MAPS_PROFILE_URL }
-      : {}),
+    // + Yelp / Facebook / Instagram из SOCIAL_PROFILES, как только их впишут.
+    ...(SAME_AS.length > 0 ? { sameAs: SAME_AS } : {}),
+    ...(GOOGLE_MAPS_PROFILE_URL ? { hasMap: GOOGLE_MAPS_PROFILE_URL } : {}),
   };
 }

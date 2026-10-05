@@ -27,7 +27,6 @@ const BOOKABLE = [
   'Dealer or auction pickup (Copart, IAAI)',
   'Delivery to a repair shop or dealership',
   'Vehicle relocation / snowbird move',
-  'Motorcycle transport',
   'AWD, EV or a car that will not roll',
   'Car home service — you ride with us',
   'Price quote only, not booking yet',

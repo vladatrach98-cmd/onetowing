@@ -30,8 +30,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BUSINESS.siteUrl}/services/${page.slug}`,
       lastModified: now,
       changeFrequency: 'monthly' as const,
-      priority: 0.8,
+      // Пять основных посадочных — выше остальных.
+      priority: page.core ? 0.9 : 0.7,
     })),
+    { url: `${BUSINESS.siteUrl}/service-areas`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     // Страницы районов. Список берётся из самих страниц: написали новый
     // район — он попадает в карту сайта сам, забыть невозможно.
     ...SERVICE_AREA_PAGES.map((area) => ({

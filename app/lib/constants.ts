@@ -44,36 +44,88 @@ export const PRICING = {
    * математике это происходит уже с 25 миль (см. LONG_DISTANCE_FROM_MILES).
    */
   longDistanceThresholdMiles: 50,
+  /**
+   * Прикурить — единственная дорожная услуга с опубликованной ценой («from $65»).
+   * Остальная дорожная помощь (топливо, запаска) — «call for price».
+   * Поставить null — везде на сайте снова станет «Call for price».
+   */
+  jumpStartFrom: 65 as number | null,
   currency: 'USD',
 } as const;
 
-/** Районы обслуживания (для доверия и локального SEO). */
 /**
- * Районы обслуживания. Этот список идёт сразу в четыре места: блок «Areas» на
- * главной, подвал, структурированные данные для Google (areaServed) и текст
- * страницы. Держать его таким же, как зона в карточке Google Business Profile —
+ * Районы обслуживания — ГРУППАМИ. Из них собирается страница /service-areas,
+ * блок «Areas» на главной и подвал.
+ *
+ * ⚠️ Держать таким же, как зона в карточке Google Business Profile —
  * расхождение между сайтом и карточкой Google считает признаком неточных данных.
+ * Добавили район здесь — добавьте его и в карточку.
+ *
+ * `main: true` — показывается на главной и в подвале. Остальное только на
+ * /service-areas: огромный список районов на главной никто не читает.
  */
-export const SERVICE_AREAS = [
-  'Tampa',
-  'Downtown Tampa',
-  'South Tampa',
-  'Ybor City',
-  'Hyde Park',
-  'Davis Islands',
-  'West Tampa',
-  'Tampa Heights',
-  'Seminole Heights',
-  'Drew Park',
-  'Carrollwood',
-  'Town ’n’ Country',
-  'Westchase',
-  'Temple Terrace',
-  'University Area',
-  'Brandon',
-  'Riverview',
-  'Palm River',
+export const AREA_GROUPS = [
+  {
+    title: 'Tampa',
+    note: 'Our home turf — the truck runs out of Downtown Tampa.',
+    areas: [
+      { name: 'Tampa', main: true },
+      { name: 'Downtown Tampa' },
+      { name: 'Ybor City' },
+      { name: 'South Tampa' },
+      { name: 'Hyde Park' },
+      { name: 'Davis Islands' },
+      { name: 'West Tampa' },
+      { name: 'Tampa Heights' },
+      { name: 'Seminole Heights' },
+      { name: 'Drew Park' },
+      { name: 'Carrollwood' },
+      { name: 'University Area' },
+    ],
+  },
+  {
+    title: 'East of Tampa',
+    note: 'Straight out along the Selmon Expressway and I-75.',
+    areas: [{ name: 'Brandon', main: true }, { name: 'Riverview', main: true }, { name: 'Palm River' }],
+  },
+  {
+    title: 'North of Tampa',
+    note: 'Up I-275, the Veterans Expressway and Dale Mabry.',
+    areas: [{ name: 'Temple Terrace', main: true }, { name: 'Lutz', main: true }],
+  },
+  {
+    title: 'Northwest',
+    note: 'Along Hillsborough Avenue and the Veterans toward the county line.',
+    areas: [{ name: 'Town ’n’ Country' }, { name: 'Westchase' }, { name: 'Oldsmar', main: true }],
+  },
+  {
+    title: 'Across the bay',
+    note: 'Pinellas County, reached over the bridges.',
+    areas: [
+      { name: 'St. Petersburg', main: true },
+      { name: 'Clearwater', main: true },
+      { name: 'Tampa International Airport & Westshore' },
+    ],
+  },
 ] as const;
+
+/**
+ * Мосты и коридоры через залив — отдельно от районов: это не город, а место,
+ * где люди чаще всего и застревают.
+ */
+export const BRIDGE_CORRIDORS = [
+  { name: 'Howard Frankland Bridge', road: 'I-275', note: 'Tampa ↔ St. Petersburg, the busiest crossing of the bay.' },
+  { name: 'Gandy Bridge', road: 'US-92', note: 'South Tampa ↔ St. Petersburg.' },
+  { name: 'Courtney Campbell Causeway', road: 'SR-60', note: 'Tampa airport and Westshore ↔ Clearwater.' },
+] as const;
+
+/** Плоский список всех районов — для подвала, текстов и поиска страниц районов. */
+export const SERVICE_AREAS = AREA_GROUPS.flatMap((group) => group.areas.map((area) => area.name));
+
+/** Главные районы — главная страница, подвал, первый экран. */
+export const MAIN_SERVICE_AREAS = AREA_GROUPS.flatMap((group) =>
+  group.areas.filter((area) => 'main' in area && area.main).map((area) => area.name),
+);
 
 /** Шоссе и главные магистрали, на которые выезжаем. */
 export const HIGHWAYS = [
@@ -87,16 +139,15 @@ export const HIGHWAYS = [
   'Hillsborough Avenue',
 ] as const;
 
-/** Пункты меню — одностраничная навигация со скроллом к секции. */
 /**
- * Порядок пунктов должен совпадать с порядком блоков на главной, иначе меню
- * бросает посетителя то вниз, то вверх. Сначала «доедете ли до меня» и живые
- * фото — это первое, что спрашивает человек на обочине; услуги и цены дальше.
+ * Пункты меню. Первые два — главные направления (буксировка и дорожная помощь):
+ * с них человек из рекламы должен попадать на нужную страницу в один тап.
  */
 export const NAV_LINKS = [
-  { href: '/#areas', label: 'Areas' },
-  { href: '/#photos', label: 'Photos' },
+  { href: '/services/towing', label: 'Towing' },
+  { href: '/services/roadside-assistance', label: 'Roadside' },
   { href: '/services', label: 'Services' },
+  { href: '/service-areas', label: 'Areas' },
   { href: '/#pricing', label: 'Pricing' },
   { href: '/#reviews', label: 'Reviews' },
   { href: '/book', label: 'Book' },
@@ -135,3 +186,15 @@ export const SMS_NUMBERS_SENTENCE =
  */
 export const GOOGLE_REVIEWS_URL = process.env.NEXT_PUBLIC_GOOGLE_REVIEWS_URL ?? '';
 export const GOOGLE_MAPS_PROFILE_URL = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL ?? '';
+
+/**
+ * Профили в соцсетях и каталогах — идут в `sameAs` разметки бизнеса.
+ * Так Google связывает сайт, карточку в Картах, Yelp и соцсети в одну сущность.
+ * Пустые строки отбрасываются. Вписывать полный адрес, например
+ * 'https://www.yelp.com/biz/one-towing-tampa'.
+ */
+export const SOCIAL_PROFILES = {
+  yelp: '',
+  facebook: '',
+  instagram: '',
+} as const;

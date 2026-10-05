@@ -21,6 +21,16 @@ const nextConfig = {
         destination: '/services/car-home-service',
         permanent: true,
       },
+      /**
+       * Перестройка услуг под рекламу (сентябрь 2026):
+       *  — light-duty-towing слилась с главной страницей буксировки /services/towing;
+       *  — accident-recovery переименована в accident-towing (так ищут и так в рекламе);
+       *  — motorcycle-towing убрана: мотоциклы пока не продвигаем.
+       * Постоянные перенаправления переносят накопленный вес старых адресов.
+       */
+      { source: '/services/light-duty-towing', destination: '/services/towing', permanent: true },
+      { source: '/services/accident-recovery', destination: '/services/accident-towing', permanent: true },
+      { source: '/services/motorcycle-towing', destination: '/services/towing', permanent: true },
     ];
   },
 };

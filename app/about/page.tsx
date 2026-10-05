@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
-import { BASE_LOCATION, BUSINESS, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
+import { BASE_LOCATION, BUSINESS, HIGHWAYS, MAIN_SERVICE_AREAS, PRICING, SERVICE_AREAS } from '../lib/constants';
 
 /**
  * СТРАНИЦА «КТО МЫ» — сделана в первую очередь ради машин, а не ради людей.
@@ -18,14 +18,14 @@ import { BASE_LOCATION, BUSINESS, HIGHWAYS, PRICING, SERVICE_AREAS } from '../li
  *
  * ⚠️ Каждое утверждение здесь должно быть проверяемым. Ничего про «лицензию»
  * и «застрахованы» — сертификат пока выписан на другое юрлицо. Ничего про время
- * подачи. Ничего про замену колёс: этой услуги нет.
+ * подачи. Колесо — только на запаску клиента, шины не чиним и не продаём.
+ * Мотоциклы, lockout, repo, impound здесь не упоминаем вообще.
  */
 
 const title = `About ${BUSINESS.name} | Towing Company in Tampa, FL`;
 const description =
   `${BUSINESS.name} is a towing and roadside assistance company in Tampa, Florida. ` +
-  `Owner-operated, working 24/7 across Tampa and Hillsborough County. Local tow from ` +
-  `$${PRICING.baseFee}. Consent towing only — no impounds, no repossessions.`;
+  `Owner-operated, working 24/7 across Tampa Bay. Local tow from $${PRICING.baseFee}.`;
 
 export const metadata: Metadata = {
   title,
@@ -42,8 +42,8 @@ const facts: Array<[string, string]> = [
   ['Base', `${BASE_LOCATION.address} — Downtown Tampa`],
   ['Hours', 'Open 24 hours, 7 days a week, including holidays'],
   ['Phone', BUSINESS.phone],
-  ['Service area', 'Tampa and Hillsborough County, Florida'],
-  ['Truck', '2022 RAM 4500 — wheel-lift and dollies, cars, SUVs, vans, motorcycles'],
+  ['Service area', MAIN_SERVICE_AREAS.join(', ')],
+  ['Truck', '2022 RAM 4500 — wheel-lift and dollies; cars, SUVs, vans and pickups'],
   ['Languages', 'English, Russian, Ukrainian'],
   ['Payment', 'Cash, debit and credit cards'],
 ];
@@ -63,9 +63,10 @@ export default function AboutPage() {
             </h1>
             <p className="mt-7 max-w-[80ch] text-[19px] leading-[1.6] text-ink-200 text-pretty sm:text-[21px]">
               <strong className="font-bold text-white">{BUSINESS.name}</strong> is a towing and roadside assistance
-              company based in Downtown Tampa, Florida. We tow cars, SUVs, vans and motorcycles, and we handle the
-              roadside problems that do not need a tow at all — dead batteries, keys locked inside, an empty tank. We
-              work 24 hours a day, every day of the year, across Tampa and Hillsborough County.
+              company based in Downtown Tampa, Florida. We tow cars, SUVs, vans and pickups — local towing, accident
+              towing and roadside breakdowns — and we handle the roadside problems that do not need a tow at all: dead
+              batteries, an empty tank, a flat with a usable spare. We work 24 hours a day, every day of the year,
+              across Tampa Bay.
             </p>
             <a
               href={BUSINESS.phoneHref}
@@ -98,20 +99,19 @@ export default function AboutPage() {
           <div className="mx-auto grid max-w-[1280px] gap-14 px-6 py-[76px] lg:grid-cols-2 lg:gap-20 lg:px-8">
             <div>
               <h2 className="font-display text-[26px] font-extrabold leading-[1.15] tracking-[-0.015em] sm:text-[32px]">
-                What we do — and what we deliberately do not
+                What we do
               </h2>
               <p className="mt-6 text-[17px] leading-[1.65] text-ink-600 text-pretty">
-                We do <strong className="font-bold text-ink-700">consent towing only</strong>. That means the owner of
-                the vehicle calls us and asks for the tow. It is the whole of our business, and it shapes everything
-                else about how we work.
+                We work <strong className="font-bold text-ink-700">for the driver</strong>. The owner or driver of the
+                car calls us, and the car goes where they say — a mechanic, a dealer, a body shop or home. We have no
+                storage yard, so we have no reason to steer anyone anywhere else.
               </p>
               <p className="mt-5 text-[17px] leading-[1.65] text-ink-600 text-pretty">
-                We do not do repossessions. We do not tow cars off private property at a landlord’s request. We do not
-                immobilise vehicles with boots, and we do not run an impound lot — your car goes where you tell us,
-                not to a yard where you have to buy it back.
-              </p>
-              <p className="mt-5 text-[17px] leading-[1.65] text-ink-600 text-pretty">
-                We also do not change tires. If a tire is gone, we will take the car to a shop that can replace it.
+                <strong className="font-bold text-ink-700">Towing:</strong> local towing, accident towing, roadside and
+                highway breakdowns, long runs across Florida.{' '}
+                <strong className="font-bold text-ink-700">Roadside assistance:</strong> jump starts, fuel delivery and
+                putting on your spare tire. We do not repair or sell tires and batteries — that is a shop’s job, and
+                we can take the car there.
               </p>
             </div>
             <div>
@@ -125,8 +125,9 @@ export default function AboutPage() {
                 {PRICING.longDistanceMileRate} per mile.
               </p>
               <p className="mt-5 text-[17px] leading-[1.65] text-ink-600 text-pretty">
-                Roadside work — a jump start, a lockout, fuel — is quoted on the call, because what it takes varies
-                too much to put a single number on a web page.
+                {PRICING.jumpStartFrom ? `A jump start starts at $${PRICING.jumpStartFrom}. ` : ''}Other roadside
+                work — fuel delivery, a spare tire — is quoted on the call, because what it takes varies too much to
+                put a single number on a web page.
               </p>
               <p className="mt-5 text-[17px] leading-[1.65] text-ink-600 text-pretty">
                 Either way, you get the figure <strong className="font-bold text-ink-700">before anything moves</strong>
@@ -143,8 +144,9 @@ export default function AboutPage() {
               Where we work
             </h2>
             <p className="mt-6 max-w-[80ch] text-[17px] leading-[1.65] text-ink-600 text-pretty">
-              Our truck runs out of {BASE_LOCATION.address}, in Downtown Tampa. From there we cover Tampa and the
-              surrounding parts of Hillsborough County, and we are on these roads constantly:
+              Our truck runs out of {BASE_LOCATION.address}, in Downtown Tampa. From there we cover Tampa, Brandon,
+              Riverview, Temple Terrace, Lutz and Oldsmar, and across the bay into St. Petersburg and Clearwater. We
+              are on these roads constantly:
             </p>
             <p className="mt-6 text-[17px] font-semibold leading-[1.7] text-ink-700">{HIGHWAYS.join(' · ')}</p>
             <p className="mt-8 text-[12px] font-semibold uppercase leading-none tracking-[0.2em] text-bone-label">

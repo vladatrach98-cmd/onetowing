@@ -15,7 +15,9 @@ import { LONG_DISTANCE_FROM_MILES } from '../lib/pricing';
  *
  * ⚠️ Правила, которые нельзя нарушать в текстах:
  *   — время подачи не обещаем, только «позвоните, скажем, где машина сейчас»;
- *   — замену колёс не предлагаем, отвечаем честно «нет»;
+ *   — колесо меняем только на запаску клиента; шины не чиним и не продаём;
+ *   — мотоциклы, lockout, repo, impound, private property здесь не упоминаем
+ *     вообще — даже в виде «мы этого не делаем»;
  *   — «licensed & insured» не пишем: сертификат страховки пока на другом юрлице.
  *
  * Разметка FAQPage добавлена намеренно: вопросы и ответы на странице те же самые,
@@ -53,7 +55,7 @@ const FAQS: Faq[] = [
   },
   {
     question: 'What areas do you cover?',
-    answer: 'Tampa and Hillsborough County — Downtown, Ybor City, South Tampa, Hyde Park, Davis Islands, West Tampa, Tampa Heights, Seminole Heights, Drew Park, Carrollwood, Town ’n’ Country, Westchase, Temple Terrace, the University area, Brandon, Riverview and Palm River. We are on I-275, I-4, I-75, the Selmon Expressway, the Veterans Expressway, US-301, Dale Mabry Highway and Hillsborough Avenue constantly.',
+    answer: 'Tampa Bay — Tampa and its neighborhoods, Brandon, Riverview, Temple Terrace, Lutz, Oldsmar, St. Petersburg and Clearwater, including the airport and Westshore corridor. We run the Howard Frankland, Gandy and Courtney Campbell crossings, and we are on I-275, I-4, I-75, the Selmon Expressway, the Veterans Expressway, US-301, Dale Mabry Highway and Hillsborough Avenue constantly.',
   },
   {
     question: 'Can you tow my car to a repair shop or dealership?',
@@ -61,23 +63,23 @@ const FAQS: Faq[] = [
   },
   {
     question: 'My car will not start. Do I need a tow?',
-    answer: 'Often not. If it is the battery we can jump it on the spot and check that it keeps running, which is cheaper than a tow. If it will not hold a charge, the truck is already there and we load it. Same with keys locked inside or an empty tank — we fix those on the roadside.',
+    answer: `Often not. If it is the battery we can jump it on the spot and check that it keeps running, which is cheaper than a tow${PRICING.jumpStartFrom ? ` — a jump start starts at $${PRICING.jumpStartFrom}` : ''}. If it will not hold a charge, the truck is already there and we load it. Same with an empty tank or a flat with a usable spare — we fix those on the roadside.`,
   },
   {
     question: 'Do you change tires?',
-    answer: 'No. We do not do tire changes. If a tire is gone, we tow the car to a shop that can replace it properly.',
+    answer: 'We put your own spare on, if the car has a usable one. We do not repair, sell or mount tires. If there is no spare or the wheel itself is damaged, we tow the car to a tire shop.',
   },
   {
     question: 'What if my car will not roll at all?',
-    answer: 'Seized brakes, a missing key, a locked steering column, a parking brake that will not release — a car that will not roll still goes on our dollies. Tell us on the phone so we bring the right gear.',
+    answer: 'Seized brakes, a locked steering column, a parking brake that will not release — a car that will not roll still goes on our dollies. Tell us on the phone so we bring the right gear.',
   },
   {
-    question: 'Do you do repossessions or tow cars from private property?',
-    answer: `No. ${BUSINESS.name} does consent towing only, which means the owner of the vehicle calls us and asks for the tow. We do not do repossessions, we do not tow cars off private property at a property owner's request, we do not immobilise vehicles with boots, and we do not run an impound lot. Your car goes where you tell us.`,
+    question: 'Who can call you for a tow?',
+    answer: `The owner of the car, or the person driving it. ${BUSINESS.name} works for the driver: you call us, you decide where the car goes, and you hear the price before we start. We have no storage yard, so the car goes where you tell us.`,
   },
   {
-    question: 'Can you move a motorcycle?',
-    answer: 'Yes. Bikes are secured with soft straps and a wheel chock so they arrive the way they left.',
+    question: 'Do you have a flatbed?',
+    answer: 'No. We run a wheel-lift truck with a full set of dollies. For all-wheel-drive and electric cars the dollies go under the second axle, so all four wheels are off the ground — which is usually why people ask for a flatbed.',
   },
   {
     question: 'How do I pay?',

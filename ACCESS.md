@@ -31,6 +31,10 @@
 - Счётчик Аналитики: `G-676GCTBX4Z` — вшит в сайт, **не пересоздавать**
 - Аккаунт Google Ads: `564-992-8278` (создан под `roman@onetowingfl.com`, кампаний нет)
 - Подтверждение Search Console: TXT-запись в DNS, поставлена Владой
+- Search Console — ДВА ресурса, оба нужны, не удалять:
+  - `onetowingfl.com` (домен) — основной, связан с GA4
+  - `https://onetowingfl.com/` (префикс URL, добавлен 2026-10-05) — **связан с Google Ads 564-992-8278**.
+    Google Ads связывается только с этим ресурсом; через эту связь Google подтверждает номер CallRail в объявлениях
 - Подтверждение Workspace: вторая TXT-запись в том же DNS
 - Почта домена: MX `smtp.google.com`, SPF, DKIM `google._domainkey`, DMARC `_dmarc`
 

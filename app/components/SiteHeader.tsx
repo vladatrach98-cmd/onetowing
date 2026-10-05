@@ -43,7 +43,7 @@ export default function SiteHeader({ showTopBar = true }: { showTopBar?: boolean
 
           <nav
             aria-label="Main"
-            className="hidden items-center gap-x-[20px] text-[13px] font-semibold uppercase leading-none tracking-[0.14em] lg:flex xl:gap-x-[30px]"
+            className="hidden items-center gap-x-[16px] text-[12px] font-semibold uppercase leading-none tracking-[0.12em] lg:flex xl:gap-x-[26px] xl:text-[13px]"
           >
             {navLinks.map((link) => (
               <Link
@@ -58,9 +58,9 @@ export default function SiteHeader({ showTopBar = true }: { showTopBar?: boolean
 
           <a
             href={BUSINESS.phoneHref}
-            className="shrink-0 bg-brand-500 px-4 py-[13px] text-[12px] font-bold uppercase leading-none tracking-[0.1em] text-white transition-colors hover:bg-brand-600 hover:text-white sm:px-[22px] sm:py-[15px] sm:text-[13px]"
+            className="shrink-0 bg-brand-500 px-5 py-[14px] text-[15px] font-extrabold uppercase leading-none tracking-[0.06em] text-white transition-colors hover:bg-brand-600 hover:text-white sm:px-[22px] sm:py-[15px] sm:text-[13px] sm:font-bold sm:tracking-[0.1em]"
           >
-            <span className="sm:hidden">☎ Call</span>
+            <span className="sm:hidden">☎ Call Now</span>
             <span className="hidden sm:inline">Call {BUSINESS.phone}</span>
           </a>
         </div>

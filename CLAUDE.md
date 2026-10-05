@@ -28,7 +28,10 @@ Tampa, зона — Tampa Bay. Владелец — не программист:
 - Локальная буксировка — **от $95** (включено: до 10 миль подъезда + погрузка + до 10 миль буксировки)
 - Каждая миля сверх включённых — **$5**
 - Буксировка от 50 миль — **$3/миля**
-- Дорожная помощь (прикурить, вскрытие, колесо, топливо) — **«Call for price»**, цифр нет
+- Прикурить (Jump Start) — **от $65** (`PRICING.jumpStartFrom`; `null` → везде «Call for price»)
+- Остальная дорожная помощь (топливо, замена колеса на запаску клиента) — **«Call for price»**
+- Колесо меняем **только на запаску клиента**; шины не чиним и не продаём. Нет запаски → буксировка
+- **Платформы (flatbed) нет** — wheel-lift + тележки. Не писать «flatbed» как нашу услугу
 
 ## Правила контента (не нарушать)
 - **Не обещать время подачи.** Никаких «приедем за 20–45 минут» → «Call for current ETA».
@@ -37,7 +40,14 @@ Tampa, зона — Tampa Bay. Владелец — не программист:
 - **Не публиковать выдуманные отзывы.** Демо-отзывы включаются только флагом
   `NEXT_PUBLIC_DEMO_CONTENT=1` локально (в США за фейковые отзывы штрафует FTC).
 - «Licensed & insured» писать, только если это правда (сейчас НЕ пишем).
-- Телефон виден на каждом экране и звонится в один тап.
+- Телефон виден на каждом экране и звонится в один тап (на телефоне — липкая кнопка внизу, в `SiteFooter`).
+- **Не продвигаем:** мотоциклы, repossession, impound, private property / non-consensual towing —
+  не упоминать нигде, даже как «мы этого не делаем» (кроме юр. текста /terms).
+- **Lockout** — страница `/services/lockout-service` только для органики (`adsExcluded: true`):
+  не ссылаться с главной и основных услуг, не класть в разметку бизнеса, не вести на неё рекламу.
+  Без слов «unlock», «we open cars», «locksmith» (Google Ads требует Advanced Verification).
+- **5 основных посадочных под рекламу:** `/services/towing`, `/services/roadside-assistance`,
+  `/services/jump-start`, `/services/fuel-delivery`, `/services/accident-towing` (флаг `core: true`).
 
 ## Стек
 Next.js **14.2.15** (App Router, TS) · React 18 · Tailwind **v3** (`tailwind.config.ts`) ·
@@ -164,8 +174,13 @@ Vercel падала на `bg-ink-950 does not exist`. Перед пушем — 
 `user.name "vladatrach98-cmd"`, `user.email "304151701+vladatrach98-cmd@users.noreply.github.com"`
 (уже настроено в этом репо).
 
-## СТАТУС — обновлено 2026-07-28
+## СТАТУС — обновлено 2026-09-29
 Сделано:
+- ✅ Сайт перестроен под Google Ads: 5 основных посадочных (`core`), Motorcycle убран (308 → /towing),
+  light-duty → /services/towing, accident-recovery → /services/accident-towing, lockout только органика,
+  страница `/service-areas` (районы группами — `AREA_GROUPS` в constants), липкая кнопка звонка на телефоне.
+  ⚠️ Зону в карточке Google Business Profile привести к `AREA_GROUPS` (добавились Lutz, Oldsmar, St. Pete, Clearwater)
+- ⏳ `SOCIAL_PROFILES` в constants.ts — вписать Yelp / Facebook / Instagram, когда будут (идут в sameAs)
 - ✅ Реальный телефон и цены вместо заглушек, `app/lib/constants.ts` как единый источник
 - ✅ Простая навигация (Services · Pricing · Areas · Photos · Reviews) + мобильная строка меню
 - ✅ Главная: 12 услуг, блок цен, районы, шоссе

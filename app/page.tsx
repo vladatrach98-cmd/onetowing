@@ -8,9 +8,10 @@ import {
   BASE_LOCATION,
   BUSINESS,
   ESTIMATOR_ENABLED,
+  BRIDGE_CORRIDORS,
   HIGHWAYS,
+  MAIN_SERVICE_AREAS,
   PRICING,
-  SERVICE_AREAS,
 } from './lib/constants';
 import { LONG_DISTANCE_FROM_MILES } from './lib/pricing';
 import { serviceAreaHref } from './data/service-areas';
@@ -38,9 +39,22 @@ const HERO_PHOTO = '/images/one-towing-tampa-skyline.jpg';
  */
 const heroChips = [
   { value: `$${PRICING.baseFee}`, label: 'Local tow from', lead: true },
+  ...(PRICING.jumpStartFrom ? [{ value: `$${PRICING.jumpStartFrom}`, label: 'Jump start from' }] : []),
   { value: `$${PRICING.extraMileRate}/mi`, label: 'Extra miles' },
-  { value: `$${PRICING.longDistanceMileRate}/mi`, label: 'Long distance' },
   { value: '24/7', label: 'Available' },
+];
+
+/**
+ * Главные направления — одной строкой ссылок под заголовком первого экрана.
+ * Ответ на «что вы делаете» за секунду. Lockout и мотоциклов здесь нет
+ * намеренно: главная — посадочная страница рекламы.
+ */
+const heroServices = [
+  { href: '/services/towing', label: 'Towing' },
+  { href: '/services/accident-towing', label: 'Accident towing' },
+  { href: '/services/jump-start', label: 'Jump start' },
+  { href: '/services/fuel-delivery', label: 'Fuel delivery' },
+  { href: '/services/flat-tire-towing', label: 'Flat tire' },
 ];
 
 /**
@@ -65,8 +79,8 @@ const serviceGroups = [
     items: SERVICES.filter((service) => service.kind === 'tow'),
   },
   {
-    title: 'Roadside help',
-    price: 'Call for price',
+    title: 'Roadside assistance',
+    price: PRICING.jumpStartFrom ? `Jump start from $${PRICING.jumpStartFrom}` : 'Call for price',
     items: SERVICES.filter((service) => service.kind === 'roadside'),
   },
 ];
@@ -91,10 +105,15 @@ const priceRows = [
     title: `Long distance — $${PRICING.longDistanceMileRate} per mile`,
     detail: `Long runs cost less per mile. From about ${LONG_DISTANCE_FROM_MILES} miles we switch you to this rate automatically — you always get the cheaper of the two.`,
   },
-  {
-    title: 'Roadside help — call for price',
-    detail: 'Jump start, lockout, fuel delivery. Every case is different, so we quote it on the phone.',
-  },
+  PRICING.jumpStartFrom
+    ? {
+        title: `Jump start — from $${PRICING.jumpStartFrom}`,
+        detail: 'Mobile service: we come to the car, boost it and check that it holds. Fuel delivery and spare tire changes are quoted on the phone.',
+      }
+    : {
+        title: 'Roadside help — call for price',
+        detail: 'Jump start, fuel delivery, spare tire change. Every case is different, so we quote it on the phone.',
+      },
 ];
 
 export default function Home() {
@@ -108,7 +127,7 @@ export default function Home() {
               не увидит ни H1, ни первый экран. Затемнение слева под буквами,
               справа кадр не трогаем — трак и небоскрёбы и есть весь смысл. */}
           <section className="relative bg-hero-ink">
-            <div className="relative aspect-[4/3] w-full sm:aspect-[16/9] min-[960px]:absolute min-[960px]:inset-0 min-[960px]:aspect-auto min-[960px]:h-full">
+            <div className="relative aspect-[16/9] w-full min-[960px]:absolute min-[960px]:inset-0 min-[960px]:aspect-auto min-[960px]:h-full">
               <Image
                 src={HERO_PHOTO}
                 alt="ONE TOWING tow truck with the downtown Tampa skyline and the Hillsborough River behind it"
@@ -123,7 +142,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-[linear-gradient(to_top,#0b0e11_2%,rgba(11,14,17,.74)_34%,rgba(11,14,17,0)_78%)] min-[960px]:bg-[linear-gradient(100deg,rgba(11,14,17,.96)_0%,rgba(11,14,17,.93)_34%,rgba(11,14,17,.72)_50%,rgba(11,14,17,.28)_66%,rgba(11,14,17,0)_78%)]" />
             </div>
 
-            <div className="relative bg-[linear-gradient(160deg,#161d24_0%,#10151a_55%,#0b0e11_100%)] px-6 pb-14 pt-11 min-[960px]:bg-none min-[960px]:px-0 min-[960px]:py-0">
+            <div className="relative bg-[linear-gradient(160deg,#161d24_0%,#10151a_55%,#0b0e11_100%)] px-6 pb-14 pt-7 sm:pt-11 min-[960px]:bg-none min-[960px]:px-0 min-[960px]:py-0">
               <div className="mx-auto flex max-w-[1280px] flex-col justify-center min-[960px]:min-h-[clamp(560px,44vw,760px)] min-[960px]:px-8">
                 <div className="min-[960px]:max-w-[600px]">
                   <span className="inline-flex items-center gap-2.5 bg-brand-500 px-[15px] py-[9px] text-[13px] font-bold uppercase leading-none tracking-[0.14em] text-white">
@@ -131,22 +150,25 @@ export default function Home() {
                     Open now · 24/7 dispatch
                   </span>
 
-                  <h1 className="mt-5 font-display text-[42px] font-black leading-[0.98] tracking-[-0.03em] text-white text-balance sm:text-[56px] min-[960px]:text-[64px]">
-                    24/7 Towing <span className="text-hero-accent">in Tampa</span>
+                  {/* H1 отвечает на «что вы делаете и где» — ровно те слова, что в
+                      рекламе: Towing + Roadside Assistance + Tampa. */}
+                  <h1 className="mt-5 font-display text-[36px] font-black leading-[1.02] tracking-[-0.03em] text-white text-balance sm:text-[52px] min-[960px]:text-[58px]">
+                    24/7 Towing &amp; Roadside Assistance <span className="text-hero-accent">in Tampa</span>
                   </h1>
 
-                  <p className="mt-5 max-w-[36ch] text-[20px] font-semibold leading-[1.45] text-white text-pretty sm:text-[22px]">
-                    Serving {SERVICE_AREAS.slice(0, 6).join(', ')} and the rest of Hillsborough County.
-                  </p>
-
-                  <p className="mt-3 text-[16px] leading-[1.6] text-ink-200">
-                    Fast access to{' '}
-                    {HIGHWAYS.slice(0, 4).map((highway, index) => (
-                      <span key={highway}>
-                        {index > 0 ? ' · ' : ''}
-                        <span className="font-bold text-white">{highway}</span>
+                  <p className="mt-4 flex flex-wrap gap-x-2 text-[16px] font-bold leading-[1.7] text-white sm:text-[17px]">
+                    {heroServices.map((item, index) => (
+                      <span key={item.href}>
+                        {index > 0 ? <span className="mr-2 text-ink-400">·</span> : null}
+                        <Link href={item.href} className="text-white underline-offset-4 hover:underline">
+                          {item.label}
+                        </Link>
                       </span>
                     ))}
+                  </p>
+
+                  <p className="mt-3 max-w-[44ch] text-[17px] font-semibold leading-[1.45] text-ink-100 text-pretty sm:text-[19px]">
+                    Serving {MAIN_SERVICE_AREAS.join(', ')}.
                   </p>
 
                   {/* Плашки с ценами: те же цифры, что в рекламе и в блоке Pricing.
@@ -178,7 +200,7 @@ export default function Home() {
                       <span aria-hidden="true" className="text-[0.85em]">
                         ☎
                       </span>
-                      Call {BUSINESS.phone}
+                      Call Now {BUSINESS.phone}
                     </a>
                     {/* Отправка локации — сразу за звонком. Для человека на
                         обочине это важнее цен и записи: он часто не может
@@ -211,6 +233,16 @@ export default function Home() {
                   <p className="mt-4 text-[15px] font-bold uppercase leading-none tracking-[0.08em] text-ink-100">
                     A person answers — day, night, weekends
                   </p>
+
+                  <p className="mt-6 text-[15px] leading-[1.6] text-ink-200">
+                    Fast access to{' '}
+                    {HIGHWAYS.slice(0, 4).map((highway, index) => (
+                      <span key={highway}>
+                        {index > 0 ? ' · ' : ''}
+                        <span className="font-bold text-white">{highway}</span>
+                      </span>
+                    ))}
+                  </p>
                 </div>
               </div>
             </div>
@@ -237,10 +269,11 @@ export default function Home() {
             <div className="mx-auto max-w-[1280px] px-6 py-[52px] lg:px-8">
               <p className="max-w-[92ch] text-[19px] leading-[1.6] text-ink-600 text-pretty sm:text-[21px]">
                 <strong className="font-bold text-ink-700">{BUSINESS.name}</strong> is a towing and
-                roadside assistance company based in Downtown Tampa, Florida. We provide 24/7 towing,
-                jump starts, vehicle lockouts, fuel delivery, locked-wheel assistance, accident
-                recovery, motorcycle transport and long-distance towing across Tampa and Hillsborough
-                County. Local towing starts at ${PRICING.baseFee}, and a real person answers the phone
+                roadside assistance company based in Downtown Tampa, Florida. We provide 24/7 local
+                towing, accident towing and roadside towing, plus jump starts, fuel delivery and spare
+                tire changes across Tampa Bay — from Tampa, Brandon and Riverview to St. Petersburg and
+                Clearwater. Local towing starts at ${PRICING.baseFee}
+                {PRICING.jumpStartFrom ? `, a jump start at $${PRICING.jumpStartFrom}` : ''}, and a real person answers the phone
                 at{' '}
                 <a href={BUSINESS.phoneHref} className="font-bold text-brand-600 hover:underline">
                   {BUSINESS.phone}
@@ -300,7 +333,7 @@ export default function Home() {
                   Service areas
                 </p>
                 <h2 className="font-display text-[30px] font-extrabold leading-[1.1] tracking-[-0.015em] text-balance sm:text-[36px]">
-                  Based in Downtown Tampa, working Hillsborough County.
+                  Based in Downtown Tampa, working all of Tampa Bay.
                 </h2>
                 <p className="mt-5 text-[17px] leading-[1.6] text-ink-500 text-pretty">
                   Not on the list? Call anyway — if it is within reach, we come.
@@ -309,7 +342,7 @@ export default function Home() {
                     Без этой ссылки страница района — сирота: на неё неоткуда
                     прийти ни человеку, ни поисковому роботу. */}
                 <div className="mt-8 flex flex-wrap gap-2.5">
-                  {SERVICE_AREAS.map((area) => {
+                  {MAIN_SERVICE_AREAS.map((area) => {
                     const href = serviceAreaHref(area);
                     const chip =
                       'border border-bone-300 px-4 py-2.5 text-[15px] font-semibold text-ink-600';
@@ -328,7 +361,19 @@ export default function Home() {
                       </span>
                     );
                   })}
+                  <span className="border border-bone-300 px-4 py-2.5 text-[15px] font-semibold text-ink-600">
+                    Tampa Bay bridges
+                  </span>
                 </div>
+                <p className="mt-5 text-[15px] leading-[1.6] text-ink-500 text-pretty">
+                  {BRIDGE_CORRIDORS.map((bridge) => bridge.name).join(' · ')}
+                </p>
+                <Link
+                  href="/service-areas"
+                  className="mt-6 inline-block text-[14px] font-bold uppercase tracking-[0.12em] text-brand-600 hover:underline"
+                >
+                  All service areas →
+                </Link>
               </div>
 
               <div>
@@ -530,7 +575,7 @@ export default function Home() {
                 </p>
                 <ul className="mt-8 grid list-none border-t border-bone-300 p-0">
                   <li className="border-b border-bone-300 py-[18px] text-[17px] text-ink-600">
-                    Accident recovery and transport to a body shop
+                    Accident towing to a body shop, dealer or home
                   </li>
                   <li className="border-b border-bone-300 py-[18px] text-[17px] text-ink-600">
                     Cars that don’t start, don’t steer or don’t roll
@@ -559,7 +604,7 @@ export default function Home() {
                   Need a truck? We answer 24/7.
                 </h2>
                 <p className="mt-[18px] text-[18px] leading-[1.6] text-ember-body text-pretty">
-                  Tow, jump start, lockout or a flat — one call and we are on the way. Ask for the current ETA when you
+                  Tow, jump start, fuel or a flat — one call and we are on the way. Ask for the current ETA when you
                   call.
                 </p>
               </div>

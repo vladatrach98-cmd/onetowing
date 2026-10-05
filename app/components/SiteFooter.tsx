@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { BASE_LOCATION, BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, PRICING, SERVICE_AREAS } from '../lib/constants';
+import { BASE_LOCATION, BUSINESS, ESTIMATOR_ENABLED, HIGHWAYS, MAIN_SERVICE_AREAS, PRICING } from '../lib/constants';
+import { CORE_SERVICE_PAGES } from '../data/services-content';
 import { getNavLinks } from '../lib/nav';
 
 export default function SiteFooter() {
   const navLinks = getNavLinks();
 
   return (
-    <footer className="bg-ink-950 text-ink-400">
+    // Снизу отступ под липкую кнопку звонка, чтобы она не закрывала подвал.
+    <footer className="bg-ink-950 pb-[84px] text-ink-400 lg:pb-0">
       <div className="mx-auto grid max-w-[1280px] gap-12 px-6 pb-[30px] pt-16 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
         <div>
           <div className="flex items-center gap-[14px]">
@@ -81,8 +83,22 @@ export default function SiteFooter() {
           <p className="mb-3 mt-8 text-[12px] font-semibold uppercase leading-none tracking-[0.2em] text-white">
             We cover
           </p>
-          <p className="text-[15px] leading-[1.6]">{SERVICE_AREAS.join(' · ')}</p>
+          <p className="text-[15px] leading-[1.6]">{MAIN_SERVICE_AREAS.join(' · ')}</p>
           <p className="mt-2 text-[15px] leading-[1.6]">{HIGHWAYS.join(' · ')}</p>
+          <Link href="/service-areas" className="mt-3 inline-block text-[15px] text-ink-300 hover:text-white">
+            All service areas →
+          </Link>
+
+          <p className="mb-3 mt-8 text-[12px] font-semibold uppercase leading-none tracking-[0.2em] text-white">
+            Services
+          </p>
+          <div className="grid gap-2 text-[15px]">
+            {CORE_SERVICE_PAGES.map((page) => (
+              <Link key={page.slug} href={`/services/${page.slug}`} className="text-ink-400 hover:text-white">
+                {page.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -102,6 +118,22 @@ export default function SiteFooter() {
             <span>Prices on this site are estimates, not final quotes</span>
           </span>
         </div>
+      </div>
+
+      {/* ЛИПКАЯ КНОПКА ЗВОНКА — только на телефоне. Висит внизу экрана на
+          каждой странице с подвалом, так что позвонить можно с любого места
+          без прокрутки. На /where подвала нет: там своя нижняя панель. */}
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-ink-950/95 px-4 pb-[max(10px,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-sm lg:hidden">
+        <p className="text-center text-[11px] font-bold uppercase leading-none tracking-[0.14em] text-ink-200">
+          24/7 Towing &amp; Roadside Assistance
+        </p>
+        <a
+          href={BUSINESS.phoneHref}
+          className="mt-2 flex w-full items-center justify-center gap-2.5 bg-brand-500 py-[15px] font-display text-[20px] font-black leading-none text-white hover:bg-brand-600 hover:text-white"
+        >
+          <span aria-hidden="true">☎</span>
+          Call Now · {BUSINESS.phone}
+        </a>
       </div>
     </footer>
   );

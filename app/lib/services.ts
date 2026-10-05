@@ -1,4 +1,4 @@
-/** 12 услуг ONE TOWING. Тексты пойдут в messages/*.json на шаге мультиязычности. */
+/** Услуги ONE TOWING для главной и разметки. Тексты пойдут в messages/*.json на шаге мультиязычности. */
 
 export type ServiceKind = 'tow' | 'roadside';
 
@@ -16,18 +16,30 @@ export type Service = {
   page?: string;
 };
 
+/**
+ * ⚠️ Здесь только то, что продвигаем. Мотоциклов, lockout, эвакуации без согласия
+ * владельца здесь нет и быть не должно — главная страница используется в рекламе.
+ * Lockout живёт отдельной страницей только для органики (см. services-content.ts).
+ */
 export const SERVICES: Service[] = [
   {
     id: 'local-tow',
     title: 'Local Towing',
-    description: 'Cars, SUVs and vans moved anywhere around Tampa Bay.',
+    description: 'Cars, SUVs, vans and pickups moved anywhere around Tampa Bay.',
     kind: 'tow',
-    page: 'light-duty-towing',
+    page: 'towing',
   },
   {
-    id: 'emergency-tow',
-    title: 'Emergency Towing',
-    description: 'Breakdowns and accidents on the highway or in a parking lot, day or night.',
+    id: 'accident-tow',
+    title: 'Accident Towing',
+    description: 'After a collision: careful load-up and a tow to the body shop, dealer or home you choose.',
+    kind: 'tow',
+    page: 'accident-towing',
+  },
+  {
+    id: 'roadside-tow',
+    title: 'Roadside & Highway Towing',
+    description: 'Broken down on I-275, I-4, I-75, the Selmon or a bridge — day or night.',
     kind: 'tow',
     page: 'emergency-towing',
   },
@@ -39,72 +51,16 @@ export const SERVICES: Service[] = [
     page: 'wont-start-towing',
   },
   {
-    id: 'accident-recovery',
-    title: 'Accident Recovery',
-    description: 'After a collision: safe load-up and transport to a body shop, storage lot or home.',
-    kind: 'tow',
-    page: 'accident-recovery',
-  },
-  {
-    id: 'motorcycle',
-    title: 'Motorcycle Towing',
-    description: 'Bikes strapped down and moved on dollies, so they arrive as they left.',
-    kind: 'tow',
-    page: 'motorcycle-towing',
-  },
-  {
-    id: 'roadside',
-    title: 'Roadside Assistance',
-    description: 'Small problems fixed on the spot so you can keep driving.',
-    kind: 'roadside',
-    page: 'roadside-assistance',
-  },
-  {
-    id: 'jump-start',
-    title: 'Jump Start',
-    description: 'Dead battery? We boost it and check that the car keeps running.',
-    kind: 'roadside',
-    page: 'jump-start',
-  },
-  {
-    id: 'lockout',
-    title: 'Car Lockout',
-    description: 'Keys locked inside — we open most vehicles without damage.',
-    kind: 'roadside',
-    page: 'lockout-service',
-  },
-  {
-    id: 'fuel-delivery',
-    title: 'Fuel Delivery',
-    description: 'Gas or diesel brought to you — enough to reach the nearest station.',
-    kind: 'roadside',
-    page: 'fuel-delivery',
-  },
-  {
-    id: 'wheel-lock',
-    title: 'Wheels Won’t Roll',
-    description: 'Seized brakes, missing keys or locked wheels — we load it on dollies.',
-    kind: 'tow',
-    page: 'light-duty-towing',
-  },
-  {
-    id: 'dealer-delivery',
-    title: 'Delivery to a Dealership',
-    description: 'Straight to the dealer service bay, handed over properly.',
-    kind: 'tow',
-    page: 'tow-to-repair-shop',
-  },
-  {
     id: 'shop-delivery',
-    title: 'Delivery to a Repair Shop',
-    description: 'To your mechanic, or to a shop we can recommend nearby.',
+    title: 'Tow to a Shop or Dealership',
+    description: 'To your mechanic or a dealer service bay, after-hours drop-offs included.',
     kind: 'tow',
     page: 'tow-to-repair-shop',
   },
   {
-    id: 'vehicle-transport',
-    title: 'Vehicle Transport',
-    description: 'Just bought a car or moving one across town? We haul it.',
+    id: 'long-distance',
+    title: 'Long Distance Towing',
+    description: 'Runs across Florida at a reduced per-mile rate.',
     kind: 'tow',
     page: 'long-distance-towing',
   },
@@ -116,10 +72,31 @@ export const SERVICES: Service[] = [
     page: 'car-home-service',
   },
   {
-    id: 'long-distance',
-    title: 'Long Distance Towing',
-    description: 'Runs over 50 miles at a reduced per-mile rate across Florida.',
-    kind: 'tow',
-    page: 'long-distance-towing',
+    id: 'jump-start',
+    title: 'Jump Start',
+    description: 'Mobile service: dead battery boosted where the car stands, and checked that it holds.',
+    kind: 'roadside',
+    page: 'jump-start',
+  },
+  {
+    id: 'fuel-delivery',
+    title: 'Fuel Delivery',
+    description: 'Gas or diesel brought to you — enough to reach the nearest station.',
+    kind: 'roadside',
+    page: 'fuel-delivery',
+  },
+  {
+    id: 'flat-tire',
+    title: 'Flat Tire',
+    description: 'We put your spare on. No spare or a damaged wheel — we tow it to a tire shop.',
+    kind: 'roadside',
+    page: 'flat-tire-towing',
+  },
+  {
+    id: 'roadside',
+    title: 'Roadside Help',
+    description: 'Stalled on a shoulder or in a lot — fixed on the spot, or towed if it cannot be.',
+    kind: 'roadside',
+    page: 'roadside-assistance',
   },
 ];

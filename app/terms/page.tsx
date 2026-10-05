@@ -134,13 +134,12 @@ export default function TermsPage() {
 
             <H2>Our services</H2>
             <P>
-              We do <strong className="font-bold text-ink-700">consent towing only</strong>: the owner of the vehicle
-              asks us for the tow. We do not perform repossessions, we do not tow from private property at a property
-              owner&rsquo;s request, we do not immobilise vehicles, and we do not operate an impound lot.
+              We tow and assist vehicles only at the request of their owner or driver, and the vehicle goes where
+              they tell us.
             </P>
             <P>
-              We do not change tires. Where a tire cannot be driven on, we tow the vehicle to a shop that can replace
-              it.
+              We put on the customer&rsquo;s own spare tire where it is safe to do so. We do not repair, sell or mount
+              tires; where there is no usable spare, we tow the vehicle to a shop that can replace the tire.
             </P>
 
             <H2>Prices and quotes</H2>
