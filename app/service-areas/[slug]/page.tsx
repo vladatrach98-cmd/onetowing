@@ -6,6 +6,7 @@ import SiteFooter from '../../components/SiteFooter';
 import { BASE_LOCATION, BUSINESS, PRICING } from '../../lib/constants';
 import { LONG_DISTANCE_FROM_MILES } from '../../lib/pricing';
 import { SERVICE_AREA_PAGES, findServiceArea, type ServiceArea } from '../../data/service-areas';
+import { CORE_SERVICE_PAGES, servicePrice } from '../../data/services-content';
 
 /**
  * СТРАНИЦА ОДНОГО РАЙОНА — /service-areas/brandon-fl и такие же дальше.
@@ -206,6 +207,40 @@ export default function ServiceAreaPage({ params }: { params: { slug: string } }
                 storage yard, so there is no reason for us to steer you anywhere else.
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* Пять основных услуг — ссылками. Связка «район → услуга» помогает
+            и клиенту, и Google: со страницы города прямой путь к нужной работе. */}
+        <section className="border-b border-bone-200 bg-bone-100 text-ink-700">
+          <div className="mx-auto max-w-[1280px] px-6 py-[76px] lg:px-8">
+            <h2 className="font-display text-[26px] font-extrabold leading-[1.15] tracking-[-0.015em] sm:text-[32px]">
+              What we do in {area.city}
+            </h2>
+            <div className="mt-9 grid gap-px bg-bone-200 sm:grid-cols-2 lg:grid-cols-5">
+              {CORE_SERVICE_PAGES.map((page) => {
+                const price = servicePrice(page);
+                return (
+                  <Link
+                    key={page.slug}
+                    href={`/services/${page.slug}`}
+                    className="block bg-white px-6 py-7 text-inherit transition-colors hover:bg-bone-hover"
+                  >
+                    <p className="font-display text-[19px] font-extrabold leading-[1.2] text-ink-700">{page.name}</p>
+                    <p className="mt-2 text-[13px] font-semibold uppercase tracking-[0.12em] text-brand-600">
+                      {price.amount ? `From $${price.amount}` : price.value}
+                    </p>
+                    <p className="mt-3 text-[15px] leading-[1.55] text-ink-500 text-pretty">{page.cardLine}</p>
+                  </Link>
+                );
+              })}
+            </div>
+            <Link
+              href="/service-areas"
+              className="mt-8 inline-block text-[14px] font-bold uppercase tracking-[0.12em] text-brand-600 hover:underline"
+            >
+              All service areas →
+            </Link>
           </div>
         </section>
 
