@@ -55,7 +55,7 @@ export default function TermsPage() {
             <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[42px]">
               Terms of Service
             </h1>
-            <p className="mt-5 text-[17px] leading-[1.55] text-ink-300">Last updated: 2 September 2026</p>
+            <p className="mt-5 text-[17px] leading-[1.55] text-ink-300">Last updated: 30 October 2026</p>
           </div>
         </section>
 
@@ -152,6 +152,20 @@ export default function TermsPage() {
             <P>
               We do not give arrival times over the internet. Traffic makes any such promise unreliable, so we tell you
               on the phone where the truck actually is.
+            </P>
+
+            {/* Чат из карточки в Google отвечает ИИ Google — его слова не должны
+                становиться ценой или обещанием времени. Это не SMS-программа выше. */}
+            <H2>Chat through Google</H2>
+            <P>
+              If you chat with us from our listing on Google Search or Maps, replies may be written automatically by an
+              AI assistant provided by Google. Those replies are for information only — they are not a quote, a booking
+              or an arrival time. The price and timing are agreed with you on the phone before any work starts, and
+              what we tell you on the phone takes precedence over anything an automated reply said.
+            </P>
+            <P>
+              This chat is not part of the text messaging programme above. Chatting with us does not sign you up for
+              our texts.
             </P>
 
             <H2>Your responsibilities</H2>

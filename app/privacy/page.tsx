@@ -21,7 +21,7 @@ import { BASE_LOCATION, BUSINESS, SMS_NUMBERS_SENTENCE } from '../lib/constants'
  */
 
 const title = `Privacy Policy | ${BUSINESS.name}`;
-const description = `How ${BUSINESS.name} handles your information, including text messages and location data.`;
+const description = `How ${BUSINESS.name} handles your information, including text messages, chat and location data.`;
 
 export const metadata: Metadata = {
   title,
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
             <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[42px]">
               Privacy Policy
             </h1>
-            <p className="mt-5 text-[17px] leading-[1.55] text-ink-300">Last updated: 2 September 2026</p>
+            <p className="mt-5 text-[17px] leading-[1.55] text-ink-300">Last updated: 30 October 2026</p>
           </div>
         </section>
 
@@ -106,6 +106,29 @@ export default function PrivacyPage() {
               press the button. Declining the permission still lets you place the point on the map yourself.
             </P>
 
+            {/* Чат из карточки в Google (RCS Business Messaging, отвечает ИИ Google).
+                Это НЕ SMS-программа 10DLC — держать отдельно от блока «Text messages». */}
+            <H2>Chat through Google</H2>
+            <P>
+              You can start a chat with us from our listing on Google Search and Google Maps. This chat runs on
+              Google&rsquo;s business messaging service and is separate from the text messages described above: writing
+              to us there does not sign you up for our texts, we never start these conversations ourselves, and we do
+              not use them for marketing.
+            </P>
+            <P>
+              Replies in this chat may be written automatically by an AI assistant provided by Google, using the
+              information we publish about our services, prices and service area. The conversation is processed by
+              Google under its own privacy policy, and we may read it to follow up on your request. Please do not send
+              card numbers or other sensitive details in the chat.
+            </P>
+            <P>
+              An automated reply is not a quote and not an arrival time. Both are confirmed with you on the phone at{' '}
+              <a href={BUSINESS.phoneHref} className="font-bold text-brand-600 hover:underline">
+                {BUSINESS.phone}
+              </a>{' '}
+              before the truck is sent.
+            </P>
+
             <H2>What else we collect</H2>
             <P>
               <strong className="font-bold text-ink-700">When you tap our phone number on this site,</strong> we receive
@@ -132,6 +155,7 @@ export default function PrivacyPage() {
               {[
                 ['CallRail', 'call tracking and text messaging'],
                 ['Google (Tag Manager, Analytics, Ads)', 'measuring which advertising brings calls'],
+                ['Google (Business Profile chat)', 'the chat you can start with us from Search and Maps'],
                 ['OpenStreetMap', 'map tiles and turning coordinates into addresses'],
                 ['Vercel', 'hosting this website'],
                 ['Telegram', 'delivering your request to the owner'],
