@@ -213,7 +213,7 @@ export const SERVICE_AREA_PAGES: ServiceArea[] = [
       {
         question: 'My car will not start in the driveway. Do I need a tow?',
         answer:
-          'Not necessarily. Rapid clicking or a slow crank is usually the battery, and a jump start fixes that on the spot — from $65. If the engine cranks strongly but never fires, it is not the battery, and that is a tow. Describe the sound when you call and we will tell you which one you need.',
+          'Not necessarily. Rapid clicking or a slow crank is usually the battery, and a jump start fixes that on the spot — from $75. If the engine cranks strongly but never fires, it is not the battery, and that is a tow. Describe the sound when you call and we will tell you which one you need.',
       },
     ],
   },
@@ -243,7 +243,7 @@ export const SERVICE_AREA_PAGES: ServiceArea[] = [
       'Breakdowns on US-41 and Dale Mabry, where traffic moves fast and the shoulders are narrow.',
       'Cars that will not start at home, towed into Tampa to the owner’s own mechanic or dealer.',
       'Accident towing on the Veterans Expressway and Dale Mabry.',
-      'Dead batteries in store and church parking lots along US-41 — a jump start from $65.',
+      'Dead batteries in store and church parking lots along US-41 — a jump start from $75.',
       'Flat tires on long residential roads — your spare put on, or a tow to a tire shop.',
       'Running out of fuel between stations, with enough brought out to reach one.',
     ],
@@ -268,7 +268,7 @@ export const SERVICE_AREA_PAGES: ServiceArea[] = [
       {
         question: 'Is a jump start in Lutz worth it, or should I just get a tow?',
         answer:
-          'If it is the battery, a jump start from $65 is much cheaper than a tow, especially this far out. Tell us what happens when you turn the key and we will tell you honestly which one you need.',
+          'If it is the battery, a jump start from $75 is much cheaper than a tow, especially this far out. Tell us what happens when you turn the key and we will tell you honestly which one you need.',
       },
     ],
   },

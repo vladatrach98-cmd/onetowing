@@ -45,11 +45,11 @@ export const PRICING = {
    */
   longDistanceThresholdMiles: 50,
   /**
-   * Прикурить — единственная дорожная услуга с опубликованной ценой («from $65»).
+   * Прикурить — единственная дорожная услуга с опубликованной ценой («from $75»).
    * Остальная дорожная помощь (топливо, запаска) — «call for price».
    * Поставить null — везде на сайте снова станет «Call for price».
    */
-  jumpStartFrom: 65 as number | null,
+  jumpStartFrom: 75 as number | null,
   currency: 'USD',
 } as const;
 

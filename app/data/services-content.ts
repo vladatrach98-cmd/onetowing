@@ -17,7 +17,7 @@
  *   — слов «licensed & insured»: сертификат пока на другом юрлице;
  *   — ремонта и продажи шин. Колесо меняем ТОЛЬКО на запаску клиента (если она
  *     есть и цела). Нет запаски или разбит диск — буксируем в шиномонтаж;
- *   — цифр в дорожной помощи, кроме прикуривания («from $65», берётся из
+ *   — цифр в дорожной помощи, кроме прикуривания («from $75», берётся из
  *     PRICING.jumpStartFrom). Топливо и запаска — «call for price»;
  *   — слова «flatbed» как нашей услуги: платформы нет, есть wheel-lift + тележки;
  *   — мотоциклов, эвакуации без согласия владельца, repo, impound, private
@@ -39,7 +39,7 @@ export type ServiceFaq = { question: string; answer: string };
 /**
  * Как показывается цена услуги:
  *   tow            — «Local tow from $95»
- *   jump-start     — «Jump start from $65» (или call for price, если цена не задана)
+ *   jump-start     — «Jump start from $75» (или call for price, если цена не задана)
  *   roadside       — «Call for price»
  *   roadside-mixed — страница дорожной помощи: прикуривание с ценой, остальное по звонку
  */
@@ -921,7 +921,7 @@ export const SERVICE_PAGES: ServicePage[] = [
   },
 ];
 
-/** Цена услуги для плашки: «from $95», «from $65» или «call for price». */
+/** Цена услуги для плашки: «from $95», «from $75» или «call for price». */
 export function servicePrice(page: ServicePage): { label: string; value: string; amount: number | null } {
   const jump = PRICING.jumpStartFrom;
   switch (page.price) {
