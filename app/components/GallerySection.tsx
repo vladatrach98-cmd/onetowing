@@ -33,8 +33,10 @@ export default function GallerySection() {
         ) : null}
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Ключ — только номер: ключ попадает в код страницы, и «/images/…jpg-0»
+              Google принимал за ссылку и получал 404. Список статичный, номера хватает. */}
           {photos.map((photo, index) => (
-            <figure key={`${photo.src}-${index}`} className="group m-0">
+            <figure key={index} className="group m-0">
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink-900">
                 <Image
                   src={photo.src}
