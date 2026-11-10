@@ -73,8 +73,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No pickup location' }, { status: 400 });
   }
 
+  // Телефон обязателен: точка без номера — клиент, которому некому перезвонить.
+  // Страница и так не пускает без номера; это на случай старой вкладки или бота.
+  const phone = clean(body.phone, 40);
+  if (phone.replace(/\D/g, '').length < 10) {
+    return NextResponse.json({ error: 'Phone required' }, { status: 400 });
+  }
+
   const { delivered } = await sendCustomerLocation({
-    phone: clean(body.phone, 40) || undefined,
+    phone,
     smsConsent: body.smsConsent === true,
     pickupLat,
     pickupLng,

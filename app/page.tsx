@@ -212,7 +212,7 @@ export default function Home() {
                         двух одинаковых белых кнопок. Но фон не залит —
                         соперничать со «Call» она не должна. */}
                     <Link
-                      href="/where?from=site"
+                      href="/where"
                       className="flex items-center gap-2 border-2 border-brand-500 bg-brand-500/10 px-[26px] py-[21px] text-[15px] font-extrabold uppercase leading-none tracking-[0.09em] text-white transition-colors hover:bg-brand-500 hover:text-white"
                     >
                       <span aria-hidden="true">📍</span>

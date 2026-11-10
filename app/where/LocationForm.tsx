@@ -132,40 +132,13 @@ export default function LocationForm() {
   const dropoffRun = useRef(0);
 
   /**
-   * Телефон — необязательный и по умолчанию свёрнутый.
+   * Телефон — ОБЯЗАТЕЛЬНЫЙ (решение владельца, ноябрь 2026).
    *
-   * Обычно он не нужен: владелец в эту минуту разговаривает с клиентом и номер
-   * уже видит. Нужен он в двух случаях — звонок оборвался, или локацию шлёт
-   * не тот, кто стоит у машины (жена, друг, прохожий). Поэтому поле есть,
-   * но развернуть его надо самому: на два обязательных шага оно не влияет.
+   * Раньше поле было необязательным и свёрнутым: считали, что владелец и так
+   * говорит с клиентом и номер видит. На деле заявки приходили точкой на карте
+   * без номера — перезвонить некому, и такие клиенты терялись. Поэтому без
+   * полного номера кнопка отправки не загорается, а сервер такую заявку не примет.
    */
-  const [phoneOpen, setPhoneOpen] = useState(false);
-
-  /**
-   * Пришёл с нашего же сайта — значит, скорее всего, ещё НЕ звонил.
-   *
-   * Это две разные ситуации, и путать их нельзя. Кто пришёл по ссылке из SMS —
-   * уже говорит с владельцем, его телефон известен, поле лишнее. А кто нажал
-   * кнопку на главной — просто прохожий с координатами: без номера владелец
-   * получит точку на карте и никакой возможности перезвонить.
-   * Поэтому таким разворачиваем поле телефона сразу.
-   *
-   * ⚠️ По document.referrer это НЕ определить. Внутри сайта Next.js переходит
-   * без перезагрузки страницы, referrer остаётся от самого первого захода
-   * и при прямом открытии главной он пустой. Проверено: поле не раскрывалось.
-   * Поэтому метка стоит прямо в ссылке — ?from=site.
-   */
-  const [cameFromSite, setCameFromSite] = useState(false);
-  useEffect(() => {
-    try {
-      if (new URLSearchParams(window.location.search).get('from') === 'site') {
-        setCameFromSite(true);
-        setPhoneOpen(true);
-      }
-    } catch {
-      // Адрес без параметров — оставляем как есть, поле свёрнуто.
-    }
-  }, []);
   const [phone, setPhone] = useState('');
   const [smsConsent, setSmsConsent] = useState(false);
 
@@ -258,7 +231,7 @@ export default function LocationForm() {
   }
 
   async function send() {
-    if (!pickup || pickupPending) {
+    if (!pickup || pickupPending || !phoneUsable) {
       setSendState('error');
       return;
     }
@@ -268,10 +241,8 @@ export default function LocationForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          // Недописанный номер не шлём: владельцу «656-77» бесполезен,
-          // а согласие на SMS без телефона — бессмыслица.
-          phone: phoneUsable ? phone.trim() : undefined,
-          smsConsent: phoneUsable ? smsConsent : undefined,
+          phone: phone.trim(),
+          smsConsent,
           pickupLat: pickup.lat,
           pickupLng: pickup.lng,
           pickupAccuracy: pickupAccuracy ?? undefined,
@@ -340,10 +311,11 @@ export default function LocationForm() {
   );
 
   /**
-   * Готовы ли мы отправлять. Заглушка на карте — это НЕ локация,
-   * поэтому кнопка от неё не загорается и отправку не пускает.
+   * Готовы ли мы отправлять: нужна и точка, и полный номер.
+   * Заглушка на карте — это НЕ локация, поэтому кнопка от неё не загорается.
    */
-  const ready = pickup !== null && !pickupPending;
+  const locationReady = pickup !== null && !pickupPending;
+  const ready = locationReady && phoneUsable;
 
   return (
     <div className="grid gap-5">
@@ -453,9 +425,69 @@ export default function LocationForm() {
         )}
       </section>
 
-      {/* ────────── 2. Куда везти ────────── */}
+      {/* ────────── 2. Телефон — обязательно ──────────
+          Стоит сразу после точки, а не в конце: обязательные шаги идут первыми,
+          иначе человек ставит точку и останавливается, не доехав до номера.
+
+          ⚠️ Галочка про SMS обязательна не для красоты. Правило регистрации
+          10DLC: «собираете телефоны на сайте без явного согласия на переписку —
+          зарегистрировать бизнес не сможете». Галочка стоит НЕСНЯТОЙ и сама
+          по себе НЕ обязательна: согласие не может быть условием услуги.
+          Обязателен только номер. Текст согласия обязан быть в самой странице —
+          проверяющий регистрации открывает её программой, а не руками. */}
       <section className="border border-bone-300 bg-white px-5 py-7 sm:px-7">
-        <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-brand-600">Step 2 — optional</p>
+        <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-brand-600">Step 2</p>
+        <h2 className="mt-2 font-display text-[24px] font-extrabold leading-[1.15] text-ink-700 sm:text-[27px]">
+          Your phone number
+        </h2>
+        <p className="mt-2 text-[15px] leading-[1.5] text-ink-500 text-pretty">
+          So we can call you back. Without a number we get a dot on a map and no way to reach you.
+        </p>
+
+        <input
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="(656) 777-2980"
+          className="mt-4 w-full border-2 border-bone-300 bg-white px-4 py-[16px] text-[17px] text-ink-700 outline-none focus:border-brand-500"
+        />
+        {phone.trim() && !phoneUsable ? (
+          <p className="mt-2 text-[15px] leading-[1.45] text-brand-600">
+            That is not a full number yet — we need all 10 digits.
+          </p>
+        ) : null}
+
+        <label className="mt-4 flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={smsConsent}
+            onChange={(e) => setSmsConsent(e.target.checked)}
+            className="mt-[3px] h-5 w-5 shrink-0 accent-brand-500"
+          />
+          <span className="text-[15px] leading-[1.55] text-ink-600 text-pretty">
+            I agree to receive one text message from{' '}
+            <strong className="font-bold text-ink-700">ONE TOWING LLC</strong> containing a link to share my
+            vehicle’s location. Message frequency varies — about one message per call or request.{' '}
+            {SMS_NUMBERS_SENTENCE} Message and data rates may apply. Reply STOP to opt out, HELP for help.
+            Consent is not a condition of service. See our{' '}
+            <a href="/privacy" className="font-bold text-brand-600 underline underline-offset-2">
+              Privacy Policy
+            </a>{' '}
+            and{' '}
+            <a href="/terms" className="font-bold text-brand-600 underline underline-offset-2">
+              Terms of Service
+            </a>
+            .
+          </span>
+        </label>
+      </section>
+
+      {/* ────────── 3. Куда везти ────────── */}
+      <section className="border border-bone-300 bg-white px-5 py-7 sm:px-7">
+        <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-brand-600">Step 3 — optional</p>
         <h2 className="mt-2 font-display text-[24px] font-extrabold leading-[1.15] text-ink-700 sm:text-[27px]">
           Where are we taking it?
         </h2>
@@ -509,93 +541,6 @@ export default function LocationForm() {
         )}
       </section>
 
-      {/* ────────── Телефон — по желанию ──────────
-          Обычно он не нужен: владелец в эту минуту разговаривает с клиентом.
-          Нужен в двух случаях — звонок оборвался, или локацию шлёт не тот, кто
-          стоит у машины (жена, друг, прохожий). Поэтому блок свёрнут: два
-          обязательных шага он не удлиняет, а кому надо — развернёт.
-
-          ⚠️ Галочка про SMS обязательна не для красоты. Правило регистрации
-          10DLC: «собираете телефоны на сайте без явного согласия на переписку —
-          зарегистрировать бизнес не сможете». Галочка стоит НЕСНЯТОЙ, форма
-          отправляется и без неё: согласие не может быть условием услуги. */}
-      {/* ⚠️ Обе части рендерятся ВСЕГДА, свёрнутая просто спрятана классом.
-          Раньше блок появлялся в разметке только после клика — и проверяющий
-          регистрации SMS, который открывает страницу программой, а не руками,
-          не видел текста согласия вообще. Проверено: `curl` этой страницы
-          не находил ни «I agree to receive», ни «Reply STOP». Текст согласия
-          обязан быть в самой странице, даже когда блок закрыт. */}
-      <button
-        type="button"
-        onClick={() => setPhoneOpen(true)}
-        className={`w-full border border-dashed border-bone-400 bg-white px-5 py-[16px] text-center text-[16px] font-bold leading-[1.35] text-ink-600 transition-colors hover:bg-bone-hover ${phoneOpen ? 'hidden' : ''}`}
-      >
-        ☎ Share my phone number <span className="font-semibold text-ink-400">— optional</span>
-      </button>
-      <section className={`border border-bone-300 bg-white px-5 py-7 sm:px-7 ${phoneOpen ? '' : 'hidden'}`}>
-          <div className="flex items-start justify-between gap-4">
-            <h2 className="font-display text-[21px] font-extrabold leading-[1.15] text-ink-700 sm:text-[23px]">
-              Your phone number
-            </h2>
-            <button
-              type="button"
-              onClick={() => {
-                setPhoneOpen(false);
-                setPhone('');
-                setSmsConsent(false);
-              }}
-              className="shrink-0 text-[15px] font-bold text-ink-400 underline underline-offset-4"
-            >
-              Remove
-            </button>
-          </div>
-          <p className="mt-2 text-[15px] leading-[1.5] text-ink-500 text-pretty">
-            {cameFromSite
-              ? 'Leave it and we will call you back. Without a number we get a dot on a map and no way to reach you.'
-              : 'Optional. Useful if we get cut off, or if you are sending this for someone else.'}
-          </p>
-
-          <input
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="(656) 777-2980"
-            className="mt-4 w-full border-2 border-bone-300 bg-white px-4 py-[16px] text-[17px] text-ink-700 outline-none focus:border-brand-500"
-          />
-          {phone.trim() && !phoneUsable ? (
-            <p className="mt-2 text-[15px] leading-[1.45] text-ink-500">
-              That is not a full number yet — we will still send your location.
-            </p>
-          ) : null}
-
-          <label className="mt-4 flex cursor-pointer items-start gap-3">
-            <input
-              type="checkbox"
-              checked={smsConsent}
-              onChange={(e) => setSmsConsent(e.target.checked)}
-              className="mt-[3px] h-5 w-5 shrink-0 accent-brand-500"
-            />
-            <span className="text-[15px] leading-[1.55] text-ink-600 text-pretty">
-              I agree to receive one text message from{' '}
-              <strong className="font-bold text-ink-700">ONE TOWING LLC</strong> containing a link to share my
-              vehicle’s location. Message frequency varies — about one message per call or request.{' '}
-              {SMS_NUMBERS_SENTENCE} Message and data rates may apply. Reply STOP to opt out, HELP for help.
-              Consent is not a condition of service. See our{' '}
-              <a href="/privacy" className="font-bold text-brand-600 underline underline-offset-2">
-                Privacy Policy
-              </a>{' '}
-              and{' '}
-              <a href="/terms" className="font-bold text-brand-600 underline underline-offset-2">
-                Terms of Service
-              </a>
-              .
-            </span>
-          </label>
-        </section>
-
-
       {/* ────────── Кнопка отправки — прибита к низу экрана ──────────
           Раньше она стояла последней в форме, и клиент до неё не доезжал:
           карта занимает пол-экрана, человек ставит точку и на этом
@@ -613,9 +558,11 @@ export default function LocationForm() {
         <div className="mx-auto max-w-[560px]">
           {sendState === 'error' ? (
             <p className="mb-2 text-center text-[15px] font-bold leading-[1.4] text-brand-600 text-pretty">
-              {!ready
+              {!locationReady
                 ? 'Show us where the vehicle is — tap the map.'
-                : 'That did not send. Try once more, or tell us on the phone.'}
+                : !phoneUsable
+                  ? 'Add your phone number so we can call you back.'
+                  : 'That did not send. Try once more, or tell us on the phone.'}
             </p>
           ) : null}
 
@@ -635,7 +582,11 @@ export default function LocationForm() {
           </button>
 
           <p className="mt-2 text-center text-[14px] leading-[1.35] text-ink-500">
-            {ready ? 'We get it the second you tap.' : 'Set your location above, then tap here.'}
+            {ready
+              ? 'We get it the second you tap.'
+              : !locationReady
+                ? 'Set your location above, then tap here.'
+                : 'Add your phone number above, then tap here.'}
           </p>
         </div>
       </div>
